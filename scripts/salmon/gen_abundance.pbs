@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#PBS -l select=1:ncpus=8:mem=64gb
+#PBS -l walltime=12:00:00
+
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate salmon
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV/Data/
+
+for fn in RNA/*fastq.gz;
+do
+samp=`basename ${fn}`
+echo "Processing sample ${samp}"
+salmon quant -i Reference/human_index_with_decoy -l A \
+         -r ${fn} \
+         -p 8 --validateMappings -o quants_with_decoy/${samp}_quant
+done
