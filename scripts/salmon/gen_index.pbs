@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#PBS -l select=1:ncpus=4:mem=64gb
+#PBS -l walltime=12:00:00
+
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate salmon
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV/Data/Reference
+
+salmon index -t gencode.v38.transcripts.fa.gz --gencode -i human_index
