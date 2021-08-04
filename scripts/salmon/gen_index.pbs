@@ -1,19 +1,11 @@
 #!/bin/bash
 
-#PBS -l select=1:ncpus=8:mem=64gb
+#PBS -l select=1:ncpus=8:mem=128gb
 #PBS -l walltime=12:00:00
 
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate salmon
 
 cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV/Data/Reference
-
-
-grep "^>" <(gunzip -c GRCh38.primary_assembly.genome.fa.gz) | cut -d " " -f 1 > decoys.txt
-sed -i.bak -e 's/>//g' decoys.txt
-
-cat gencode.v38.transcripts.fa.gz GRCh38.primary_assembly.genome.fa.gz > gentrome.fa.gz
-
-salmon index -t gentrome.fa.gz -d decoys.txt -p 8 -k 21 -i human_alltranscriptgenome_index_k21 --gencode
 
 salmon index -t gentrome.fa.gz -d decoys.txt -p 8 -k 9 -i human_alltranscriptgenome_index_k9 --gencode
