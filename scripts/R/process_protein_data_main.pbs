@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV/scripts/R
+
+qsub -v data_dir='annotatedQ1-6', condition_type='NA', norm='' -l select=1:ncpus=8:mem=128gb,walltime=24:00:00 process_protein_data.pbs
+qsub -v data_dir='', condition_type='', norm='' -l select=1:ncpus=8:mem=128gb,walltime=24:00:00 process_protein_data.pbs
+qsub -v data_dir='', condition_type='', norm='' -l select=1:ncpus=8:mem=128gb,walltime=24:00:00 process_protein_data.pbs
+qsub -v data_dir='', condition_type='', norm='' -l select=1:ncpus=8:mem=128gb,walltime=24:00:00 process_protein_data.pbs

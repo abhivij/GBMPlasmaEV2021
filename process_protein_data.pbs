@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -l select=1:ncpus=8:mem=128gb
+#PBS -l walltime=12:00:00
+
+
+
+source ~/.venvs/forR/bin/activate
+module load R/3.6.3
+Rscript process_protein_data.R --args ${data_dir} ${condition_type} ${norm}
+
+
+#annotatedQ1-6
+#unannotated
