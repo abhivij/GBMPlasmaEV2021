@@ -37,3 +37,7 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Katana output logs
+*.pbs.o*
+*.pbs.e*
