@@ -58,7 +58,11 @@ process_protein_data <- function(data_dir, condition_type, norm){
   print(paste("Normalization :", norm))
   
   data <- SkylinetoMSstatsFormat(data)
-  data_process_output <- dataProcess(data, logTrans = "2", normalization = norm)
+  data_process_output <- dataProcess(data, logTrans = "2", normalization = norm,
+                                     censoredInt = '0')
+  file_name <- paste(paste("data_process_output", data_dir, condition_type, norm, sep = "_"), "rds", sep = ".")
+  output_dir <- "Data/Protein/data_process_output"
+  saveRDS(data_process_output, file = append_path(output_dir, file_name))
   
   normed <- data_process_output$RunlevelData %>%
     select(Protein, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL) %>%
@@ -66,7 +70,7 @@ process_protein_data <- function(data_dir, condition_type, norm){
     pivot_wider(names_from = Protein, values_from = LogIntensities)
   
   file_name <- paste(paste("norm", data_dir, condition_type, norm, sep = "_"), "csv", sep = ".")
-  output_dir <- "Data/Protein/output"
+  output_dir <- "Data/Protein/norm_output"
   write.table(normed, append_path(output_dir, file_name), 
               quote = FALSE, sep = ",", row.names = FALSE)
   
