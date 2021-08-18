@@ -1,6 +1,7 @@
 library(MSstats)
 library(tidyverse)
 source("utils.R")
+setwd("../..")
 
 modify_condition <- function(data, condition_type = NA, sample_column = NA) {
   allowed_condition_types <- c("column", "disease")
@@ -41,7 +42,7 @@ get_data_from_file <- function(file_name, condition_type = NA, sample_column = N
 process_protein_data <- function(data_dir, condition_type, norm){
   print(paste("Data dir :", data_dir))
   data_path <- paste("Data/Protein/MSstatsinput", data_dir, sep = "")
-  file_names <- list.files(path = data_path, full.names = TRUE)  
+  file_names <- list.files(path = data_path, full.names = TRUE)
   
   if(!is.na(condition_type) && condition_type == "column"){
     sample_column <- read.csv("Data/Protein/sample_columns.csv", na.strings = "") %>%
@@ -65,7 +66,7 @@ process_protein_data <- function(data_dir, condition_type, norm){
     pivot_wider(names_from = Protein, values_from = LogIntensities)
   
   file_name <- paste(paste("norm", data_dir, condition_type, norm, sep = "_"), "csv", sep = ".")
-  output_dir <- "Data/Protein/output/"
+  output_dir <- "Data/Protein/output"
   write.table(normed, append_path(output_dir, file_name), 
               quote = FALSE, sep = ",", row.names = FALSE)
   

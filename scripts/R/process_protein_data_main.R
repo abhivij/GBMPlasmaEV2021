@@ -1,5 +1,5 @@
-source("process_protein_data.R")
 source("process_protein_arglist.R")
+source("process_protein_data.R")
 
 args = commandArgs(trailingOnly = TRUE)
 if(length(args) > 1) {
