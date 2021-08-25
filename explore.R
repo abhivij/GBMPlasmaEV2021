@@ -160,8 +160,12 @@ sum_norm_area_data <- read.table(file_path, header = TRUE, sep = ",",
                                  comment.char = "", na.strings = "#N/A",
                                  row.names = 1)
 sum(is.na(sum_norm_area_data))
+sum_norm_area_data[is.na(sum_norm_area_data)] <- 0.000001
 sum_norm_area_data[is.na(sum_norm_area_data)] <- 0
+sum(sum_norm_area_data == 0)
+boxplot(sum_norm_area_data[1:10,])
 boxplot(log2(sum_norm_area_data[1:10,]))
+
 #read norm output data
 
 norm_output1 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
@@ -187,6 +191,13 @@ norm_output16 <- read.csv(file = "Data/Protein/output/norm_unannotated_disease_F
   arrange(SUBJECT_ORIGINAL) %>%
   select(-c(GROUP_ORIGINAL))
 
+
+modified_sum_norm_area <- log2(sum_norm_area_data)
+modified_sum_norm_area <- data.frame(t(modified_sum_norm_area)) %>%
+  rownames_to_column("SUBJECT_ORIGINAL") %>%
+  arrange(SUBJECT_ORIGINAL)
+
+
 all.equal(norm_output1, norm_output5)
 all.equal(norm_output1, norm_output2)
 all.equal(norm_output2, norm_output5)
@@ -194,3 +205,5 @@ all.equal(norm_output2, norm_output5)
 all.equal(norm_output2, norm_output8)
 all.equal(norm_output8, norm_output16)
 all.equal(norm_output16, norm_output2)
+
+all.equal(norm_output2, modified_sum_norm_area)
