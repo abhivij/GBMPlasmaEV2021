@@ -11,7 +11,10 @@ library(tidyverse)
 setwd("/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV")
 source("sample_column_generator.R")
 
-raw_data <- read.csv("MSstatsinputannotatedQ1-6/MSstats_Input_Batch1.csv")
+data_path <- "Data/Protein/MSstatsinputannotatedQ1-6"
+file_name <- list.files(path = data_path, full.names = TRUE)[1]
+
+raw_data <- read.csv(file_name)
 raw_data <- SkylinetoMSstatsFormat(raw_data)
 
 
@@ -19,32 +22,38 @@ raw_data_filtered <- raw_data %>%
   filter(BioReplicate == 'HB01')
 
 data_process_output <- dataProcess(raw_data, logTrans = "2", normalization = "equalizeMedians")
-
-dataProcessPlots(data_process_output, type = "ProfilePlot")
-# dataProcessPlots(data_process_output, type = "QCPlot")
+data_process_output2 <- dataProcess(raw_data, logTrans = "2", normalization = "equalizeMedians",
+                                    censoredInt = '0')
+data_process_output_nonorm <- dataProcess(raw_data, logTrans = "2", normalization = FALSE)
+data_process_output2_nonorm <- dataProcess(raw_data, logTrans = "2", normalization = FALSE,
+                                           censoredInt = '0')
+# dataProcessPlots(data_process_output, type = "ProfilePlot")
+dataProcessPlots(data_process_output2, type = "QCPlot")
 # dataProcessPlots(data_process_output, type = "ConditionPlot")
+
+
+saveRDS(data_process_output2, file = "dataProcessOutput.rds")
+data_process_output2_new <- readRDS("dataProcessOutput.rds")
 
 levels(data_process_output$ProcessedData$GROUP_ORIGINAL)
 
 processed_data <- data_process_output$ProcessedData 
 run_level_data <- data_process_output$RunlevelData
 
+run_level_data2 <- data_process_output_nonorm$RunlevelData
+
 normed <- run_level_data %>% 
-  select(Protein, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL) 
+  select(Protein, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL)
 
 length(levels(normed$Protein))
 
 
-
-prots <- strsplit(as.character(normed$Protein), split="\\|")
-prots <- unlist(lapply(prots, function(x) x[3]))
-prots <- gsub("_HUMAN", "", prots)
-
+normed <- normed %>%
+  separate(Protein, c(NA, "Protein", NA), sep = "\\|") %>% 
+  pivot_wider(names_from = Protein, values_from = LogIntensities)
 
 
-normed$Protein <- prots
-normed <- normed %>% 
-  spread(Protein, LogIntensities)
+write.table(normed, "normQ1-6.csv", quote = FALSE, sep = ",", row.names = FALSE)
 
 
 normed_abundance <- processed_data %>% 
@@ -58,7 +67,8 @@ normed_abundance <- normed_abundance %>%
 normed_abundance <- normed_abundance %>% 
   spread(PROTEIN, ABUNDANCE)
 
-normed_abundance[is.na(normed_abundance)] <- 0
+# not required since no NAs
+# normed_abundance[is.na(normed_abundance)] <- 0
 
 ############PCA start###########################################
 
@@ -140,3 +150,47 @@ row.names(comparison) <- c("hc_preopgbm",
 multipleResults <- groupComparison(contrast.matrix = comparison,
                                    data=data_process_output)
 ############DE end##############################################
+
+
+
+#reading sum of normalized areas
+
+file_path <- "Data/Protein/Sumofnormalisedareas/Batch1-18_modified.csv"
+sum_norm_area_data <- read.table(file_path, header = TRUE, sep = ",", 
+                                 comment.char = "", na.strings = "#N/A",
+                                 row.names = 1)
+sum(is.na(sum_norm_area_data))
+sum_norm_area_data[is.na(sum_norm_area_data)] <- 0
+boxplot(log2(sum_norm_area_data[1:10,]))
+#read norm output data
+
+norm_output1 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+norm_output2 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_FALSE.csv")
+norm_output3 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_column_equalizeMedians.csv")
+norm_output5 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_disease_equalizeMedians.csv")
+norm_output8 <- read.csv(file = "Data/Protein/output/norm_annotatedQ7_NA_FALSE.csv")
+norm_output16 <- read.csv(file = "Data/Protein/output/norm_unannotated_disease_FALSE.csv")
+
+norm_output1 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_equalizeMedians.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+norm_output2 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_FALSE.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+norm_output5 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_disease_equalizeMedians.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+norm_output8 <- read.csv(file = "Data/Protein/output/norm_annotatedQ7_NA_FALSE.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+norm_output16 <- read.csv(file = "Data/Protein/output/norm_unannotated_disease_FALSE.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+
+all.equal(norm_output1, norm_output5)
+all.equal(norm_output1, norm_output2)
+all.equal(norm_output2, norm_output5)
+
+all.equal(norm_output2, norm_output8)
+all.equal(norm_output8, norm_output16)
+all.equal(norm_output16, norm_output2)
