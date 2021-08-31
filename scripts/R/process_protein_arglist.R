@@ -64,5 +64,23 @@ process_protein_arglist <- list(
   #16
   list(data_dir = "unannotated",
        condition_type = "disease",
-       norm = FALSE) 
+       norm = FALSE),
+  
+  #17
+  list(data_dir = "annotatedQ1-6",
+       condition_type = NA,
+       norm = "quantile"),  
+  #18
+  list(data_dir = "annotatedQ1-6",
+       condition_type = "column",
+       norm = "quantile"),
+  #19
+  list(data_dir = "annotatedQ1-6",
+       condition_type = "disease",
+       norm = "quantile"), 
+  #20
+  list(data_dir = "annotatedQ7",
+       condition_type = NA,
+       norm = "quantile")  
+  
 )
