@@ -175,6 +175,8 @@ norm_output5 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_disease_
 norm_output8 <- read.csv(file = "Data/Protein/output/norm_annotatedQ7_NA_FALSE.csv")
 norm_output16 <- read.csv(file = "Data/Protein/output/norm_unannotated_disease_FALSE.csv")
 
+norm_output1_new <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+
 norm_output1 <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_equalizeMedians.csv") %>%
   arrange(SUBJECT_ORIGINAL) %>%
   select(-c(GROUP_ORIGINAL))
@@ -191,6 +193,12 @@ norm_output16 <- read.csv(file = "Data/Protein/output/norm_unannotated_disease_F
   arrange(SUBJECT_ORIGINAL) %>%
   select(-c(GROUP_ORIGINAL))
 
+norm_output1_new <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
+norm_output2_new <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv") %>%
+  arrange(SUBJECT_ORIGINAL) %>%
+  select(-c(GROUP_ORIGINAL))
 
 modified_sum_norm_area <- log2(sum_norm_area_data)
 modified_sum_norm_area <- data.frame(t(modified_sum_norm_area)) %>%
@@ -207,3 +215,12 @@ all.equal(norm_output8, norm_output16)
 all.equal(norm_output16, norm_output2)
 
 all.equal(norm_output2, modified_sum_norm_area)
+
+all.equal(norm_output1, norm_output1_new)
+all.equal(norm_output2_new, modified_sum_norm_area)
+#############
+
+
+#data process output
+
+data_process_output <- readRDS("Data/Protein/data_process_output/data_process_output_annotatedQ1-6_NA_equalizeMedians.rds")
