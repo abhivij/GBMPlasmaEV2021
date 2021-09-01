@@ -1,0 +1,6 @@
+#!/bin/bash
+
+module load R/3.6.3
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/scripts/R
+Rscript perform_de_comparisons_main.R --args ${PBS_ARRAY_INDEX}
