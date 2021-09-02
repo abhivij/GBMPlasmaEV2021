@@ -1,6 +1,7 @@
 library(MSstats)
 library(tidyverse)
 source("scripts/R/utils.R")
+source("scripts/R/plot_data.R")
 setwd("../..")
 
 file_name <- "data_process_output_annotatedQ1-6_NA_equalizeMedians.rds"
@@ -31,7 +32,7 @@ plot_de_results <- function(file_name){
     dir.create(dir_path, recursive = TRUE)
   }
   
-  log_fc_cutoff <- 0.5
+  log_fc_cutoff <- 2
   # modelBasedQCPlots(data=comparison_result, type="QQPlots",
   #                   width=5, height=5, address=append_path(dir_path, ""),
   #                   which.Protein = c(1:10))
@@ -52,7 +53,14 @@ plot_de_results <- function(file_name){
                         dir_path = dir_path, logFC_cutoff = log_fc_cutoff)
   }
   
-  
+  result <- comparison_result$ComparisonResult %>%
+    separate(Protein, c(NA, "Protein", NA), sep = "\\|") %>%
+    select(Protein, Label, log2FC, adj.pvalue) %>%
+    rename(Molecule = Protein, logFC = log2FC, adjPVal = adj.pvalue)
+  title = "Comparison 2"
+  create_common_venn(result, title, "common_venn.png", dir_path)
+  create_common_venn(result, title, "common_venn_lfcut2.png", dir_path, logFC_cutoff = 2)
+
                        
   
 }

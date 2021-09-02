@@ -2,6 +2,7 @@ library(tidyverse)
 library(viridis)
 library(umap)
 library(ggrepel)
+library(VennDiagram)
 setwd("/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV/scripts/R")
 source("utils.R")
 
@@ -182,4 +183,48 @@ create_volcano_plot <- function(result, title, file_name, dir_path = "",
     labs(title = title, colour = "Diff Expr")
   
   ggsave(append_path(dir_path, file_name), vol_plot) 
+}
+
+# result <- comparison_result$ComparisonResult %>%
+#   separate(Protein, c(NA, "Protein", NA), sep = "\\|") %>%
+#   select(Protein, Label, log2FC, adj.pvalue) %>%
+#   rename(Molecule = Protein, logFC = log2FC, adjPVal = adj.pvalue)
+# p_val_cutoff = 0.05
+# logFC_cutoff = NA
+# l = "MET_HC"
+# dir_path = "plots/de_protein/comp_2"
+# file_name = "common_venn.png"
+# title = "Comparison 2"
+# create_common_venn(result, title, "common_venn.png", dir_path)
+# create_common_venn(result, title, "common_venn_lfcut2.png", dir_path, logFC_cutoff = 2)
+
+create_common_venn <- function(result, title, file_name, dir_path = "",
+                               p_val_cutoff = 0.05, logFC_cutoff = NA){
+  data_list <- list()
+  category_names <- c()
+  col <- c("red", "yellow3", "blue")
+  fill <- c(alpha("red", 0.3), alpha("yellow3", 0.3), alpha("blue", 0.3))
+  cat.col <- c("red", "yellow3", "blue")
+  
+  for(l in levels(result$Label)){
+    if(!is.na(logFC_cutoff)){
+      de_mol <- result %>%
+        filter(Label == l & adjPVal < p_val_cutoff & abs(logFC) >= logFC_cutoff)
+    } else {
+      de_mol <- result %>%
+        filter(Label == l & adjPVal < p_val_cutoff)      
+    }
+    data_list <- append(data_list, list(de_mol$Molecule))
+    category_names <- append(category_names, l)
+  }
+  
+  venn.diagram(
+    x = data_list,
+    category.names = category_names,
+    filename = append_path(dir_path, file_name),
+    output = TRUE,
+    col = col[1:length(category_names)],
+    fill = fill[1:length(category_names)],
+    cat.col = cat.col[1:length(category_names)]
+  )
 }
