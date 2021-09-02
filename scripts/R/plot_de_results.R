@@ -31,19 +31,29 @@ plot_de_results <- function(file_name){
     dir.create(dir_path, recursive = TRUE)
   }
   
-  modelBasedQCPlots(data=comparison_result, type="QQPlots",
-                    width=5, height=5, address=append_path(dir_path, ""),
-                    which.Protein = c(1:10))
-  # residual plots
-  modelBasedQCPlots(data=comparison_result, type="ResidualPlots",
-                    width=5, height=5, address=append_path(dir_path, ""),
-                    which.Protein = c(1:10))  
+  log_fc_cutoff <- 0.5
+  # modelBasedQCPlots(data=comparison_result, type="QQPlots",
+  #                   width=5, height=5, address=append_path(dir_path, ""),
+  #                   which.Protein = c(1:10))
+  # # residual plots
+  # modelBasedQCPlots(data=comparison_result, type="ResidualPlots",
+  #                   width=5, height=5, address=append_path(dir_path, ""),
+  #                   which.Protein = c(1:10))  
   
-  groupComparisonPlots(data = modified_comparison_result, type = 'VolcanoPlot',
-                       address=append_path(dir_path, ""))
+  for(l in levels(modified_comparison_result$Label)){
+    print(l)
+    comparison_result_subset <- modified_comparison_result %>%
+      filter(Label == l) %>%
+      select(Protein, log2FC, adj.pvalue) %>%
+      rename(Molecule = Protein, logFC = log2FC, adjPVal = adj.pvalue)
+    create_volcano_plot(comparison_result_subset, 
+                        title = gsub("_", " Vs ", l), 
+                        file_name = paste("volcano", paste(l, ".png", sep = ""), sep = "_"), 
+                        dir_path = dir_path, logFC_cutoff = log_fc_cutoff)
+  }
   
-  groupComparisonPlots(data = modified_comparison_result, type = 'Heatmap',
-                       address = append_path(dir_path, ""))
+  
+                       
   
 }
 
