@@ -39,7 +39,7 @@ get_data_from_file <- function(file_name, condition_type = NA, sample_column = N
 
 
 
-process_protein_data <- function(data_dir, condition_type, norm){
+process_protein_data <- function(data_dir, condition_type, norm, remove_50_missing = FALSE){
   print(paste("Data dir :", data_dir))
   data_path <- paste("Data/Protein/MSstatsinput", data_dir, sep = "")
   file_names <- list.files(path = data_path, full.names = TRUE)
@@ -59,8 +59,15 @@ process_protein_data <- function(data_dir, condition_type, norm){
   
   data <- SkylinetoMSstatsFormat(data)
   data_process_output <- dataProcess(data, logTrans = 2, normalization = norm,
-                                     censoredInt = '0')
-  file_name <- paste(paste("data_process_output", data_dir, condition_type, norm, sep = "_"), "rds", sep = ".")
+                                     censoredInt = '0', remove50missing = remove_50_missing)
+  
+  file_name_substring <- condition_type
+  if(remove_50_missing){
+    file_name_substring <- paste(file_name_substring, "remove_50_missing", sep = "_")
+  }
+  
+  
+  file_name <- paste(paste("data_process_output", data_dir, file_name_substring, norm, sep = "_"), "rds", sep = ".")
   output_dir <- "Data/Protein/data_process_output"
   saveRDS(data_process_output, file = append_path(output_dir, file_name))
   
@@ -69,7 +76,7 @@ process_protein_data <- function(data_dir, condition_type, norm){
     separate(Protein, c(NA, "Protein", NA), sep = "\\|") %>% 
     pivot_wider(names_from = Protein, values_from = LogIntensities)
   
-  file_name <- paste(paste("norm", data_dir, condition_type, norm, sep = "_"), "csv", sep = ".")
+  file_name <- paste(paste("norm", data_dir, file_name_substring, norm, sep = "_"), "csv", sep = ".")
   output_dir <- "Data/Protein/norm_output"
   write.table(normed, append_path(output_dir, file_name), 
               quote = FALSE, sep = ",", row.names = FALSE)

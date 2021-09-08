@@ -81,6 +81,22 @@ process_protein_arglist <- list(
   #20
   list(data_dir = "annotatedQ7",
        condition_type = NA,
-       norm = "quantile")  
+       norm = "quantile"),  
   
+  
+  #21
+  list(data_dir = "annotatedQ1-6",
+       condition_type = NA,
+       norm = "equalizeMedians",
+       remove_50_missing = TRUE),   
+  #22
+  list(data_dir = "annotatedQ1-6",
+       condition_type = NA,
+       norm = FALSE,
+       remove_50_missing = TRUE),
+  #23
+  list(data_dir = "annotatedQ1-6",
+       condition_type = NA,
+       norm = "quantile",
+       remove_50_missing = TRUE),  
 )
