@@ -3,6 +3,7 @@ library(tidyverse)
 source("scripts/R/utils.R")
 source("scripts/R/plot_data.R")
 setwd("../..")
+setwd("/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV")
 
 file_name <- "data_process_output_annotatedQ1-6_NA_equalizeMedians.rds"
 comparison_num <- "2"
@@ -17,6 +18,9 @@ plot_de_results <- function(file_name){
   head(comparison_result$ComparisonResult)
   levels(comparison_result$ComparisonResult$Label)
   
+  # head(comparison_result$ComparisonResult %>%
+  #        filter(Protein == "sp|A0A075B6I0|LV861_HUMAN"))
+  
   dim(comparison_result$ComparisonResult)
   
   dim(comparison_result$ComparisonResult %>% filter(Label == "PREOPE_MET"))
@@ -26,6 +30,10 @@ plot_de_results <- function(file_name){
   modified_comparison_result <- comparison_result$ComparisonResult %>%
     separate(Protein, c(NA, NA, "Protein"), sep = "\\|") %>%
     mutate(Protein = gsub(pattern = "_HUMAN", replacement = "", Protein))  
+  
+  
+  # modified_comparison_result %>%
+  #   filter(!is.na(issue))
   
   dir_path <- paste("plots/de_protein/comp", comparison_num, sep = "_")
   if(!dir.exists(dir_path)){

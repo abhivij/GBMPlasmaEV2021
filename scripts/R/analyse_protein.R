@@ -110,6 +110,9 @@ plot_protein_sum_of_area_data(sum_norm_area_data, meta_data, "Column",
 #analysing data with censoredInt = '0'
 
 norm_output <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+
+sum(is.na(norm_output))
+
 create_box_plot(norm_output, "Q1-6 Equalize median norm data censored int = 0", "q1to6_eqmed_new.png")
 
 plot_protein_norm_data(norm_data, "q1to6_eqmed_new.png", "Q1-6 Equalize median norm data ( data censored int = 0)", dim_red = "pca")

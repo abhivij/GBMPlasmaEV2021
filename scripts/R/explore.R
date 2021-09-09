@@ -224,3 +224,21 @@ all.equal(norm_output2_new, modified_sum_norm_area)
 #data process output
 
 data_process_output <- readRDS("Data/Protein/data_process_output/data_process_output_annotatedQ1-6_NA_equalizeMedians.rds")
+
+sum(is.na(data_process_output$RunlevelData))
+
+normed <- data_process_output$RunlevelData %>%
+  select(Protein, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL) %>%
+  separate(Protein, c(NA, NA, "Protein"), sep = "\\|") %>%
+  pivot_wider(names_from = Protein, values_from = LogIntensities)
+
+missing_data <- normed %>%
+  select(GROUP_ORIGINAL, SUBJECT_ORIGINAL, "SSU72_HUMAN", "RAD18_HUMAN") %>%
+  filter(GROUP_ORIGINAL == "PREOPE" | GROUP_ORIGINAL == "MET")
+
+sum(is.na(normed))
+
+quant_normed <- quantification(data_process_output)
+missing_data_from_quant_normed <- quant_normed %>%
+  select(Protein, starts_with("PREOPE") | starts_with("MET")) %>%
+  filter(grepl("SSU72_HUMAN|RAD18_HUMAN", Protein))
