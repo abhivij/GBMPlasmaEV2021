@@ -98,5 +98,5 @@ process_protein_arglist <- list(
   list(data_dir = "annotatedQ1-6",
        condition_type = NA,
        norm = "quantile",
-       remove_50_missing = TRUE),  
+       remove_50_missing = TRUE)
 )
