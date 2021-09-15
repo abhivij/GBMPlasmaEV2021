@@ -22,11 +22,13 @@ group_mapping <- group_mapping %>%
   mutate(SUBJECT_ORIGINAL = gsub("HB0", "HB", SUBJECT_ORIGINAL))
 
 metadata <- metadata %>%
-  left_join(group_mapping) %>%
+  inner_join(group_mapping) %>%
   mutate(GROUP_ORIGINAL = gsub("-", "_", GROUP_ORIGINAL)) %>%
   rename(GROUP_Q1to6 = GROUP_ORIGINAL)
 
-
+group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,]
+write.csv(group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,],
+          "Data/missing_in_transcriptomics.csv", row.names = FALSE)
 
 #get group mappings from Q7 proteomics output
 protein_data <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ7_NA_equalizeMedians.csv")
@@ -40,10 +42,11 @@ group_mapping <- group_mapping %>%
   mutate(SUBJECT_ORIGINAL = gsub("HB0", "HB", SUBJECT_ORIGINAL))
 
 metadata <- metadata %>%
-  left_join(group_mapping) %>%
+  inner_join(group_mapping) %>%
   mutate(GROUP_ORIGINAL = gsub("-", "_", GROUP_ORIGINAL)) %>%
   rename(GROUP_Q7 = GROUP_ORIGINAL)
 
+group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,]
 
 write.csv(metadata, "Data/metadata.csv", row.names = FALSE)
 
