@@ -1,0 +1,78 @@
+library(tidyverse)
+library(readxl)
+library(edgeR)
+library(caret)
+
+
+base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
+setwd(base_dir)
+
+source("scripts/R/utils.R")
+source("scripts/R/plot_data.R")
+
+umi_counts <- read.csv("Data/RNA/umi_counts.csv", row.names = 1)
+metadata <- read.csv("Data/metadata.csv")
+
+# data <- umi_counts
+# metadata_col <- "GROUP_Q1to6"
+# contrast <- "MET - HC"
+# comparison_num <- 2
+
+perform_de <- function(data, metadata, metadata_col, comparison_num, contrast){
+  
+  file_name <- paste("de", "comp", comparison_num, sub(" - ", "_", contrast), sep = "_")
+  file_name <- paste(file_name, "png", sep = ".")
+  
+  metadata <- metadata %>%
+    column_to_rownames("SUBJECT_ORIGINAL")
+  
+  group <- metadata[colnames(data), metadata_col]
+  
+  keep <- filterByExpr(data, group=group)
+  data <- data[keep, ]
+  
+  dge_data <- DGEList(data)
+  dge_data <- calcNormFactors(dge_data)
+  
+  model_matrix <- model.matrix(~0 + group)
+  colnames(model_matrix) <- gsub("group", "", colnames(model_matrix))
+  
+  png(filename = append_path("plots/de/transcriptomic", paste("voom", file_name, sep = "_")))
+  y <- voom(dge_data, model_matrix, plot = TRUE)
+  dev.off()
+  
+  # y
+  vfit <- lmFit(y, model_matrix)
+  # head(coef(vfit))
+  
+  contr_matrix <- makeContrasts(contrasts = contrast,
+                                levels = colnames(model_matrix))
+  vfit <- contrasts.fit(vfit, contr_matrix)
+  efit <- eBayes(vfit)
+  
+  png(filename = append_path("plots/de/transcriptomic", paste("sa", file_name, sep = "_")))
+  plotSA(efit)
+  dev.off()
+  
+  dt <- decideTests(efit)
+  summary(dt)
+  
+  top.table <- topTable(efit, n = Inf, sort.by = "p") %>%
+    rownames_to_column("rna")
+  
+  result <- top.table %>%
+    select(rna, logFC, adj.P.Val) %>%
+    rename(Molecule = rna, adjPVal = adj.P.Val)
+  
+
+  title <- sub("-", "Vs", contrast)
+  create_volcano_plot(result, 
+                      title = title, 
+                      file_name = paste("volcano", file_name, sep = "_"), 
+                      dir_path = "plots/de/transcriptomic", logFC_cutoff = 1)
+}
+
+
+perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "PREOPE - MET")
+perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "PREOPE - HC")
+perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "MET - HC")
