@@ -126,3 +126,21 @@ norm_data %>%
 norm_data %>%
   filter(SUBJECT_ORIGINAL %in% c("HB18", "HC7")) %>%
   select(SUBJECT_ORIGINAL, GROUP_ORIGINAL)
+
+
+##############################
+
+#comparing norm - equalize, quantile, none
+
+norm_output_eqmed <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_quantile.csv")
+norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+
+plot_protein_norm_data(norm_output_eqmed, "q1to6_eqmed.png", "Q1-6 Equalize median norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_eqmed, "q1to6_eqmed.png", "Q1-6 Equalize median norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_nonorm, "q1to6_nonorm.png", "Q1-6 no norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_nonorm, "q1to6_nonorm.png", "Q1-6 no norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_quantile, "q1to6_quantile.png", "Q1-6 Quantile norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_quantile, "q1to6_quantile.png", "Q1-6 Quantile norm data", dim_red = "umap")
