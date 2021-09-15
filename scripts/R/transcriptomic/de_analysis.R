@@ -76,3 +76,21 @@ perform_de <- function(data, metadata, metadata_col, comparison_num, contrast){
 perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "PREOPE - MET")
 perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "PREOPE - HC")
 perform_de(umi_counts, metadata, "GROUP_Q1to6", 2, "MET - HC")
+
+
+
+umi_norm_data <- cpm(umi_counts, log = TRUE)
+umi_norm_data <- scale(umi_norm_data)
+
+umi_norm_data <- as.data.frame(t(as.matrix(umi_norm_data)))
+umi_norm_data <- predict(preProcess(umi_norm_data), umi_norm_data)
+umi_norm_data <- as.data.frame(t(as.matrix(umi_norm_data)))
+
+
+create_box_plot_transcriptomic(umi_counts, "Raw UMI Counts", "raw_umi_boxplot.png")
+create_box_plot_transcriptomic(umi_norm_data, "Norm UMI Counts", "norm_umi_boxplot.png")
+
+#cant have -ve counts
+# perform_de(umi_norm_data, metadata, "GROUP_Q1to6", 2, "PREOPE - MET")
+# perform_de(umi_norm_data, metadata, "GROUP_Q1to6", 2, "PREOPE - HC")
+# perform_de(umi_norm_data, metadata, "GROUP_Q1to6", 2, "MET - HC")

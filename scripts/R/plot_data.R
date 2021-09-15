@@ -22,6 +22,22 @@ create_box_plot <- function(data, title, filename){
   ggsave(filename, box_plot)  
 }
 
+# data <- umi_counts
+# title <- "Raw UMI Counts"
+# filename <- "raw_umi_boxplot.png"
+create_box_plot_transcriptomic <- function(data, title, filename){
+  data <- data %>%
+    rownames_to_column("transcript") %>%
+    pivot_longer(!transcript, names_to = "Samples", values_to = "Expression")
+  box_plot <- data %>%
+    ggplot(aes(x=Samples, y=Expression)) +
+    geom_boxplot() +
+    ggtitle(title) +
+    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.99, size=rel(0.5)))
+  filename <- paste("plots/box_plot", filename, sep = "/")
+  ggsave(filename, box_plot)  
+}
+
 
 ###################################
 
