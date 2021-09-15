@@ -144,3 +144,94 @@ plot_protein_norm_data(norm_output_nonorm, "q1to6_nonorm.png", "Q1-6 no norm dat
 
 plot_protein_norm_data(norm_output_quantile, "q1to6_quantile.png", "Q1-6 Quantile norm data", dim_red = "pca")
 plot_protein_norm_data(norm_output_quantile, "q1to6_quantile.png", "Q1-6 Quantile norm data", dim_red = "umap")
+
+
+
+norm_output_eqmed <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_disease_equalizeMedians.csv")
+norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_disease_quantile.csv")
+norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_disease_FALSE.csv")
+
+plot_protein_norm_data(norm_output_eqmed, "disease_eqmed.png", "Disease Equalize median norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_eqmed, "disease_eqmed.png", "Disease Equalize median norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_nonorm, "disease_nonorm.png", "Disease no norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_nonorm, "disease_nonorm.png", "Disease no norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_quantile, "disease_quantile.png", "Disease Quantile norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_quantile, "disease_quantile.png", "Disease Quantile norm data", dim_red = "umap")
+
+
+
+norm_output_eqmed <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_quantile.csv")
+norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+
+norm_output_eqmed <- norm_output_eqmed %>%
+  filter(GROUP_ORIGINAL %in% c("PREOPE", "MET", "HC"))
+norm_output_quantile <- norm_output_quantile %>%
+  filter(GROUP_ORIGINAL %in% c("PREOPE", "MET", "HC"))
+norm_output_nonorm <- norm_output_nonorm %>%
+  filter(GROUP_ORIGINAL %in% c("PREOPE", "MET", "HC"))
+
+plot_protein_norm_data(norm_output_eqmed, "comp2_eqmed.png", "Comp2 Equalize median norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_eqmed, "comp2_eqmed.png", "Comp2 Equalize median norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_nonorm, "comp2_nonorm.png", "Comp2 no norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_nonorm, "comp2_nonorm.png", "Comp2 no norm data", dim_red = "umap")
+
+plot_protein_norm_data(norm_output_quantile, "comp2_quantile.png", "Comp2 Quantile norm data", dim_red = "pca")
+plot_protein_norm_data(norm_output_quantile, "comp2_quantile.png", "Comp2 Quantile norm data", dim_red = "umap")
+
+
+compare_norm_plots <- function(group_vec = c(), comparison_number){
+  norm_output_eqmed <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+  norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_quantile.csv")
+  norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+  
+  if(length(group_vec) > 0){
+    norm_output_eqmed <- norm_output_eqmed %>%
+      filter(GROUP_ORIGINAL %in% group_vec)
+    norm_output_quantile <- norm_output_quantile %>%
+      filter(GROUP_ORIGINAL %in% group_vec)
+    norm_output_nonorm <- norm_output_nonorm %>%
+      filter(GROUP_ORIGINAL %in% group_vec)
+  }
+  print(dim(norm_output_eqmed))
+  print(dim(norm_output_quantile))
+  print(dim(norm_output_nonorm))
+  
+  name_prefix <- paste(paste("comp", comparison_number, sep = ""),
+                       paste(group_vec, collapse = "_"), sep = "_")
+  
+  plot_protein_norm_data(norm_output_eqmed, 
+                         paste(name_prefix, "_eqmed.png", sep = ""),
+                         paste(name_prefix, " Equalize median norm data", sep = ""), 
+                         dim_red = "pca")
+  plot_protein_norm_data(norm_output_eqmed, 
+                         paste(name_prefix, "_eqmed.png", sep = ""),
+                         paste(name_prefix, " Equalize median norm data", sep = ""), 
+                         dim_red = "umap")
+  
+  plot_protein_norm_data(norm_output_nonorm, 
+                         paste(name_prefix, "_nonorm.png", sep = ""),
+                         paste(name_prefix, " no norm data", sep = ""), 
+                         dim_red = "pca")
+  plot_protein_norm_data(norm_output_nonorm, 
+                         paste(name_prefix, "_nonorm.png", sep = ""),
+                         paste(name_prefix, " no norm data", sep = ""), 
+                         dim_red = "umap")
+  
+  plot_protein_norm_data(norm_output_quantile, 
+                         paste(name_prefix, "_quantile.png", sep = ""),
+                         paste(name_prefix, " Quantile norm data", sep = ""), 
+                         dim_red = "pca")
+  plot_protein_norm_data(norm_output_quantile, 
+                         paste(name_prefix, "_quantile.png", sep = ""),
+                         paste(name_prefix, " Quantile norm data", sep = ""), 
+                         dim_red = "umap")
+  
+}
+
+compare_norm_plots(c("PREOPE", "MET"), 2)
+compare_norm_plots(c("PREOPE", "HC"), 2)
+compare_norm_plots(c("MET", "HC"), 2)
