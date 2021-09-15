@@ -3,10 +3,15 @@ library(readxl)
 library(edgeR)
 library(caret)
 
+
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
-filepath <- paste(base_dir, "mirna_counts.csv", sep = "/")
-generated_mirna_counts <- read.table(filepath, header=TRUE, sep = ",", row.names = 1)
+
+source("scripts/R/utils.R")
+source("scripts/R/plot_data.R")
+
+
+generated_mirna_counts <- read.table("mirna_counts.csv", header=TRUE, sep = ",", row.names = 1)
 
 data <- read_excel("Data/RNA/158629.all_samples.summary.xlsx", sheet = "miRNA_piRNA")
 mirna_data <- data[1:2505,]
@@ -21,82 +26,6 @@ data <- rbind(mirna_data, pirna_data) %>%
 
 umi_counts <- data %>%
   select(ends_with("UMIs"))
-
-
-# read_counts <- data %>%
-#   select(ends_with("READs"))
-# 
-# 
-# split_function <- function(x){
-#   return (strsplit(x, split = "-", fixed = TRUE)[[1]][1])
-# }
-# 
-# length(colnames(read_counts))
-# length(colnames(umi_counts))
-# sum(sapply(colnames(umi_counts), split_function) == sapply(colnames(read_counts), split_function))
-# 
-# 
-# data_sub <- data[1:10, c(1:5, 122:126)]
-# new_names_prefix <- paste("Sample", c(1:5), sep = "")
-# new_names <- c(paste(new_names_prefix, "UMIs", sep = "-"),
-#                paste(new_names_prefix, "READs", sep = "-"))
-# colnames(data_sub) <- new_names
-
-
-
-plot_data <- function(norm_data, filename, title, width = 30, height = 30, perplexity = 30){
-  all_group_names <- sapply(colnames(norm_data),
-                   function(x){
-                     prefix <- substr(x, 1, 2)
-                     if (prefix == "ME") {
-                       label <- "MET"
-                     } else if (prefix == "HB") {
-                       label <- "GBM"
-                     } else {
-                       label <- "HC"
-                     }
-                     return (label)
-                   }
-  )
-  all_sample_names <- colnames(norm_data)
-  
-  
-  
-  ne <- sapply(norm_data, function(x) as.numeric(x))  #causes rownames to be lost
-  ne <- t(ne)
-  
-  pca_file_name <- paste("pca", filename, sep = "_")
-  p <- prcomp(ne, scale. = TRUE, center = TRUE)
-  pca_plotdata <- data.frame(p$x) %>%
-    mutate(type = all_group_names) %>%
-    mutate(name = all_sample_names)
-  # 
-  tsne_file_name <- paste("tsne", filename, sep = "_")
-  set.seed(1)
-  tsne_result <- Rtsne::Rtsne(ne, perplexity = perplexity)
-  tsne_df <- data.frame(x = tsne_result$Y[,1], y = tsne_result$Y[,2], 
-                        Colour = all_group_names,
-                        name = all_sample_names)
-  
-  pca_plotdata %>%
-    ggplot(aes(x = PC1, y = PC2, colour = type, label = name)) +
-    geom_point(size = 2) +
-    labs(title = title)
-  ggsave(pca_file_name, width = 10, height = 10)
-  
-  tsne_plot <- tsne_df %>%
-    ggplot(aes(x = x, y = y, colour = Colour, label = name)) +
-    geom_point(size = 2) +
-    ggplot2::labs(colour = "Groups", title = title) +
-    ggplot2::xlab("tSNE 1") +
-    ggplot2::ylab("tSNE 2")
-  ggplot2::ggsave(tsne_file_name, tsne_plot)
-  
-}
-
-plot_data(umi_counts, "umi_counts.jpg", "UMIs")
-
-
 all_group_names <- sapply(colnames(umi_counts),
                           function(x){
                             prefix <- substr(x, 1, 2)
@@ -111,13 +40,39 @@ all_group_names <- sapply(colnames(umi_counts),
                           }
 )
 
+plot_transcriptomic_data <- function(data, file_name, title, groups = NA, dim_red = "pca"){
+  if(length(groups) <= 1 && is.na(groups)){
+    groups <- sapply(colnames(data),
+                              function(x){
+                                prefix <- substr(x, 1, 2)
+                                if (prefix == "ME") {
+                                  label <- "MET"
+                                } else if (prefix == "HB") {
+                                  label <- "GBM"
+                                } else {
+                                  label <- "HC"
+                                }
+                                return (label)
+                              }
+    )  
+  }
+  plot_data(t(data), file_name, title, groups = groups, dim_red = dim_red,
+            colour_label = "Labels")
+}
+
+plot_transcriptomic_data(umi_counts, "umi_counts.jpg", "UMIs")
+plot_transcriptomic_data(umi_counts, "umi_counts.jpg", "UMIs", dim_red = "tsne")
+plot_transcriptomic_data(umi_counts, "umi_counts.jpg", "UMIs", dim_red = "umap")
+
+
+
+
 keep <- filterByExpr(umi_counts, group = all_group_names)
 umi_counts <- umi_counts[keep, ]
 
-plot_data(umi_counts, "filtered_umi_counts.jpg", "Filtered UMIs")
-
-#unable to run below line
-plot_data(cpm(umi_counts), "cpm_umi_counts.jpg", "CPM UMIs", perplexity = 2)
+plot_transcriptomic_data(umi_counts, "filtered_umi_counts.jpg", "Filtered UMIs")
+plot_transcriptomic_data(umi_counts, "filtered_umi_counts.jpg", "Filtered UMIs", dim_red = "tsne")
+plot_transcriptomic_data(umi_counts, "filtered_umi_counts.jpg", "Filtered UMIs", dim_red = "umap")
 
 
 umi_norm_data <- cpm(umi_counts, log = TRUE)
@@ -127,7 +82,9 @@ umi_norm_data <- as.data.frame(t(as.matrix(umi_norm_data)))
 umi_norm_data <- predict(preProcess(umi_norm_data), umi_norm_data)
 umi_norm_data <- as.data.frame(t(as.matrix(umi_norm_data)))
 
-plot_data(umi_norm_data, "normlogcpm_umi_counts.jpg", "Norm Log CPM UMIs")
+plot_transcriptomic_data(umi_norm_data, "normlogcpm_umi_counts.jpg", "Norm Log CPM UMIs")
+plot_transcriptomic_data(umi_norm_data, "normlogcpm_umi_counts.jpg", "Norm Log CPM UMIs", dim_red = "tsne")
+plot_transcriptomic_data(umi_norm_data, "normlogcpm_umi_counts.jpg", "Norm Log CPM UMIs", dim_red = "umap")
 
 
 all_group_names <- sapply(colnames(umi_norm_data),
@@ -150,8 +107,9 @@ ggplot() +
   ylab("Normalized counts")
 ggsave("umi_hist.jpg", width = 10, height = 10)
 
+
 ggplot() +
-  geom_histogram(aes(x = umi_counts[,5]), stat = "bin", bins = 200) +
+  geom_histogram(aes(x = umi_counts[,15]), stat = "bin", bins = 200) +
   xlab("UMIs") +
   ylab("Normalized counts")
 ggsave("umi_hist.jpg", width = 10, height = 10)
@@ -191,4 +149,168 @@ norm_data <- as.data.frame(t(as.matrix(norm_data)))
 plot_data(norm_data, "normlogcpm_read_counts.jpg", "Norm Log CPM Reads")
 
 
+###############
+
+#DE analysis
+
+data <- read_excel("Data/RNA/158629.all_samples.summary.xlsx", sheet = "miRNA_piRNA")
+mirna_data <- data[1:2505,]
+pirna_data <- data[2507:2642,] %>%
+  separate(miRNA, c("miRNA", NA, NA, NA), sep = "/")
+
+dim(data)[1]
+dim(mirna_data)[1] + dim(pirna_data)[1]
+
+data <- rbind(mirna_data, pirna_data) %>%
+  column_to_rownames("miRNA")
+
+umi_counts <- data %>%
+  select(ends_with("UMIs"))
+colnames(umi_counts) <- gsub("-UMIs", "", colnames(umi_counts))
+colnames(umi_counts) <- sapply(colnames(umi_counts), FUN = 
+         function(x){
+           strsplit(x, split = "_", fixed = TRUE)[[1]][1]
+         }
+)
+#to get meta data start
+
+protein_data <- read.csv(file = "Data/Protein/output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+
+group_mapping <- protein_data %>%
+  select(SUBJECT_ORIGINAL, GROUP_ORIGINAL) %>%
+  arrange(SUBJECT_ORIGINAL)
+rm(protein_data)
+
+metadata <- data.frame(SUBJECT_ORIGINAL = colnames(umi_counts)) %>%
+  arrange(SUBJECT_ORIGINAL)
+
+#in proteomics data, unlike transcriptomics, HB numbered 01, 02, 03, ...
+# so changing that to match transcriptomics sample names
+group_mapping <- group_mapping %>%
+  mutate(SUBJECT_ORIGINAL = gsub("HB0", "HB", SUBJECT_ORIGINAL))
+
+metadata <- metadata %>%
+  left_join(group_mapping)
+
+group <- gsub("-", "_", metadata$GROUP_ORIGINAL)
+
+#meta data end
+
+
+
+data_for_de <- umi_counts
+keep <- filterByExpr(data_for_de, group=group)
+data_for_de <- data_for_de[keep, ]
+
+dge_data <- DGEList(data_for_de)
+dge_data <- calcNormFactors(dge_data)
+
+model_matrix <- model.matrix(~0 + group)
+colnames(model_matrix) <- gsub("group", "", colnames(model_matrix))
+
+y <- voom(dge_data, model_matrix, plot = TRUE)
+# y
+vfit <- lmFit(y, model_matrix)
+# head(coef(vfit))
+
+contr_matrix <- makeContrasts(contrasts = "MET - HC",
+                              levels = colnames(model_matrix))
+vfit <- contrasts.fit(vfit, contr_matrix)
+efit <- eBayes(vfit)
+plotSA(efit)
+
+dt <- decideTests(efit)
+summary(dt)
+
+top.table <- topTable(efit, n = Inf, sort.by = "p") %>%
+  rownames_to_column("rna")
+
+result <- top.table %>%
+  select(rna, logFC, adj.P.Val) %>%
+  rename(Molecule = rna, adjPVal = adj.P.Val)
+
+create_volcano_plot(result, 
+                    title = "MET Vs HC", 
+                    file_name = "de_rna.png", 
+                    dir_path = "plots", logFC_cutoff = 2)
+
+
+###############
+
+data_for_de <- umi_counts
+keep <- filterByExpr(data_for_de, group=group)
+data_for_de <- data_for_de[keep, ]
+
+dge_data <- DGEList(data_for_de)
+dge_data <- calcNormFactors(dge_data)
+
+model_matrix <- model.matrix(~0 + group)
+colnames(model_matrix) <- gsub("group", "", colnames(model_matrix))
+
+y <- voom(dge_data, model_matrix, plot = TRUE)
+# y
+vfit <- lmFit(y, model_matrix)
+# head(coef(vfit))
+
+contr_matrix <- makeContrasts(contrasts = "PREOPE - HC",
+                              levels = colnames(model_matrix))
+vfit <- contrasts.fit(vfit, contr_matrix)
+efit <- eBayes(vfit)
+plotSA(efit)
+
+dt <- decideTests(efit)
+summary(dt)
+
+top.table <- topTable(efit, n = Inf, sort.by = "p") %>%
+  rownames_to_column("rna")
+
+result <- top.table %>%
+  select(rna, logFC, adj.P.Val) %>%
+  rename(Molecule = rna, adjPVal = adj.P.Val)
+
+create_volcano_plot(result, 
+                    title = "PREOPE Vs HC", 
+                    file_name = "de_rna_ph.png", 
+                    dir_path = "plots", logFC_cutoff = 2)
+
+
+
+################
+
+
+data_for_de <- umi_counts
+keep <- filterByExpr(data_for_de, group=group)
+data_for_de <- data_for_de[keep, ]
+
+dge_data <- DGEList(data_for_de)
+dge_data <- calcNormFactors(dge_data)
+
+model_matrix <- model.matrix(~0 + group)
+colnames(model_matrix) <- gsub("group", "", colnames(model_matrix))
+
+y <- voom(dge_data, model_matrix, plot = TRUE)
+# y
+vfit <- lmFit(y, model_matrix)
+# head(coef(vfit))
+
+contr_matrix <- makeContrasts(contrasts = "PREOPE - MET",
+                              levels = colnames(model_matrix))
+vfit <- contrasts.fit(vfit, contr_matrix)
+efit <- eBayes(vfit)
+plotSA(efit)
+
+dt <- decideTests(efit)
+summary(dt)
+
+top.table <- topTable(efit, n = Inf, sort.by = "p") %>%
+  rownames_to_column("rna")
+
+result <- top.table %>%
+  select(rna, logFC, adj.P.Val) %>%
+  rename(Molecule = rna, adjPVal = adj.P.Val)
+
+create_volcano_plot(result, 
+                    title = "PREOPE Vs MET", 
+                    file_name = "de_rna_pm.png", 
+                    dir_path = "plots", logFC_cutoff = 2)
 
