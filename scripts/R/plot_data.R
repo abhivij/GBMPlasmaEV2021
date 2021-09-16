@@ -148,24 +148,31 @@ plot_protein_sum_of_area_data <- function(norm_data, meta_data, condition,
 # result <- comparison_result_subset
 # p_val_cutoff = 0.05
 # logFC_cutoff = 0.5
-# title = "PREOPE Vs MET"
+# title = "PREOPE Vs HC"
 # dir_path = "plots/de_protein/comp_2"
-# file_name = "volcano_PREOPE_MET.png"
+# file_name = "volcano_PREOPE_HC.png"
 # logFC_cutoff = 0.5
-
-
+# use_p_val = FALSE
+# k = 5
 
 create_volcano_plot <- function(result, title, file_name, dir_path = "",
                                 p_val_cutoff = 0.05, logFC_cutoff = 5,
+                                use_p_val = FALSE,
                                 k = 5) {
+  if(use_p_val){
+    p_val_column <- "pVal"
+  } else{
+    p_val_column <- "adjPVal"
+  }
+  
   result$diffexpr <- "NO"
-  result$diffexpr[result$logFC > logFC_cutoff & result$adjPVal < p_val_cutoff] <- "UP"
-  result$diffexpr[result$logFC < -logFC_cutoff & result$adjPVal < p_val_cutoff] <- "DOWN"
+  result$diffexpr[result$logFC > logFC_cutoff & result[, p_val_column] < p_val_cutoff] <- "UP"
+  result$diffexpr[result$logFC < -logFC_cutoff & result[, p_val_column] < p_val_cutoff] <- "DOWN"
 
   
   rownames(result) <- result$Molecule
   up_reg_result <- result %>%
-    filter(logFC > 0 & adjPVal < p_val_cutoff)
+    filter(logFC > 0 & .[[p_val_column]] < p_val_cutoff)
   if(dim(up_reg_result)[1] == 0){
     up_reg_result <- result %>%
       filter(logFC > 0)    
@@ -174,7 +181,7 @@ create_volcano_plot <- function(result, title, file_name, dir_path = "",
   up_reg_indices <- rownames(up_reg_result[up_reg_indices,])
   
   down_reg_result <- result %>%
-    filter(logFC < 0 & adjPVal < p_val_cutoff)
+    filter(logFC < 0 & .[[p_val_column]] < p_val_cutoff)
   if(dim(down_reg_result)[1] == 0){
     down_reg_result <- result %>%
       filter(logFC < 0) 
@@ -190,7 +197,7 @@ create_volcano_plot <- function(result, title, file_name, dir_path = "",
   colours <- c("red", "blue", "grey")
   names(colours) <- c("UP", "DOWN", "NO")
   
-  vol_plot <- ggplot(data=result, aes(x=logFC, y=-log10(adjPVal), col=diffexpr, label=de_mol)) +
+  vol_plot <- ggplot(data=result, aes(x=logFC, y=-log10(!!as.symbol(p_val_column)), col=diffexpr, label=de_mol)) +
     geom_point() + 
     geom_text_repel(max.overlaps = 20, colour = "black") +
     geom_vline(xintercept=c(-logFC_cutoff, logFC_cutoff), col="green", linetype = "dashed") +
