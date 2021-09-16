@@ -235,3 +235,21 @@ compare_norm_plots <- function(group_vec = c(), comparison_number){
 compare_norm_plots(c("PREOPE", "MET"), 2)
 compare_norm_plots(c("PREOPE", "HC"), 2)
 compare_norm_plots(c("MET", "HC"), 2)
+
+##############################
+
+#comparing missing50 param - quantile, none
+norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_quantile.csv")
+norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+
+norm_output_quantile_missing50 <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_remove_50_missing_quantile.csv")
+norm_output_nonorm_missing50 <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_remove_50_missing_FALSE.csv")
+
+
+sum(is.na(norm_output_quantile))
+sum(is.na(norm_output_nonorm))
+#28219
+
+sum(is.na(norm_output_quantile_missing50))
+sum(is.na(norm_output_nonorm_missing50))
+#28518
