@@ -32,8 +32,9 @@ print(dim(counts(dds)))
 
 dds <- DESeq(dds)
 
-contrast_vec <- c("PREOPE", "MET")
-get_comparison_results <- function(contrast_vec, comparison_num){
+contrast_vec <- c("MET", "HC")
+comparison_num <- 2
+get_comparison_results <- function(contrast_vec, comparison_num, umi_counts, metadata){
   res <- results(dds, contrast = c("GROUP_Q1to6", contrast_vec[1], contrast_vec[2]), alpha = 0.05)
   res
   print(summary(res))
@@ -50,6 +51,22 @@ get_comparison_results <- function(contrast_vec, comparison_num){
                      paste(contrast_vec, collapse = "_"), sep = "_")
   file_name <- paste(file_name, "png", sep = ".")
   
+  
+  plot_transcriptomic_data(umi_counts[(result %>% filter(adjPVal < 0.05))$Molecule, ], 
+                           metadata, contrast_vec, "Adj pval < 0.05 transcripts",
+                           file_name = "adjpval")
+  plot_transcriptomic_data(umi_counts[(result %>% filter(adjPVal < 0.05))$Molecule, ], 
+                           metadata, contrast_vec, "Adj pval < 0.05 transcripts", dim_red = "umap",
+                           file_name = "adjpval")
+  
+  plot_transcriptomic_data(umi_counts[(result %>% filter(pVal < 0.05))$Molecule, ], 
+                           metadata, contrast_vec, "pval < 0.05 transcripts",
+                           file_name = "pval")
+  plot_transcriptomic_data(umi_counts[(result %>% filter(pVal < 0.05))$Molecule, ], 
+                           metadata, contrast_vec, "pval < 0.05 transcripts", dim_red = "umap",
+                           file_name = "pval")
+  
+  
   create_volcano_plot(result, 
                       title = title, 
                       file_name = paste("volcano", file_name, sep = "_"), 
@@ -64,10 +81,36 @@ get_comparison_results <- function(contrast_vec, comparison_num){
 
   
 
-get_comparison_results(c("PREOPE", "MET"), 2)
-get_comparison_results(c("PREOPE", "HC"), 2)
-get_comparison_results(c("MET", "HC"), 2)
+get_comparison_results(c("PREOPE", "MET"), 2, umi_counts, metadata)
+get_comparison_results(c("PREOPE", "HC"), 2, umi_counts, metadata)
+get_comparison_results(c("MET", "HC"), 2, umi_counts, metadata)
 
 
 
 
+plot_transcriptomic_data <- function(data, metadata, categories, title, dim_red = "pca",
+                                     file_name = ""){
+  metadata <- metadata %>%
+    filter(GROUP_Q1to6 %in% categories)
+  print("metadata size")
+  print(dim(metadata))
+  
+  data <- data[, rownames(metadata)]
+  print(all(rownames(metadata) == colnames(data)))
+  groups <- metadata$GROUP_Q1to6
+  
+  file_name <- paste("umi_counts", file_name, paste(categories, collapse = "_"), sep = "_")
+  file_name <- paste(file_name, "png", sep = ".")
+  
+  plot_data(t(data), file_name, title, groups = groups, dim_red = dim_red,
+            colour_label = "Labels")
+}
+
+plot_transcriptomic_data(umi_counts, metadata, c("PREOPE", "MET"), "All transcripts")
+plot_transcriptomic_data(umi_counts, metadata, c("PREOPE", "MET"), "All transcripts", dim_red = "umap")
+
+plot_transcriptomic_data(umi_counts, metadata, c("PREOPE", "HC"), "All transcripts")
+plot_transcriptomic_data(umi_counts, metadata, c("PREOPE", "HC"), "All transcripts", dim_red = "umap")
+
+plot_transcriptomic_data(umi_counts, metadata, c("MET", "HC"), "All transcripts")
+plot_transcriptomic_data(umi_counts, metadata, c("MET", "HC"), "All transcripts", dim_red = "umap")

@@ -69,10 +69,13 @@ plot_data <- function(norm_data, filename, title, colour_label,
     ylab <- "tSNE 2"
   } else if(dim_red == "umap"){
     print(dim(norm_data)[1])
-    # n_neighbors <- max(floor(dim(norm_data)[1] / 4), 2)
-    # print(n_neighbors)
-    # result <- umap(norm_data, n_neighbors = n_neighbors)
-    result <- umap(norm_data)
+    if(dim(norm_data)[1] < umap.defaults$n_neighbors){
+      n_neighbors <- max(floor(dim(norm_data)[1] / 4), 2)
+      print(n_neighbors)
+    } else{
+      n_neighbors <- umap.defaults$n_neighbors
+    }
+    result <- umap(norm_data, n_neighbors = n_neighbors)
     dim_red_df <- data.frame(x = result$layout[,1], y = result$layout[,2], 
                              Colour = groups, 
                              Sample = text)  
