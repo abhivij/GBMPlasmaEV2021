@@ -13,6 +13,39 @@ source("scripts/R/plot_data.R")
 umi_counts <- read.csv("Data/RNA/umi_counts.csv", row.names = 1)
 metadata <- read.csv("Data/metadata.csv")
 
+
+ggplot(umi_counts) +
+  geom_histogram(aes(x = MET21), stat = "bin", bins = 200) +
+  xlab("UMI counts") +
+  ylab("Number of transcripts")
+
+ggplot(umi_counts) +
+  geom_histogram(aes(x = HB50), stat = "bin", bins = 200) +
+  xlab("UMI counts") +
+  ylab("Number of transcripts")
+
+ggplot(umi_counts) +
+  geom_histogram(aes(x = HC5), stat = "bin", bins = 200) +
+  xlab("UMI counts") +
+  ylab("Number of transcripts")
+
+
+mean_variance_plot <- function(samples){
+  mean_counts <- apply(umi_counts[, samples], 1, mean)        
+  variance_counts <- apply(umi_counts[, samples], 1, var)
+  df <- data.frame(mean_counts, variance_counts)
+  
+  ggplot(df) +
+    geom_point(aes(x=mean_counts, y=variance_counts)) + 
+    scale_y_log10(limits = c(1,1e9)) +
+    scale_x_log10(limits = c(1,1e9)) +
+    geom_abline(intercept = 0, slope = 1, color="red")  
+}
+
+mean_variance_plot(c("HB10", "HB11", "HB12", "HB13"))
+mean_variance_plot(c("MET4", "MET5", "MET6"))
+mean_variance_plot(c("HC20", "HC21", "HC22"))
+
 # data <- umi_counts
 # metadata_col <- "GROUP_Q1to6"
 # contrast <- "MET - HC"
