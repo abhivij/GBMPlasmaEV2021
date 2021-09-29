@@ -76,7 +76,12 @@ file_path <- "Data/Protein/Sumofnormalisedareas/Batch1-18_modified.csv"
 sum_norm_area_data <- read.table(file_path, header = TRUE, sep = ",", 
                                  comment.char = "", na.strings = "#N/A",
                                  row.names = 1)
-
+sum(is.na(sum_norm_area_data))
+# 22583
+max(sum_norm_area_data, na.rm = TRUE)
+# 4.95e+09
+min(sum_norm_area_data, na.rm = TRUE)
+# 2400
 
 plot_protein_sum_of_area_data(sum_norm_area_data, meta_data, "DiseaseType",
                               filename = "sumnormarea_disease.png", title = "Disease from Sum norm Area data", 
