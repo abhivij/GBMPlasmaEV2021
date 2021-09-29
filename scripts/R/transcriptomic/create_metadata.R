@@ -77,7 +77,7 @@ write.csv(metadata, "Data/transcriptomic_sample_metadata.csv", row.names = FALSE
 
 
 
-#create phenotype file to use in FSM pipeline
+#create phenotype file to use in FEMPipeline
 phenotype_info <- metadata %>%
   rename("Sample" = "SUBJECT_ORIGINAL") %>%
   mutate(Biomarker = "sncRNA", .after = "Sample") %>%  
@@ -113,4 +113,4 @@ write.table(phenotype_info,
 # 
 # filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
 # colnames(filtered_samples_output_labels) <- c("Sample", "Label")
-# 
+
