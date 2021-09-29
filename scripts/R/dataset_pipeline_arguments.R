@@ -106,6 +106,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "quantile"),
   
   #8
@@ -123,6 +124,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "quantile"),
   
   #9
@@ -140,6 +142,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "quantile"),  
   
   
@@ -156,6 +159,7 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "quantile"),
   
   #11
@@ -171,6 +175,7 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "quantile"),
   
   #12
@@ -186,8 +191,9 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "quantile"),
-
+  
   #13
   #proteomic PREOPEVsMET
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
@@ -203,6 +209,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "norm_quantile"),
   
   #14
@@ -220,6 +227,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "norm_quantile"),
   
   #15
@@ -237,6 +245,7 @@ dataset_pipeline_arguments <- list(
                        "wilcoxontest", "wilcoxontest_BH",
                        "ranger_impu_cor", 
                        "mrmr30", "mrmr50", "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
        norm = "norm_quantile"),  
   
   
@@ -253,6 +262,7 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "norm_quantile"),
   
   #17
@@ -268,6 +278,7 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "norm_quantile"),
   
   #18
@@ -283,6 +294,7 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
        norm = "norm_quantile")      
     
 
