@@ -4,11 +4,13 @@ library(readxl)
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
+source("scripts/R/utils.R")
+
 if(!dir.exists("Data/Protein/formatted_data/")){
   dir.create("Data/Protein/formatted_data/")
 }
 
-input_file_path <- "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv"
+# input_file_path <- "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv"
 # max(formatted_data, na.rm = TRUE)
 # 25.10626
 # min(formatted_data, na.rm = TRUE)
@@ -26,23 +28,59 @@ input_file_path <- "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv"
 # min(formatted_data, na.rm = TRUE)
 # -8.416577
 
-output_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted.csv"
-process_and_format_protein_data <- function(input_file_path, output_file_path){
+
+#create a csv file showing results of filtering proteins with specific percentages of NAs
+#     so as to determine what filter_na_per to use
+compare_filter_na_from_input <- function(input_file_path){
   protein_data <- read.csv(file = input_file_path)
   
   formatted_data <-  protein_data %>%
     select(-c(GROUP_ORIGINAL)) %>%
     column_to_rownames("SUBJECT_ORIGINAL")
   
-  max(formatted_data, na.rm = TRUE)
-  min(formatted_data, na.rm = TRUE)
-  quantiles <- quantile(formatted_data, na.rm = TRUE)
+  filter_na_result_df <- compare_filter_na(formatted_data)
   
-  na_repl_value <- quantiles["0%"] - quantiles["25%"]
+  filepath_parts <- strsplit(input_file_path, split = "/", fixed = TRUE)[[1]]
+  filename <- filepath_parts[length(filepath_parts)]
   
-  sum(is.na(formatted_data))
-  formatted_data[is.na(formatted_data)] <- na_repl_value
-  sum(is.na(formatted_data))
+  filter_na_result_df[["filename"]] <- filename
+  
+  output_filename <- "Data/Protein/formatted_data/filter_na_result.csv"
+  write.table(filter_na_result_df, output_filename, sep = ",", 
+              row.names = FALSE, append = TRUE,
+              col.names = !file.exists(output_filename))
+}
+
+compare_filter_na_from_input("Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+compare_filter_na_from_input("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv")
+
+
+# output_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted.csv"
+process_and_format_protein_data <- function(input_file_path, output_file_path,
+                                            impute = FALSE, filter_na_perc = 75){
+  protein_data <- read.csv(file = input_file_path)
+  
+  formatted_data <-  protein_data %>%
+    select(-c(GROUP_ORIGINAL)) %>%
+    column_to_rownames("SUBJECT_ORIGINAL")
+  
+  print(max(formatted_data, na.rm = TRUE))
+  print(min(formatted_data, na.rm = TRUE))
+  
+  print(sum(is.na(formatted_data)))
+  if(impute){
+    #impute = TRUE does imputation using missForest
+    formatted_data <- impute_data(formatted_data, 
+                                  filter_na_perc = filter_na_perc,
+                                  impute = TRUE)
+  }else{
+    #impute = FALSE replaces NA with (min - 25th_quantile)
+    quantiles <- quantile(formatted_data, na.rm = TRUE)
+    na_repl_value <- quantiles["0%"] - quantiles["25%"]
+    formatted_data[is.na(formatted_data)] <- na_repl_value
+  }
+  print(sum(is.na(formatted_data)))
+
   
   formatted_data <- t(formatted_data)
   write.csv(formatted_data, output_file_path)
@@ -50,9 +88,18 @@ process_and_format_protein_data <- function(input_file_path, output_file_path){
 
 process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv",
                                 "Data/Protein/formatted_data/Q1-6_nonorm_formatted.csv")
+process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv",
+                                impute = TRUE, filter_na_perc = 50)
+process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute75fil.csv",
+                                impute = TRUE, filter_na_perc = 75)
+
+
+
 process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv",
                                 "Data/Protein/formatted_data/Q7_nonorm_formatted.csv")
 
-# data <- read.table(output_file_path, header=TRUE, sep=",", row.names=1, skip=0,
-#                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+data <- read.table(output_file_path, header=TRUE, sep=",", row.names=1, skip=0,
+                   nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
 
