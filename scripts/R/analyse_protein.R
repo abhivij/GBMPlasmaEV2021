@@ -258,3 +258,32 @@ sum(is.na(norm_output_nonorm))
 sum(is.na(norm_output_quantile_missing50))
 sum(is.na(norm_output_nonorm_missing50))
 #28518
+
+##################################
+
+#compare NA and -ves
+
+norm_output_eqmed <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
+norm_output_quantile <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_quantile.csv")
+norm_output_nonorm <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv")
+
+sum(is.na(norm_output_eqmed))
+#28219
+sum(is.na(norm_output_quantile))
+#28219
+sum(is.na(norm_output_nonorm))
+#28219
+
+
+sum(norm_output_eqmed[,3:6180] < 0, na.rm = TRUE)
+#55
+sum(norm_output_quantile[,3:6180] < 0, na.rm = TRUE)
+#1573
+sum(norm_output_nonorm[,3:6180] < 0, na.rm = TRUE)
+#16
+
+#Note : as seen above, both norm and no norm outputs have -ves
+# So not doing, replacement of -ves to 0 as mentioned in MSStats doc
+
+# Surprising that -ves are present
+#       given its mentioned in MSStats doc that values in [0,1] are replaced with 0
