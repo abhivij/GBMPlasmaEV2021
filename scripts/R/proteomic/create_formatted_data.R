@@ -5,6 +5,7 @@ base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
 source("scripts/R/utils.R")
+source("scripts/R/plot_data.R")
 
 if(!dir.exists("Data/Protein/formatted_data/")){
   dir.create("Data/Protein/formatted_data/")
@@ -100,6 +101,35 @@ process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_
 process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv",
                                 "Data/Protein/formatted_data/Q7_nonorm_formatted.csv")
 
-data <- read.table(output_file_path, header=TRUE, sep=",", row.names=1, skip=0,
+
+for_data1 <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted.csv", 
+                        header=TRUE, sep=",", row.names=1, skip=0,
                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+for_data2 <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute75fil.csv", 
+                        header=TRUE, sep=",", row.names=1, skip=0,
+                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+for_data3 <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", 
+                        header=TRUE, sep=",", row.names=1, skip=0,
+                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+
+
+phenotype_info <- read.table("Data/proteomic_phenotype.txt", header=TRUE, sep="\t") %>%
+  filter(GROUP_Q1to6 %in% c("PREOPE", "MET", "HC"))
+
+for_data1 <- for_data1 %>%
+  select(phenotype_info$Sample)
+for_data2 <- for_data2 %>%
+  select(phenotype_info$Sample)
+for_data3 <- for_data3 %>%
+  select(phenotype_info$Sample)
+
+plot_data(t(for_data1), "static_NA_replace.png", "Static NA replace", 
+          colour_label = "Label", groups = phenotype_info$GROUP_Q1to6, 
+          shownames = FALSE, text = NA, dim_red = "umap")
+plot_data(t(for_data2), "impute_NA_replace_after75fil.png", "75% filter & impute NA replace", 
+          colour_label = "Label", groups = phenotype_info$GROUP_Q1to6, 
+          shownames = FALSE, text = NA, dim_red = "umap")
+plot_data(t(for_data3), "impute_NA_replace_after50fil.png", "50% filter & impute NA replace", 
+          colour_label = "Label", groups = phenotype_info$GROUP_Q1to6, 
+          shownames = FALSE, text = NA, dim_red = "umap")
 
