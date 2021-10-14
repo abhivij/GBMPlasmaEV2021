@@ -576,6 +576,58 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
        perform_filter = FALSE,
-       norm = "norm_quantile")    
+       norm = "norm_quantile"),
+  
+  #31
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_mrmr30_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_mrmr30",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all")),  
+
+  #32
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_mrmr100_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_mrmr100",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all")),  
+  
+  #33
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_wilcoxontest_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_wilcoxontest",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all")),  
+  
+  #34
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"))  
 
 )  
