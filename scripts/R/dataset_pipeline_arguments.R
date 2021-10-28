@@ -619,9 +619,23 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all"),
-       classifier_feature_imp = TRUE),  
+       classifier_feature_imp = TRUE),
   
   #34
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_t-test_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_t-test_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #35
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
@@ -635,7 +649,7 @@ dataset_pipeline_arguments <- list(
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE),
   
-  #35
+  #36
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
@@ -649,7 +663,7 @@ dataset_pipeline_arguments <- list(
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE),  
   
-  #36
+  #37
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
@@ -663,7 +677,7 @@ dataset_pipeline_arguments <- list(
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE),  
   
-  #37
+  #38
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
@@ -677,7 +691,21 @@ dataset_pipeline_arguments <- list(
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE),  
   
-  #38
+  #39
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_t-test_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_t-test_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+    
+  #40
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
