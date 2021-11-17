@@ -4,6 +4,8 @@ library(readxl)
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
+source("scripts/R/utils.R")
+
 #get group mappings from Q1-6 proteomics output
 protein_data <- read.csv(file = "Data/Protein/norm_output/norm_annotatedQ1-6_NA_equalizeMedians.csv")
 
@@ -31,14 +33,11 @@ metadata <- metadata %>%
 #order metadata as HC1, HC2, HC3, ...
 #   and NOT HC1, HC10, HC11 ... HC19, HC2, HC20, ...
 # to get this ordering split string part and num part, and order separately
-# for some unknown reason, 'num_part' entries corresponding to HB08, HB09 become NA. 
-#                                 So setting them manually
+
 metadata <- metadata %>%
   separate(SUBJECT_ORIGINAL, c("modified_sample", NA), remove = FALSE, sep = "-", fill = "right") %>%
   mutate(str_part = gsub("[0-9]", "", modified_sample)) %>%
-  mutate(num_part = strtoi(gsub("[^0-9]", "", modified_sample))) 
-metadata[metadata$SUBJECT_ORIGINAL == "HB08", "num_part"] <- 8
-metadata[metadata$SUBJECT_ORIGINAL == "HB09", "num_part"] <- 9
+  mutate(num_part = strtoi(gsub("[^0-9]", "", modified_sample), base = 10)) 
 metadata <- metadata %>%
   arrange(str_part, num_part) %>%
   select(-c(str_part, num_part, modified_sample))
@@ -50,13 +49,27 @@ write.csv(metadata, "Data/proteomic_sample_metadata.csv", row.names = FALSE)
 phenotype_info <- metadata %>%
   rename("Sample" = "SUBJECT_ORIGINAL") %>%
   mutate(Biomarker = "Protein", .after = "Sample") %>%  
-  mutate(Technology = "SWATH-MS", .after = "Biomarker") %>%
-  mutate(PREOPEVsMET = ifelse(GROUP_Q1to6 == "PREOPE", 
-                              "PREOPE", ifelse(GROUP_Q1to6 == "MET", "MET", NA))) %>%
-  mutate(PREOPEVsHC = ifelse(GROUP_Q1to6 == "PREOPE", 
-                             "PREOPE", ifelse(GROUP_Q1to6 == "HC", "HC", NA))) %>%
-  mutate(METVsHC = ifelse(GROUP_Q1to6 == "MET", 
-                          "MET", ifelse(GROUP_Q1to6 == "HC", "HC", NA)))
+  mutate(Technology = "SWATH-MS", .after = "Biomarker") 
+
+phenotype_info <- insert_comparison_columns(phenotype_info,
+                                            comparison_list = list(c("PREOPE", "MET"), 
+                                                                   c("PREOPE", "HC"), 
+                                                                   c("MET", "HC"),
+                                                                   
+                                                                   c("PREOPE", "POSTOPE-T"), 
+                                                                   c("PREOPE", "POSTOPE-P"), 
+                                                                   c("POSTOPE-T", "POSTOPE-P"),
+                                                                   
+                                                                   c("POSTOPE-T", "REC-T"),
+                                                                   c("POSTOPE-P", "REC-P"),
+                                                                   c("POSTOPE-T", "PREREC")
+                                                                   ), 
+                                            class_column_name = "GROUP_Q1to6")
+phenotype_info <- insert_comparison_columns(phenotype_info,
+                                            comparison_list = list(c("PREOPE", "REC-TP")), 
+                                            class_column_name = "GROUP_Q7")
+
+
 
 write.table(phenotype_info, 
             file = "Data/proteomic_phenotype.txt", 

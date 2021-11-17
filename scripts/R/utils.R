@@ -30,3 +30,26 @@ compare_filter_na <- function(data){
   }
   return (info_df)
 }
+
+
+
+
+# comparison_list <- list(c("PREOPE", "MET"), c("PREOPE", "HC"), c("MET", "HC"))
+# class_column_name <- "GROUP_Q1to6"
+insert_comparison_columns <- function(phenotype_info, comparison_list, class_column_name){
+  #below code is to generalize
+  # mutate(PREOPEVsMET = case_when(
+  #   GROUP_Q1to6 == "PREOPE" ~ "PREOPE",
+  #   GROUP_Q1to6 == "MET" ~ "MET",
+  #   TRUE ~ NA_character_))     
+  for(comparison in comparison_list){
+    comparison_column_name <- paste0(comparison[1], "Vs", comparison[2])
+    phenotype_info <- phenotype_info %>%
+      mutate("{comparison_column_name}" := case_when(
+        !!sym(class_column_name) == comparison[1] ~ comparison[1],
+        !!sym(class_column_name) == comparison[2] ~ comparison[2],
+        TRUE ~ NA_character_
+      ))
+  }
+  phenotype_info
+}

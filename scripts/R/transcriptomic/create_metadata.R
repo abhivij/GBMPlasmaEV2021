@@ -4,6 +4,8 @@ library(readxl)
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
+source("scripts/R/utils.R")
+
 umi_counts <- read.csv("Data/RNA/umi_counts.csv", row.names = 1)
 
 #get group mappings from Q1-6 proteomics output
@@ -33,7 +35,6 @@ group_mapping <- group_mapping %>%
 
 metadata <- metadata %>%
   inner_join(group_mapping) %>%
-  mutate(GROUP_ORIGINAL = gsub("-", "_", GROUP_ORIGINAL)) %>%
   rename(GROUP_Q1to6 = GROUP_ORIGINAL)
 
 group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,]
@@ -53,7 +54,6 @@ group_mapping <- group_mapping %>%
 
 metadata <- metadata %>%
   inner_join(group_mapping) %>%
-  mutate(GROUP_ORIGINAL = gsub("-", "_", GROUP_ORIGINAL)) %>%
   rename(GROUP_Q7 = GROUP_ORIGINAL)
 
 group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,]
@@ -81,13 +81,26 @@ write.csv(metadata, "Data/transcriptomic_sample_metadata.csv", row.names = FALSE
 phenotype_info <- metadata %>%
   rename("Sample" = "SUBJECT_ORIGINAL") %>%
   mutate(Biomarker = "sncRNA", .after = "Sample") %>%  
-  mutate(Technology = "RNASeq", .after = "Biomarker") %>%
-  mutate(PREOPEVsMET = ifelse(GROUP_Q1to6 == "PREOPE", 
-                              "PREOPE", ifelse(GROUP_Q1to6 == "MET", "MET", NA))) %>%
-  mutate(PREOPEVsHC = ifelse(GROUP_Q1to6 == "PREOPE", 
-                             "PREOPE", ifelse(GROUP_Q1to6 == "HC", "HC", NA))) %>%
-  mutate(METVsHC = ifelse(GROUP_Q1to6 == "MET", 
-                          "MET", ifelse(GROUP_Q1to6 == "HC", "HC", NA)))
+  mutate(Technology = "RNASeq", .after = "Biomarker") 
+
+
+phenotype_info <- insert_comparison_columns(phenotype_info,
+                                            comparison_list = list(c("PREOPE", "MET"), 
+                                                                   c("PREOPE", "HC"), 
+                                                                   c("MET", "HC"),
+                                                                   
+                                                                   c("PREOPE", "POSTOPE-T"), 
+                                                                   c("PREOPE", "POSTOPE-P"), 
+                                                                   c("POSTOPE-T", "POSTOPE-P"),
+                                                                   
+                                                                   c("POSTOPE-T", "REC-T"),
+                                                                   c("POSTOPE-P", "REC-P"),
+                                                                   c("POSTOPE-T", "PREREC")
+                                            ), 
+                                            class_column_name = "GROUP_Q1to6")
+phenotype_info <- insert_comparison_columns(phenotype_info,
+                                            comparison_list = list(c("PREOPE", "REC-TP")), 
+                                            class_column_name = "GROUP_Q7")
 
 write.table(phenotype_info, 
             file = "Data/transcriptomic_phenotype.txt", 
