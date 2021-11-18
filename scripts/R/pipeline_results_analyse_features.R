@@ -156,12 +156,17 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
 }
 
 arglist <- c(1,  #t PREOPE Vs MET
-             25  #p PREOPE Vs MET
+             2,
+             3,
+             25,  #p PREOPE Vs MET
+             26,
+             27
              ) 
 
 for(arg in arglist){
   ds <- dataset_pipeline_arguments[[arg]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
+  print("***********************")
   print(dataset_id) 
   
   create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
