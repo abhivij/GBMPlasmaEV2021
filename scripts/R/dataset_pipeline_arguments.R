@@ -1348,6 +1348,706 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000)    
+       random_seed = 2000),
+  
+  #75
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr30_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr30_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #76
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr100_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr100_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #77
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_wilcoxontest_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_wilcoxontest_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #78
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_t-test_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_t-test_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #79
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_ranger_impu_cor_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_ranger_impu_cor_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #80
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr30_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr30_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #81
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr100_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_mrmr100_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #82
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_wilcoxontest_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_wilcoxontest_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #83
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_t-test_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_t-test_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+  
+  #84
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_ranger_impu_cor_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsHC_ranger_impu_cor_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #85
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr30_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr30_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #86
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr100_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr100_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #87
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_wilcoxontest_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_wilcoxontest_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #88
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_t-test_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_t-test_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #89
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_ranger_impu_cor_28_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_ranger_impu_cor_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #90
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr30_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr30_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #91
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr100_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_mrmr100_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #92
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_wilcoxontest_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_wilcoxontest_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #93
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_t-test_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_t-test_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+  
+  #94
+  #transcriptomic METVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_METVsHC_ranger_impu_cor_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_METVsHC_ranger_impu_cor_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #95
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_mrmr30_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_mrmr30_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #96
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_mrmr100_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_mrmr100_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #97
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_wilcoxontest_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_wilcoxontest_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #98
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_t-test_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_t-test_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #99
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_ranger_impu_cor_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_ranger_impu_cor_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #100
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_mrmr30_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_mrmr30_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #101
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_mrmr100_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_mrmr100_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #102
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_wilcoxontest_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_wilcoxontest_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #103
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_t-test_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_t-test_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+  
+  #104
+  #proteomic PREOPEVsMET
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET_ranger_impu_cor_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsMET_ranger_impu_cor_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #105
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_mrmr30_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_mrmr30_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #106
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_mrmr100_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_mrmr100_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #107
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_wilcoxontest_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_wilcoxontest_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #108
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_t-test_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_t-test_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #109
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_ranger_impu_cor_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_ranger_impu_cor_28",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #110
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_mrmr30_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_mrmr30_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #111
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_mrmr100_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_mrmr100_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #112
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_wilcoxontest_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_wilcoxontest_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #113
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_t-test_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_t-test_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+  
+  #114
+  #proteomic PREOPEVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC_ranger_impu_cor_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_PREOPEVsHC_ranger_impu_cor_29",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #115
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_mrmr30_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_mrmr30_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #116
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_mrmr100_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_mrmr100_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #117
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_wilcoxontest_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_wilcoxontest_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #118
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_t-test_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_t-test_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #119
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_ranger_impu_cor_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_ranger_impu_cor_28",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),
+  
+  #120
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_mrmr30_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_mrmr30_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #121
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_mrmr100_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_mrmr100_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #122
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_wilcoxontest_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_wilcoxontest_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+  
+  #123
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_t-test_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_t-test_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE), 
+  
+  #124
+  #proteomic METVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein",
+       read_count_file_name = "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC_ranger_impu_cor_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_METVsHC_ranger_impu_cor_29",
+       classification_criteria = "METVsHC",
+       classes = c("HC", "MET"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE)                              
 
 )  
