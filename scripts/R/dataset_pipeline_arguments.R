@@ -1318,6 +1318,36 @@ dataset_pipeline_arguments <- list(
        classes = c("REC-TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
-       fems_to_run = c("RF_RFE", "ga_rf"))                              
+       fems_to_run = c("RF_RFE", "ga_rf")),  
+  
+  
+  #73
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE),  
+
+  #74
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29_umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29_random2000",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE,
+       random_seed = 2000)    
 
 )  
