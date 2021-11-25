@@ -29,6 +29,9 @@ metadata <- metadata %>%
   inner_join(group_mapping) %>%
   rename(GROUP_Q7 = GROUP_ORIGINAL)
 
+metadata <- metadata %>%
+  mutate(GROUP_Q1to6 = gsub("-", "_", GROUP_Q1to6)) %>%
+  mutate(GROUP_Q7 = gsub("-", "_", GROUP_Q7))
 
 #order metadata as HC1, HC2, HC3, ...
 #   and NOT HC1, HC10, HC11 ... HC19, HC2, HC20, ...
@@ -56,17 +59,17 @@ phenotype_info <- insert_comparison_columns(phenotype_info,
                                                                    c("PREOPE", "HC"), 
                                                                    c("MET", "HC"),
                                                                    
-                                                                   c("PREOPE", "POSTOPE-T"), 
-                                                                   c("PREOPE", "POSTOPE-P"), 
-                                                                   c("POSTOPE-T", "POSTOPE-P"),
+                                                                   c("PREOPE", "POSTOPE_T"), 
+                                                                   c("PREOPE", "POSTOPE_P"), 
+                                                                   c("POSTOPE_T", "POSTOPE_P"),
                                                                    
-                                                                   c("POSTOPE-T", "REC-T"),
-                                                                   c("POSTOPE-P", "REC-P"),
-                                                                   c("POSTOPE-T", "PREREC")
+                                                                   c("POSTOPE_T", "REC_T"),
+                                                                   c("POSTOPE_P", "REC_P"),
+                                                                   c("POSTOPE_T", "PREREC")
                                                                    ), 
                                             class_column_name = "GROUP_Q1to6")
 phenotype_info <- insert_comparison_columns(phenotype_info,
-                                            comparison_list = list(c("PREOPE", "REC-TP")), 
+                                            comparison_list = list(c("PREOPE", "REC_TP")), 
                                             class_column_name = "GROUP_Q7")
 
 
@@ -96,4 +99,3 @@ write.table(phenotype_info,
 # 
 # filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
 # colnames(filtered_samples_output_labels) <- c("Sample", "Label")
-

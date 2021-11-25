@@ -58,6 +58,10 @@ metadata <- metadata %>%
 
 group_mapping[!group_mapping$SUBJECT_ORIGINAL %in% metadata$SUBJECT_ORIGINAL,]
 
+metadata <- metadata %>%
+  mutate(GROUP_Q1to6 = gsub("-", "_", GROUP_Q1to6)) %>%
+  mutate(GROUP_Q7 = gsub("-", "_", GROUP_Q7))
+
 write.csv(metadata, "Data/transcriptomic_sample_metadata.csv", row.names = FALSE)
 
 
@@ -89,17 +93,17 @@ phenotype_info <- insert_comparison_columns(phenotype_info,
                                                                    c("PREOPE", "HC"), 
                                                                    c("MET", "HC"),
                                                                    
-                                                                   c("PREOPE", "POSTOPE-T"), 
-                                                                   c("PREOPE", "POSTOPE-P"), 
-                                                                   c("POSTOPE-T", "POSTOPE-P"),
+                                                                   c("PREOPE", "POSTOPE_T"), 
+                                                                   c("PREOPE", "POSTOPE_P"), 
+                                                                   c("POSTOPE_T", "POSTOPE_P"),
                                                                    
-                                                                   c("POSTOPE-T", "REC-T"),
-                                                                   c("POSTOPE-P", "REC-P"),
-                                                                   c("POSTOPE-T", "PREREC")
+                                                                   c("POSTOPE_T", "REC_T"),
+                                                                   c("POSTOPE_P", "REC_P"),
+                                                                   c("POSTOPE_T", "PREREC")
                                             ), 
                                             class_column_name = "GROUP_Q1to6")
 phenotype_info <- insert_comparison_columns(phenotype_info,
-                                            comparison_list = list(c("PREOPE", "REC-TP")), 
+                                            comparison_list = list(c("PREOPE", "REC_TP")), 
                                             class_column_name = "GROUP_Q7")
 
 write.table(phenotype_info, 

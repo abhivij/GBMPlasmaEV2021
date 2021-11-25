@@ -1074,14 +1074,14 @@ dataset_pipeline_arguments <- list(
        norm = "vsn"),
 
   #59
-  #transcriptomic PREOPEVsPOSTOPE-T
+  #transcriptomic PREOPEVsPOSTOPE_T
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsPOSTOPE-T",
-       classes = c("POSTOPE-T", "PREOPE"),
+       classification_criteria = "PREOPEVsPOSTOPE_T",
+       classes = c("POSTOPE_T", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1095,14 +1095,14 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #60
-  #transcriptomic PREOPEVsPOSTOPE-P
+  #transcriptomic PREOPEVsPOSTOPE_P
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsPOSTOPE-P",
-       classes = c("POSTOPE-P", "PREOPE"),
+       classification_criteria = "PREOPEVsPOSTOPE_P",
+       classes = c("POSTOPE_P", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1116,14 +1116,14 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #61
-  #transcriptomic POSTOPE-TVsPOSTOPE-P
+  #transcriptomic POSTOPE_TVsPOSTOPE_P
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsPOSTOPE-P",
-       classes = c("POSTOPE-P", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsPOSTOPE_P",
+       classes = c("POSTOPE_P", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1138,57 +1138,57 @@ dataset_pipeline_arguments <- list(
   
   
   #62
-  #transcriptomic PREOPEVsPOSTOPE-T
+  #transcriptomic PREOPEVsPOSTOPE_T
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsPOSTOPE-T",
-       classes = c("POSTOPE-T", "PREOPE"),
+       classification_criteria = "PREOPEVsPOSTOPE_T",
+       classes = c("POSTOPE_T", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   #63
-  #transcriptomic PREOPEVsPOSTOPE-P
+  #transcriptomic PREOPEVsPOSTOPE_P
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsPOSTOPE-P",
-       classes = c("POSTOPE-P", "PREOPE"),
+       classification_criteria = "PREOPEVsPOSTOPE_P",
+       classes = c("POSTOPE_P", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   #64
-  #transcriptomic POSTOPE-TVsPOSTOPE-P
+  #transcriptomic POSTOPE_TVsPOSTOPE_P
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsPOSTOPE-P",
-       classes = c("POSTOPE-P", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsPOSTOPE_P",
+       classes = c("POSTOPE_P", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   
   #65
-  #transcriptomic POSTOPE-TVsREC-T
+  #transcriptomic POSTOPE_TVsREC_T
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsREC-T",
-       classes = c("REC-T", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsREC_T",
+       classes = c("REC_T", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1202,28 +1202,28 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #66
-  #transcriptomic POSTOPE-TVsREC-T
+  #transcriptomic POSTOPE_TVsREC_T
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsREC-T",
-       classes = c("REC-T", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsREC_T",
+       classes = c("REC_T", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   #67
-  #transcriptomic POSTOPE-PVsREC-P
+  #transcriptomic POSTOPE_PVsREC_P
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-PVsREC-P",
-       classes = c("REC-P", "POSTOPE-P"),
+       classification_criteria = "POSTOPE_PVsREC_P",
+       classes = c("REC_P", "POSTOPE_P"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1237,28 +1237,28 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #68
-  #transcriptomic POSTOPE-PVsREC-P
+  #transcriptomic POSTOPE_PVsREC_P
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-PVsREC-P",
-       classes = c("REC-P", "POSTOPE-P"),
+       classification_criteria = "POSTOPE_PVsREC_P",
+       classes = c("REC_P", "POSTOPE_P"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   #69
-  #transcriptomic POSTOPE-TVsPREREC
+  #transcriptomic POSTOPE_TVsPREREC
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsPREREC",
-       classes = c("PREREC", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsPREREC",
+       classes = c("PREREC", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1272,28 +1272,28 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #70
-  #transcriptomic POSTOPE-TVsPREREC
+  #transcriptomic POSTOPE_TVsPREREC
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "POSTOPE-TVsPREREC",
-       classes = c("PREREC", "POSTOPE-T"),
+       classification_criteria = "POSTOPE_TVsPREREC",
+       classes = c("PREREC", "POSTOPE_T"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),
   
   #71
-  #transcriptomic PREOPEVsREC-TP
+  #transcriptomic PREOPEVsREC_TP
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsREC-TP",
-       classes = c("REC-TP", "PREOPE"),
+       classification_criteria = "PREOPEVsREC_TP",
+       classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("all", 
@@ -1307,15 +1307,15 @@ dataset_pipeline_arguments <- list(
                        "mrmr75", "mrmr100")),
   
   #72
-  #transcriptomic PREOPEVsREC-TP
+  #transcriptomic PREOPEVsREC_TP
   # to run "RF_RFE", "ga_rf"
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
        read_count_file_name = "umi_counts.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic",
-       classification_criteria = "PREOPEVsREC-TP",
-       classes = c("REC-TP", "PREOPE"),
+       classification_criteria = "PREOPEVsREC_TP",
+       classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf")),  
