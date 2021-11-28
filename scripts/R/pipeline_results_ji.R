@@ -51,7 +51,7 @@ compute_all_jaccard_index <- function(fsm_vector, features_info){
 
 print("Computing JI.....")
 
-dparg_id_vec <- c(1:3, 13:15, 19:21, 25:27)
+dparg_id_vec <- c(41:43, 125:127, 131, 133, 135, 137)
 
 fsm_vector <- c("all", 
                 "t-test", "t-test_BH",
@@ -71,24 +71,30 @@ for(arg in dparg_id_vec){
   
   features_file <- paste(dataset_id, "features.csv", sep = "_")
   
-  features_info <- read.table(features_file, sep = ',', header = TRUE)
-
-  features_info <- features_info %>%
-    filter(FSM %in% fsm_vector)
-  
-  ji_df <- compute_all_jaccard_index(fsm_vector, features_info)
-  
-  ji_df <- cbind(DataSetId = dataset_id, ji_df)
-  
-  dir_path <- 'JI'
-  if (!dir.exists(dir_path)){
-    dir.create(dir_path)
-  }
-  ji_data_file_name <- "all_ji.csv"
-  file_path <- paste(dir_path, ji_data_file_name, sep = "/")
-  write.table(ji_df, file = file_path,
-              quote = FALSE, sep = ",", row.names = FALSE, append = TRUE,
-              col.names = !file.exists(file_path))  
+  tryCatch({
+    features_info <- read.table(features_file, sep = ',', header = TRUE)
+    
+    features_info <- features_info %>%
+      filter(FSM %in% fsm_vector)
+    
+    ji_df <- compute_all_jaccard_index(fsm_vector, features_info)
+    
+    ji_df <- cbind(DataSetId = dataset_id, ji_df)
+    
+    dir_path <- 'JI'
+    if (!dir.exists(dir_path)){
+      dir.create(dir_path)
+    }
+    ji_data_file_name <- "all_ji.csv"
+    file_path <- paste(dir_path, ji_data_file_name, sep = "/")
+    write.table(ji_df, file = file_path,
+                quote = FALSE, sep = ",", row.names = FALSE, append = TRUE,
+                col.names = !file.exists(file_path))    
+  },
+  error = function(cond){
+    print(cond)
+  })
+    
 }
 
 print("JI computation complete")
