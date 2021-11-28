@@ -2703,7 +2703,7 @@ dataset_pipeline_arguments <- list(
   #transcriptomic PREOPEVsMET common for 3 (28)
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
-       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_28.csv",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_28.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_28",
        classification_criteria = "PREOPEVsMET",
@@ -2718,7 +2718,7 @@ dataset_pipeline_arguments <- list(
   #transcriptomic PREOPEVsMET common for 4 (28)
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
-       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_28.csv",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_28.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_28",
        classification_criteria = "PREOPEVsMET",
@@ -2733,7 +2733,7 @@ dataset_pipeline_arguments <- list(
   #transcriptomic PREOPEVsMET common for 3 (29)
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
-       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_29.csv",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_29.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_29",
        classification_criteria = "PREOPEVsMET",
@@ -2748,7 +2748,7 @@ dataset_pipeline_arguments <- list(
   #transcriptomic PREOPEVsMET common for 4 (29)
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA",
-       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_29.csv",
+       read_count_file_name = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_29.csv",
        sep = ",",
        dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_29",
        classification_criteria = "PREOPEVsMET",
