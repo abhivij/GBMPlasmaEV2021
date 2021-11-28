@@ -2696,6 +2696,67 @@ dataset_pipeline_arguments <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results",
        fems_to_run = c("RF_RFE", "ga_rf"),
-       norm = "norm_log_cpm_simple")     
+       norm = "norm_log_cpm_simple"),
+  
+  
+  #159
+  #transcriptomic PREOPEVsMET common for 3 (28)
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE,
+       random_seed = 2000),
+  
+  #160
+  #transcriptomic PREOPEVsMET common for 4 (28)
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_28.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_28",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE,
+       random_seed = 2000),
+  
+  #161
+  #transcriptomic PREOPEVsMET common for 3 (29)
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_common_in_3FSM_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE,
+       random_seed = 2000),
+  
+  #162
+  #transcriptomic PREOPEVsMET common for 4 (29)
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "Data/RNA/GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_29.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm_PREOPEVsMET_mrmr30_29",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_subset",
+       fems_to_run = c("all"),
+       classifier_feature_imp = TRUE,
+       random_seed = 2000)               
 
 )  

@@ -40,16 +40,21 @@ fsm_vec <- c("all",
 
 # best_fsm <- "mrmr100"
 
-dataset_id <- "GBMPlasmaEV_transcriptomic_PREOPEVsMET"
-
-best_fsm_vec <- c("ranger_impu_cor",
-                  "t-test", "wilcoxontest",
-                  "mrmr30", "mrmr100")
-
-min_iter_feature_presence = 28
+dataset_id = 139
+best_fsm_vec = c("ranger_impu_cor",
+                 "RF_RFE",
+                 "t-test_pval_0.025", 
+                 "wilcoxontest_pval_0.025",
+                 "mrmr30")
+min_iter_feature_presence = 29
 create_common_feature_plots_and_datasubsets <- function(dataset_id,
                                                         best_fsm_vec, 
                                                         min_iter_feature_presence){
+  
+  ds <- dataset_pipeline_arguments[[dataset_id]]
+  dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
+  print("***********************")
+  print(dataset_id)
   
   features_file <- paste(dataset_id, "features.csv", sep = "_")
   features_file <- paste("fem_pipeline_results", features_file, sep = "/")
@@ -135,9 +140,8 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
     features <- setdiff(
       Reduce(intersect, list(
         selected_features[["ranger_impu_cor"]],
-        selected_features[["mrmr100"]],
-        selected_features[["t-test"]],
-        selected_features[["wilcoxontest"]]
+        selected_features[["t-test_pval_0.025"]],
+        selected_features[["wilcoxontest_pval_0.025"]]
       )),
       selected_features[["mrmr30"]]
     )
@@ -145,7 +149,7 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
     data_sub <- data[gsub(".", "-", features, fixed = TRUE),]
     print(dim(data_sub))
     print(sum(is.na(data_sub)))
-    subset_filename <- paste0(output_dir, dataset_id, "_common_in_4FSM_", 
+    subset_filename <- paste0(output_dir, dataset_id, "_common_in_3FSM_", 
                               min_iter_feature_presence,
                               ".csv")
     print(subset_filename)
@@ -155,26 +159,58 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
   
 }
 
-arglist <- c(1,  #t PREOPE Vs MET
-             2,
-             3,
-             25,  #p PREOPE Vs MET
-             26,
-             27
-             ) 
+# arglist <- c(1,  #t PREOPE Vs MET
+#              2,
+#              3,
+#              25,  #p PREOPE Vs MET
+#              26,
+#              27
+#              ) 
+# 
+# for(arg in arglist){
+#   ds <- dataset_pipeline_arguments[[arg]]
+#   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
+#   print("***********************")
+#   print(dataset_id) 
+#   
+#   create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
+#                                               best_fsm_vec = best_fsm_vec,
+#                                               min_iter_feature_presence = 28)
+#   create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
+#                                               best_fsm_vec = best_fsm_vec,
+#                                               min_iter_feature_presence = 29)
+# }
 
-for(arg in arglist){
-  ds <- dataset_pipeline_arguments[[arg]]
-  dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
-  print("***********************")
-  print(dataset_id) 
-  
-  create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
-                                              best_fsm_vec = best_fsm_vec,
+#t PREOPEVsMET
+create_common_feature_plots_and_datasubsets(dataset_id = 139,
+                                              best_fsm_vec = c("ranger_impu_cor",
+                                                               "RF_RFE",
+                                                               "t-test_pval_0.025", 
+                                                               "wilcoxontest_pval_0.025",
+                                                               "mrmr30"),
                                               min_iter_feature_presence = 28)
-  create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
-                                              best_fsm_vec = best_fsm_vec,
+create_common_feature_plots_and_datasubsets(dataset_id = 139,
+                                            best_fsm_vec = c("ranger_impu_cor",
+                                                             "RF_RFE",
+                                                             "t-test_pval_0.025", 
+                                                             "wilcoxontest_pval_0.025",
+                                                             "mrmr30"),
+                                            min_iter_feature_presence = 29)
+#p PREOPEVsMET
+create_common_feature_plots_and_datasubsets(dataset_id = 125,
+                                            best_fsm_vec = c("ranger_impu_cor",
+                                                             "t-test_pval", 
+                                                             "wilcoxontest",
+                                                             "all", 
+                                                             "mrmr100"),
+                                            min_iter_feature_presence = 28)
+create_common_feature_plots_and_datasubsets(dataset_id = 125,
+                                              best_fsm_vec = c("ranger_impu_cor",
+                                                               "t-test_pval", 
+                                                               "wilcoxontest_pval",
+                                                               "mrmr30", 
+                                                               "mrmr100"),
                                               min_iter_feature_presence = 29)
-}
+
 
 

@@ -34,3 +34,6 @@ qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 125-136 pipeline_execut
 qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 137-138 pipeline_executor.pbs
 
 qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 139-158 pipeline_executor.pbs
+
+
+qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 159-162 pipeline_executor.pbs
