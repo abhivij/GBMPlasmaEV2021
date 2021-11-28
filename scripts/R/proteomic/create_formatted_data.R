@@ -100,6 +100,12 @@ process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_
 
 process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv",
                                 "Data/Protein/formatted_data/Q7_nonorm_formatted.csv")
+process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/Q7_nonorm_formatted_impute50fil.csv",
+                                impute = TRUE, filter_na_perc = 50)
+process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ7_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/Q7_nonorm_formatted_impute75fil.csv",
+                                impute = TRUE, filter_na_perc = 75)
 
 
 for_data1 <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted.csv", 
