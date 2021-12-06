@@ -51,8 +51,9 @@ compute_all_jaccard_index <- function(fsm_vector, features_info){
 
 print("Computing JI.....")
 
-dparg_id_vec <- c(41:43, 125:127, 131, 133, 135, 137)
-
+dparg_id_vec <- c(41:43, 125:127, 131, 133, 135, 137,   #proteomic
+                  139:141, 145:147, 151, 153, 155, 157  #transcriptomic
+                  )
 fsm_vector <- c("all", 
                 "t-test", "t-test_BH",
                 "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
