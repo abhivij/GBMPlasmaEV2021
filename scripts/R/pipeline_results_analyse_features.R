@@ -25,6 +25,8 @@ best_fsm_vec = c("t-test_pval_0.025",
 )
 min_iter_feature_presence = 28
 
+
+
 explore_common_features <- function(dparg_id, best_fsm_vec, 
                                     min_iter_feature_presence){
   
@@ -134,24 +136,13 @@ write_subset_file <- function(data, features, subset_file_path){
   write.csv(data_sub, subset_file_path)
 }
 
-dparg_id = 41
-min_iter_feature_presence = 28
-subset_creation_criteria <- list("i"= c("t-test",
-                                        "wilcoxontest",
-                                        "wilcoxontest_pval_0.005"),
-                                 "d"= c("mrmr75"))
-subset_file_name_substr = "common3"
-create_all_common = TRUE
-dparg_id = 139
-best_fsm_vec = c("t-test_pval_0.025",
-                 "mrmr100",
-                 "wilcoxontest_BH",
-                 "ranger_impu_cor"
-)
-subset_creation_criteria <- list("i"= c("t-test_pval_0.025",
-                                        "mrmr100",
-                                        "ranger_impu_cor"),
-                                 "d"= c("wilcoxontest_BH"))
+# dparg_id = 42
+# min_iter_feature_presence = 28
+# subset_creation_criteria <- list("i"= c("ranger_impu_cor"))
+# subset_file_name_substr = "ranger"
+# 
+# create_all_common = TRUE
+
 
 create_data_subsets <- function(dparg_id, 
                                 min_iter_feature_presence,
@@ -218,7 +209,7 @@ create_data_subsets <- function(dparg_id,
           description = "all_common",
           min_iter_feature_presence = min_iter_feature_presence,
           biomarkers = paste(features, collapse = "|"),
-          size = features
+          size = length(features)
         )        
       )
     
@@ -243,7 +234,7 @@ create_data_subsets <- function(dparg_id,
     }
   }
   
-  if(subset_creation_criteria != ""){
+  if(length(subset_creation_criteria) != 0){
     # example subset_creation_criteria
     # subset_creation_criteria <- list("i"= c("t-test",
     #                                         "wilcoxontest",
@@ -252,6 +243,7 @@ create_data_subsets <- function(dparg_id,
     intersect_list <- list()
     i <- 1
     for(i_fsm in subset_creation_criteria[["i"]]){
+      print(i_fsm)
       intersect_list[[i]] <- get_features_from_df(features_df, i_fsm)
       i <- i + 1
     }
@@ -317,38 +309,450 @@ create_data_subsets <- function(dparg_id,
 
 }
 
-#t PREOPEVsMET
-create_common_feature_plots_and_datasubsets(dataset_id = 139,
-                                              best_fsm_vec = c("ranger_impu_cor",
-                                                               "RF_RFE",
-                                                               "t-test_pval_0.025", 
-                                                               "wilcoxontest_pval_0.025",
-                                                               "mrmr30"),
-                                              min_iter_feature_presence = 28)
-create_common_feature_plots_and_datasubsets(dataset_id = 139,
-                                            best_fsm_vec = c("ranger_impu_cor",
-                                                             "RF_RFE",
-                                                             "t-test_pval_0.025", 
-                                                             "wilcoxontest_pval_0.025",
-                                                             "mrmr30"),
-                                            min_iter_feature_presence = 29)
-
 #p PREOPEVsMET
-create_common_feature_plots_and_datasubsets(dataset_id = 41,
-                                            best_fsm_vec = c("t-test",
-                                                             "wilcoxontest",
-                                                             "mrmr75",
-                                                             "wilcoxontest_pval_0.005"
-                                                             ),
-                                            min_iter_feature_presence = 28)
-create_common_feature_plots_and_datasubsets(dataset_id = 41,
-                                              best_fsm_vec = c("t-test",
-                                                               "wilcoxontest",
-                                                               "mrmr75",
-                                                               "wilcoxontest_pval_0.005"
-                                                              ),
-                                              min_iter_feature_presence = 29)
+explore_common_features(dparg_id = 41,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr75",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 41,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr75",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 29
+)
+create_data_subsets(dparg_id = 41,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria = list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75")
+create_data_subsets(dparg_id = 41,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria = list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)
+
+#p PREOPEVsHC 
+explore_common_features(dparg_id = 42,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr50",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 42,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr50",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 42,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger")
+
+create_data_subsets(dparg_id = 42,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr50")),
+                    subset_file_name_substr = "mrmr50",
+                    create_all_common = FALSE) 
+
+create_data_subsets(dparg_id = 42,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger")
+
+create_data_subsets(dparg_id = 42,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("mrmr50")),
+                    subset_file_name_substr = "mrmr50",
+                    create_all_common = FALSE) 
+
+#p METVsHC
+explore_common_features(dparg_id = 43,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 43,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 43,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE) 
+create_data_subsets(dparg_id = 43,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE) 
+create_data_subsets(dparg_id = 43,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE) 
+
+
+#p PREOPEVsPOSTOPE_T 
+
+#p PREOPEVsPOSTOPE_P 
+explore_common_features(dparg_id = 126,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 126,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 126,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test",
+                                                            "wilcoxontest"),
+                                                     "d"= c("mrmr100")),
+                    subset_file_name_substr = "common2only")
+create_data_subsets(dparg_id = 126,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("t-test",
+                                                            "wilcoxontest")),
+                    subset_file_name_substr = "common2")
+
+#p POSTOPE_TVsPOSTOPE_P
+explore_common_features(dparg_id = 127,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "ranger_impu_cor",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 127,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "ranger_impu_cor",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 127,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE) 
+create_data_subsets(dparg_id = 127,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE) 
+
+#p POSTOPE_TVsREC_T
+explore_common_features(dparg_id = 131,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr20"),
+                        min_iter_feature_presence = 28
+)
+
+explore_common_features(dparg_id = 131,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 131,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test")
+create_data_subsets(dparg_id = 131,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("wilcoxontest")),
+                    subset_file_name_substr = "wilcoxontest",
+                    create_all_common = FALSE) 
+
+#p POSTOPE_PVsREC_P
+explore_common_features(dparg_id = 133,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr50",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 133,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr50",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 133,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr50")),
+                    subset_file_name_substr = "mrmr50",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 133,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+
+create_data_subsets(dparg_id = 133,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("mrmr50")),
+                    subset_file_name_substr = "mrmr50",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 133,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+
+#p POSTOPE_TVsPREREC
+#p PREOPEVsREC_TP
+explore_common_features(dparg_id = 137,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 137,
+                        best_fsm_vec = c("t-test",
+                                         "wilcoxontest",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 137,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test",
+                                                            "wilcoxontest")),
+                    subset_file_name_substr = "common2")
+create_data_subsets(dparg_id = 137,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("t-test",
+                                                            "wilcoxontest")),
+                    subset_file_name_substr = "common2")
 
 
 
+
+#t PREOPEVsMET
+explore_common_features(dparg_id = 139,
+                        best_fsm_vec = c("t-test_pval_0.025",
+                                         "mrmr100",
+                                         "wilcoxontest_BH",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 139,
+                        best_fsm_vec = c("t-test_pval_0.025",
+                                         "mrmr100",
+                                         "wilcoxontest_BH",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 29
+)
+
+create_data_subsets(dparg_id = 139,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("t-test_pval_0.025",
+                                                            "mrmr100",
+                                                            "ranger_impu_cor")),
+                    subset_file_name_substr = "common3")
+
+#t PREOPEVsHC 
+explore_common_features(dparg_id = 140,
+                        best_fsm_vec = c("t-test_pval_0.025",
+                                         "wilcoxontest",
+                                         "mrmr30",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 140,
+                        best_fsm_vec = c("t-test_pval_0.025",
+                                         "wilcoxontest",
+                                         "mrmr30",
+                                         "ranger_impu_cor"),
+                        min_iter_feature_presence = 29
+)
+create_data_subsets(dparg_id = 140,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria = list("i"= c("mrmr30")),
+                    subset_file_name_substr = "mrmr30")
+create_data_subsets(dparg_id = 140,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria = list("i"= c("mrmr30")),
+                    subset_file_name_substr = "mrmr30")
+
+#t METVsHC
+explore_common_features(dparg_id = 141,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "wilcoxontest",
+                                         "RF_RFE",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 141,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "wilcoxontest",
+                                         "RF_RFE",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+create_data_subsets(dparg_id = 141,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor",
+                                                            "wilcoxontest",
+                                                            "mrmr100")),
+                    subset_file_name_substr = "common3")
+create_data_subsets(dparg_id = 141,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor",
+                                                            "wilcoxontest",
+                                                            "mrmr100")),
+                    subset_file_name_substr = "common3")
+
+
+#t PREOPEVsPOSTOPE_T 
+explore_common_features(dparg_id = 145,
+                        best_fsm_vec = c("t-test",
+                                         "mrmr30"),
+                        min_iter_feature_presence = 28
+)
+create_data_subsets(dparg_id = 145,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria = list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test")
+
+#t PREOPEVsPOSTOPE_P 
+explore_common_features(dparg_id = 146,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 27
+)
+create_data_subsets(dparg_id = 146,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 146,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+
+#t POSTOPE_TVsPOSTOPE_P
+explore_common_features(dparg_id = 147,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 147,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100"),
+                        min_iter_feature_presence = 29
+)
+create_data_subsets(dparg_id = 147,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 147,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+
+#t POSTOPE_TVsREC_T
+explore_common_features(dparg_id = 151,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100",
+                                         "t-test_pval_0.025",
+                                         "wilcoxontest"),
+                        min_iter_feature_presence = 28
+)
+explore_common_features(dparg_id = 151,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100",
+                                         "t-test_pval_0.025",
+                                         "wilcoxontest"),
+                        min_iter_feature_presence = 29
+)
+create_data_subsets(dparg_id = 151,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 151,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+#t POSTOPE_PVsREC_P
+explore_common_features(dparg_id = 153,
+                        best_fsm_vec = c("ranger_impu_cor", "mrmr100"),
+                        min_iter_feature_presence = 27
+)
+create_data_subsets(dparg_id = 153,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 153,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+#t POSTOPE_TVsPREREC
+explore_common_features(dparg_id = 155,
+                        best_fsm_vec = c("t-test",
+                                         "mrmr20",
+                                         "wilcoxontest"),
+                        min_iter_feature_presence = 28
+)
+create_data_subsets(dparg_id = 155,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("wilcoxontest")),
+                    subset_file_name_substr = "wilcoxontest",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 155,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE)
+
+#t PREOPEVsREC_TP
+explore_common_features(dparg_id = 157,
+                        best_fsm_vec = c("ranger_impu_cor",
+                                         "mrmr100",
+                                         "t-test"),
+                        min_iter_feature_presence = 28
+)
+create_data_subsets(dparg_id = 157,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_impu_cor")),
+                    subset_file_name_substr = "ranger",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 157,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
 

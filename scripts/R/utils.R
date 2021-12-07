@@ -53,3 +53,15 @@ insert_comparison_columns <- function(phenotype_info, comparison_list, class_col
   }
   phenotype_info
 }
+
+
+fsm_vec <- c("all", 
+             "t-test", "t-test_BH",
+             "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+             "wilcoxontest", "wilcoxontest_BH",
+             "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+             "ranger_impu_cor", 
+             "mrmr10", "mrmr20",
+             "mrmr30", "mrmr50", 
+             "mrmr75", "mrmr100",
+             "RF_RFE", "ga_rf")
