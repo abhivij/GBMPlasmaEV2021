@@ -7,53 +7,29 @@ library(ComplexHeatmap)
 library(UpSetR)
 
 
-dataset_vec <- c("GBMPlasmaEV_transcriptomic_PREOPEVsMET",
-                 "GBMPlasmaEV_transcriptomic_PREOPEVsHC",
-                 "GBMPlasmaEV_transcriptomic_METVsHC",
-                 "GBMPlasmaEV_proteomic_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_norm_quantile_METVsHC",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_METVsHC",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC"                 
-)
-dataset_vec <- dataset_vec[c(1:3, 10:12)]
-
-
-fsm_vec <- c("all", 
-             "t-test", "t-test_BH",
-             "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
-             "wilcoxontest", "wilcoxontest_BH",
-             "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
-             "ranger_impu_cor", 
-             "mrmr10", "mrmr20",
-             "mrmr30", "mrmr50", 
-             "mrmr75", "mrmr100",
-             "RF_RFE", "ga_rf")
-# fsm_vector <- fsm_vec[c(1:2, 4, 6:12)]
-
-
-
-
 # best_fsm <- "mrmr100"
 
-dataset_id = 139
-best_fsm_vec = c("ranger_impu_cor",
-                 "RF_RFE",
-                 "t-test_pval_0.025", 
-                 "wilcoxontest_pval_0.025",
-                 "mrmr30")
-min_iter_feature_presence = 29
-create_common_feature_plots_and_datasubsets <- function(dataset_id,
-                                                        best_fsm_vec, 
-                                                        min_iter_feature_presence){
+dparg_id = 41
+best_fsm_vec = c("t-test",
+                 "wilcoxontest",
+                 "mrmr75",
+                 "wilcoxontest_pval_0.005"
+)
+min_iter_feature_presence = 28
+
+dparg_id = 139
+best_fsm_vec = c("t-test_pval_0.025",
+                 "mrmr100",
+                 "wilcoxontest_BH",
+                 "ranger_impu_cor"
+)
+min_iter_feature_presence = 28
+
+explore_common_features <- function(dparg_id, best_fsm_vec, 
+                                    min_iter_feature_presence){
   
-  ds <- dataset_pipeline_arguments[[dataset_id]]
+  ds <- dataset_pipeline_arguments[[dparg_id]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
-  print("***********************")
   print(dataset_id)
   
   features_file <- paste(dataset_id, "features.csv", sep = "_")
@@ -102,12 +78,106 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
   dev.off()
   
   
+  ####write best features to file
+  output_dir <- "Data/selected_features/"
+  file_name <- "best_FSM_common_features.csv"
+
+  selected_features_df <- data.frame(matrix(nrow = 0, ncol = 4))
+  for(fsm in names(selected_features)){
+    print(fsm)
+    row <- c(dataset_id,
+             fsm,
+             min_iter_feature_presence,
+             paste(selected_features[[fsm]], collapse = "|")
+             )
+    selected_features_df <- rbind(selected_features_df, row)
+  }
+  colnames(selected_features_df) <- c("datasetid",
+                                      "fsm",
+                                      "miniter_feature_presence",
+                                      "biomarkers")
+  if(!dir.exists(output_dir)){
+    dir.create(output_dir, recursive = TRUE)
+  }
+  
+  if(length(best_fsm_vec) == dim(selected_features_df)[1]){
+    file_path <- paste0(output_dir, file_name)
+    write.table(selected_features_df, 
+                file_path,
+                sep = ",",
+                row.names = FALSE, append = TRUE,
+                col.names = !file.exists(file_path))    
+  } else{
+    print("Not writing selected features to file")
+    print("all FSMs dont have common features across iter")
+  }
+}
+
+
+
+
+get_features_from_df <- function(features_df, fsm){
+  features <- features_df[features_df$fsm == fsm, "biomarkers"]
+  if(length(features) != 0){
+    features <- strsplit(features, split = "|", fixed = TRUE)[[1]]  
+  } else{
+    features <- c()
+  }
+  features
+}
+
+write_subset_file <- function(data, features, subset_file_path){
+  data_sub <- data[gsub(".", "-", features, fixed = TRUE),]
+  print(dim(data_sub))
+  print(sum(is.na(data_sub)))
+  print(subset_file_path)
+  write.csv(data_sub, subset_file_path)
+}
+
+dparg_id = 41
+min_iter_feature_presence = 28
+subset_creation_criteria <- list("i"= c("t-test",
+                                        "wilcoxontest",
+                                        "wilcoxontest_pval_0.005"),
+                                 "d"= c("mrmr75"))
+subset_file_name_substr = "common3"
+create_all_common = TRUE
+dparg_id = 139
+best_fsm_vec = c("t-test_pval_0.025",
+                 "mrmr100",
+                 "wilcoxontest_BH",
+                 "ranger_impu_cor"
+)
+subset_creation_criteria <- list("i"= c("t-test_pval_0.025",
+                                        "mrmr100",
+                                        "ranger_impu_cor"),
+                                 "d"= c("wilcoxontest_BH"))
+
+create_data_subsets <- function(dparg_id, 
+                                min_iter_feature_presence,
+                                subset_creation_criteria,
+                                subset_file_name_substr = "common3",
+                                create_all_common = TRUE){
+  
+  ds <- dataset_pipeline_arguments[[dparg_id]]
+  dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
+  print(dataset_id)
+  
+  output_dir <- "Data/selected_features/"
+  file_name <- "best_FSM_common_features.csv"
+  features_df <- read.csv(paste0(output_dir, file_name))
+  
+  features_df <- features_df %>%
+    filter(datasetid == dataset_id) %>%
+    filter(miniter_feature_presence == min_iter_feature_presence)
+  
+  
   ######create new data subsets
   
   if(grepl(pattern = "transcriptomic", x = dataset_id, fixed = TRUE)){
     data <- read.table("Data/RNA/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")   
-    output_dir <- "Data/RNA/"
+    output_dir <- "Data/RNA/subset/"
   } else if(grepl(pattern = "proteomic", x = dataset_id, fixed = TRUE)){
     if(grepl(pattern = "REC-TP", x = dataset_id, fixed = TRUE)){
       data <- read.table("Data/Protein/formatted_data/Q7_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
@@ -116,70 +186,136 @@ create_common_feature_plots_and_datasubsets <- function(dataset_id,
       data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
     }
-    output_dir <- "Data/Protein/"
+    output_dir <- "Data/Protein/subset/"
   } else{
     print("Unknown dataset_id type !")
     return
   }
-  
-  for(best_fsm in best_fsm_vec){
-    data_sub <- data[gsub(".", "-", selected_features[[best_fsm]], fixed = TRUE),]
-    print(dim(data_sub))
-    print(sum(is.na(data_sub)))
-    subset_filename <- paste0(output_dir, dataset_id, "_", best_fsm, 
-                              "_", min_iter_feature_presence,
-                              ".csv")
-    print(subset_filename)
-    write.csv(data_sub, subset_filename)
+  if(!dir.exists(output_dir)){
+    dir.create(output_dir, recursive = TRUE)
   }
 
-  #special case : get subset of features in t PREOPE Vs MET common in 28 iter similar across 4 FSMS
-  if(dataset_id == "GBMPlasmaEV_transcriptomic_PREOPEVsMET" &&
-     min_iter_feature_presence == 28){
-    #sncRNAs selected by only 4 of the FSMs
-    features <- setdiff(
-      Reduce(intersect, list(
-        selected_features[["ranger_impu_cor"]],
-        selected_features[["t-test_pval_0.025"]],
-        selected_features[["wilcoxontest_pval_0.025"]]
-      )),
-      selected_features[["mrmr30"]]
-    )
+  best_features_df <- data.frame(matrix(nrow = 0, ncol = 5))
+  
+  #create datasubset with features common in all FSMs
+  if(create_all_common == TRUE){
+    intersect_list <- list()
+    i <- 1
+    for(i_fsm in features_df$fsm){
+      intersect_list[[i]] <- get_features_from_df(features_df, i_fsm)
+      i <- i + 1
+    }
+    features <- Reduce(intersect, intersect_list)  
+    write_subset_file(data, features, 
+                      subset_file_path = paste0(output_dir, dataset_id, "_all_common_",
+                                        min_iter_feature_presence, ".csv"))
+  
+    best_features_df <- 
+      rbind(
+        best_features_df,
+        data.frame(
+          dataset_id = dataset_id,
+          description = "all_common",
+          min_iter_feature_presence = min_iter_feature_presence,
+          biomarkers = paste(features, collapse = "|"),
+          size = features
+        )        
+      )
+    
+    if(sum(grepl("piR", features, fixed = TRUE)) > 0){
+      print("all common features contain piRNA !")
+      features_without_pir <- features[!grepl("piR", features, fixed = TRUE)]
+      write_subset_file(data, features_without_pir, 
+                        subset_file_path = paste0(output_dir, dataset_id, 
+                                                  "_all_common_nopir_",
+                                                  min_iter_feature_presence, ".csv"))
+      best_features_df <- 
+        rbind(
+          best_features_df,
+          data.frame(
+            dataset_id = dataset_id,
+            description = "all_common_nopir",
+            min_iter_feature_presence = min_iter_feature_presence,
+            biomarkers = paste(features_without_pir, collapse = "|"),
+            size = length(features_without_pir)
+          )        
+        )
+    }
+  }
+  
+  if(subset_creation_criteria != ""){
+    # example subset_creation_criteria
+    # subset_creation_criteria <- list("i"= c("t-test",
+    #                                         "wilcoxontest",
+    #                                         "wilcoxontest_pval_0.005"),
+    #                                  "d"= c("mrmr75"))
+    intersect_list <- list()
+    i <- 1
+    for(i_fsm in subset_creation_criteria[["i"]]){
+      intersect_list[[i]] <- get_features_from_df(features_df, i_fsm)
+      i <- i + 1
+    }
 
-    data_sub <- data[gsub(".", "-", features, fixed = TRUE),]
-    print(dim(data_sub))
-    print(sum(is.na(data_sub)))
-    subset_filename <- paste0(output_dir, dataset_id, "_common_in_3FSM_", 
-                              min_iter_feature_presence,
-                              ".csv")
-    print(subset_filename)
-    write.csv(data_sub, subset_filename)
+    features <- Reduce(intersect, intersect_list)
+    #currently handles case when "d" has single value only
+    if(length(subset_creation_criteria[["d"]]) == 1){
+      features <- setdiff(features,
+                          get_features_from_df(features_df, subset_creation_criteria[["d"]])
+                          )
+    }
+    
+    write_subset_file(data, features, 
+                      subset_file_path = paste0(output_dir, dataset_id, 
+                                               "_", subset_file_name_substr, "_",
+                                               min_iter_feature_presence, ".csv"))
+    best_features_df <- 
+      rbind(
+        best_features_df,
+        data.frame(
+          dataset_id = dataset_id,
+          description = subset_file_name_substr,
+          min_iter_feature_presence = min_iter_feature_presence,
+          biomarkers = paste(features, collapse = "|"),
+          size = length(features)
+        )        
+      )
+    
+    if(sum(grepl("piR", features, fixed = TRUE)) > 0){
+      print("subset creation criteria features contain piRNA !")
+      features_without_pir <- features[!grepl("piR", features, fixed = TRUE)]
+      write_subset_file(data, features_without_pir, 
+                        subset_file_path = paste0(output_dir, dataset_id, 
+                                                  "_", subset_file_name_substr, 
+                                                  "_nopir_",
+                                                  min_iter_feature_presence, ".csv"))
+      best_features_df <- 
+        rbind(
+          best_features_df,
+          data.frame(
+            dataset_id = dataset_id,
+            description = paste0(subset_file_name_substr, "_nopir"),
+            min_iter_feature_presence = min_iter_feature_presence,
+            biomarkers = paste(features_without_pir, collapse = "|"),
+            size = length(features_without_pir)
+          )        
+        )
+    }
     
   }
   
-}
+  output_dir <- "Data/selected_features/"
+  file_name <- "best_features.csv"
+  if(!dir.exists(output_dir)){
+    dir.create(output_dir, recursive = TRUE)
+  }
+  file_path <- paste0(output_dir, file_name)
+  write.table(best_features_df, 
+              file_path,
+              sep = ",",
+              row.names = FALSE, append = TRUE,
+              col.names = !file.exists(file_path))
 
-# arglist <- c(1,  #t PREOPE Vs MET
-#              2,
-#              3,
-#              25,  #p PREOPE Vs MET
-#              26,
-#              27
-#              ) 
-# 
-# for(arg in arglist){
-#   ds <- dataset_pipeline_arguments[[arg]]
-#   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
-#   print("***********************")
-#   print(dataset_id) 
-#   
-#   create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
-#                                               best_fsm_vec = best_fsm_vec,
-#                                               min_iter_feature_presence = 28)
-#   create_common_feature_plots_and_datasubsets(dataset_id = dataset_id,
-#                                               best_fsm_vec = best_fsm_vec,
-#                                               min_iter_feature_presence = 29)
-# }
+}
 
 #t PREOPEVsMET
 create_common_feature_plots_and_datasubsets(dataset_id = 139,
@@ -196,21 +332,23 @@ create_common_feature_plots_and_datasubsets(dataset_id = 139,
                                                              "wilcoxontest_pval_0.025",
                                                              "mrmr30"),
                                             min_iter_feature_presence = 29)
+
 #p PREOPEVsMET
-create_common_feature_plots_and_datasubsets(dataset_id = 125,
-                                            best_fsm_vec = c("ranger_impu_cor",
-                                                             "t-test_pval", 
+create_common_feature_plots_and_datasubsets(dataset_id = 41,
+                                            best_fsm_vec = c("t-test",
                                                              "wilcoxontest",
-                                                             "all", 
-                                                             "mrmr100"),
+                                                             "mrmr75",
+                                                             "wilcoxontest_pval_0.005"
+                                                             ),
                                             min_iter_feature_presence = 28)
-create_common_feature_plots_and_datasubsets(dataset_id = 125,
-                                              best_fsm_vec = c("ranger_impu_cor",
-                                                               "t-test_pval", 
-                                                               "wilcoxontest_pval",
-                                                               "mrmr30", 
-                                                               "mrmr100"),
+create_common_feature_plots_and_datasubsets(dataset_id = 41,
+                                              best_fsm_vec = c("t-test",
+                                                               "wilcoxontest",
+                                                               "mrmr75",
+                                                               "wilcoxontest_pval_0.005"
+                                                              ),
                                               min_iter_feature_presence = 29)
+
 
 
 
