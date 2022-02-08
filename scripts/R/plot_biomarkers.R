@@ -1,4 +1,5 @@
 library(tidyverse)
+library("ggvenn")
 
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
@@ -121,4 +122,94 @@ for(dataset_id in unique(best_features$dataset_id)){
   create_biomarker_boxplots(dataset_id = dataset_id,
                             phenotype_file_path = phenotype_file_path)
 }
+
+
+
+
+comparisons <- c("PREOPEVsMET", "PREOPEVsHC", "METVsHC")
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+plot_dir_path = "plots/FEMPipeline/selected_features_venn"
+omics_type = "proteomic"
+
+#plot venn diagram of overlap of biomarkers between groups of interest
+plot_biomarker_overlap_venn <- function(comparisons,
+                                        omics_type = "transcriptomic",
+                                        best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                                        plot_dir_path = "plots/FEMPipeline/selected_features_venn"){
+  best_features <- read.csv(best_features_file_path)  
+  
+  venn_diagram_list <- list()
+  for(i in c(1 : length(comparisons))){
+    if(omics_type == "transcriptomic"){
+      dataset_id <- paste0("GBMPlasmaEV_transcriptomic_simple_norm_",
+                           comparisons[i])
+    }else{
+      dataset_id <- paste0("GBMPlasmaEV_proteomic_impute50fil_quantile_",
+                           comparisons[i])
+    }
+    best_features_sub <- best_features %>%
+      filter(dataset_id == !!dataset_id,
+             is_best == 1) 
+    biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]
+    venn_diagram_list[[comparisons[i]]] <- biomarkers
+  }
+  
+  if(length(comparisons) == 2){
+    color_list <- c("lightskyblue", "mistyrose")
+  } else if(length(comparisons) == 3){
+    color_list <- c("lightskyblue", "mistyrose", "palegreen")
+  } else{
+    color_list <- c()
+    print("invalid case !")
+  }
+  
+  ggvenn(venn_diagram_list,
+         fill_color = color_list,
+         stroke_size = 0.1,
+         set_name_size = 5,
+         text_size = 3)
+  if(!dir.exists(plot_dir_path)){
+    dir.create(plot_dir_path, recursive = TRUE)
+  }
+  file_name <- paste0(omics_type, "_", paste(comparisons, collapse = "_"), ".png")
+  ggsave(paste(plot_dir_path, file_name, sep = "/"))
+}
+
+
+plot_biomarker_overlap_venn(comparisons = c("PREOPEVsMET", 
+                                            "PREOPEVsHC", 
+                                            "METVsHC"),
+                            omics_type = "transcriptomic")
+plot_biomarker_overlap_venn(comparisons = c("PREOPEVsPOSTOPE_T", 
+                                            "PREOPEVsPOSTOPE_P", 
+                                            "POSTOPE_TVsPOSTOPE_P"),
+                            omics_type = "transcriptomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "POSTOPE_PVsREC_P"),
+                            omics_type = "transcriptomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "POSTOPE_TVsPREREC"),
+                            omics_type = "transcriptomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "PREOPEVsREC_TP"),
+                            omics_type = "transcriptomic")
+
+
+plot_biomarker_overlap_venn(comparisons = c("PREOPEVsMET", 
+                                            "PREOPEVsHC", 
+                                            "METVsHC"),
+                            omics_type = "proteomic")
+plot_biomarker_overlap_venn(comparisons = c("PREOPEVsPOSTOPE_T", 
+                                            "PREOPEVsPOSTOPE_P", 
+                                            "POSTOPE_TVsPOSTOPE_P"),
+                            omics_type = "proteomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "POSTOPE_PVsREC_P"),
+                            omics_type = "proteomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "POSTOPE_TVsPREREC"),
+                            omics_type = "proteomic")
+plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T", 
+                                            "PREOPEVsREC_TP"),
+                            omics_type = "proteomic")
 
