@@ -1,5 +1,6 @@
 library(tidyverse)
 library("ggvenn")
+library(umap)
 
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
@@ -124,8 +125,6 @@ for(dataset_id in unique(best_features$dataset_id)){
 }
 
 
-
-
 comparisons <- c("PREOPEVsMET", "PREOPEVsHC", "METVsHC")
 best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
 plot_dir_path = "plots/FEMPipeline/selected_features_venn"
@@ -213,3 +212,158 @@ plot_biomarker_overlap_venn(comparisons = c("POSTOPE_TVsREC_T",
                                             "PREOPEVsREC_TP"),
                             omics_type = "proteomic")
 
+
+
+comparisons <- c("PREOPEVsMET", "PREOPEVsHC", "METVsHC")
+omics_type = "transcriptomic"
+phenotype_column = "GROUP_Q1to6"
+
+#plot dimred plot between comparisons of interest taking all selected biomarkers together
+plot_biomarker_dimred <- function(comparisons,
+                                  omics_type = "transcriptomic",
+                                  phenotype_column = "GROUP_Q1to6",
+                                  best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                                  plot_dir_path = "plots/FEMPipeline/selected_features_dimred"){
+  best_features <- read.csv(best_features_file_path)  
+  
+  all_selected_biomarkers <- c()
+  all_categories <- c()
+  for(i in c(1 : length(comparisons))){
+    categories <- strsplit(comparisons[i], split = "Vs", fixed = TRUE)[[1]]
+    if(omics_type == "transcriptomic"){
+      dataset_id <- paste0("GBMPlasmaEV_transcriptomic_simple_norm_",
+                           comparisons[i])
+    }else{
+      dataset_id <- paste0("GBMPlasmaEV_proteomic_impute50fil_quantile_",
+                           comparisons[i])
+    }
+    best_features_sub <- best_features %>%
+      filter(dataset_id == !!dataset_id,
+             is_best == 1) 
+    biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]
+    all_selected_biomarkers <- c(all_selected_biomarkers, biomarkers)
+    all_categories <- c(all_categories, categories)
+  }
+  all_selected_biomarkers <- unique(all_selected_biomarkers)
+  all_categories <- unique(all_categories)
+  
+  if(omics_type == "transcriptomic"){
+    data <- read.table("Data/RNA/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
+                       nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
+    norm <- "norm_log_cpm_simple"
+    split_str <- "simple_norm_"
+    phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
+  } else {
+    norm <- "quantile"
+    split_str <- "quantile_"
+    phenotype <- read.table("Data/proteomic_phenotype.txt", header=TRUE, sep="\t")
+    if(grepl(pattern = "REC-TP", x = dataset_id, fixed = TRUE)){
+      #currently this case will cause issues while reading phenotype 
+      # and requiring multiple columns in phenotype
+      data <- read.table("Data/Protein/formatted_data/Q7_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
+                         nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+    } else{
+      data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
+                         nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
+    }
+  }
+  extracted_samples <- phenotype %>%
+    rename("category" = phenotype_column) %>%
+    filter(category %in% all_categories)
+  
+  data <- data %>% select(extracted_samples$Sample) 
+  
+  norm_data <- data.frame(t(normalize_data(data, norm)))
+  groups <- extracted_samples$category
+  file_name <- paste0(omics_type, "_", paste(comparisons, collapse = "_"), "_all.png")
+  plot_dim_red(norm_data, groups, 
+               paste("Using all markers", omics_type), 
+               file_name)
+  
+  norm_data_sub <- norm_data[, all_selected_biomarkers]
+  file_name <- paste0(omics_type, "_", paste(comparisons, collapse = "_"), "_selected.png")
+  plot_dim_red(norm_data_sub, groups, 
+               paste("Using selected markers", omics_type), 
+               file_name)
+}
+
+# plot_title <- "All markers"
+# file_name <- ""
+# plot_dir_path = "plots/FEMPipeline/selected_features_dimred"
+plot_dim_red <- function(norm_data, groups, plot_title, file_name,
+                         plot_dir_path = "plots/FEMPipeline/selected_features_dimred"){
+  #plot umap dimensionality reduction
+  set.seed(1)
+  
+  print(dim(norm_data)[1])
+  if(dim(norm_data)[1] < umap.defaults$n_neighbors){
+    n_neighbors <- max(floor(dim(norm_data)[1] / 4), 2)
+    print(n_neighbors)
+  } else{
+    n_neighbors <- umap.defaults$n_neighbors
+  }
+  result <- umap(norm_data, n_neighbors = n_neighbors)
+  dim_red_df <- data.frame(x = result$layout[,1], y = result$layout[,2], 
+                           Colour = groups)  
+  xlab <- "UMAP 1"
+  ylab <- "UMAP 2"  
+  
+  ggplot2::ggplot(dim_red_df) +
+    ggplot2::geom_point(ggplot2::aes(x = x, y = y, colour = Colour)) +
+    ggplot2::labs(title = plot_title, colour = "Categories") +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab)
+  
+  if(!dir.exists(plot_dir_path)){
+    dir.create(plot_dir_path, recursive = TRUE)
+  }
+  ggsave(paste(plot_dir_path, file_name, sep = "/"))
+}
+
+
+plot_biomarker_dimred(comparisons = c("PREOPEVsMET", 
+                                      "PREOPEVsHC", 
+                                      "METVsHC"),
+                      omics_type = "transcriptomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("PREOPEVsPOSTOPE_T", 
+                                      "PREOPEVsPOSTOPE_P", 
+                                      "POSTOPE_TVsPOSTOPE_P"),
+                      omics_type = "transcriptomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+                                      "POSTOPE_PVsREC_P"),
+                      omics_type = "transcriptomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+                                      "POSTOPE_TVsPREREC"),
+                      omics_type = "transcriptomic", 
+                      phenotype_column = "GROUP_Q1to6")
+# plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+#                                       "PREOPEVsREC_TP"),
+#                       omics_type = "transcriptomic", 
+#                       phenotype_column = "GROUP_Q1to6")
+
+
+plot_biomarker_dimred(comparisons = c("PREOPEVsMET", 
+                                      "PREOPEVsHC", 
+                                      "METVsHC"),
+                      omics_type = "proteomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("PREOPEVsPOSTOPE_T", 
+                                      "PREOPEVsPOSTOPE_P", 
+                                      "POSTOPE_TVsPOSTOPE_P"),
+                      omics_type = "proteomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+                                      "POSTOPE_PVsREC_P"),
+                      omics_type = "proteomic", 
+                      phenotype_column = "GROUP_Q1to6")
+plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+                                      "POSTOPE_TVsPREREC"),
+                      omics_type = "proteomic", 
+                      phenotype_column = "GROUP_Q1to6")
+# plot_biomarker_dimred(comparisons = c("POSTOPE_TVsREC_T", 
+#                                       "PREOPEVsREC_TP"),
+#                       omics_type = "proteomic", 
+#                       phenotype_column = "GROUP_Q1to6")
