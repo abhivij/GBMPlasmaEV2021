@@ -2771,6 +2771,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #164
@@ -2784,6 +2785,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #165
@@ -2797,6 +2799,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),   
   
@@ -2811,6 +2814,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #167
@@ -2824,6 +2828,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000), 
   #168
@@ -2837,6 +2842,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #169
@@ -2850,6 +2856,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),       
   #170
@@ -2863,6 +2870,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #171
@@ -2876,6 +2884,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),       
   #172
@@ -2889,6 +2898,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #173
@@ -2902,6 +2912,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #174
@@ -2915,6 +2926,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #175
@@ -2928,6 +2940,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #176
@@ -2941,6 +2954,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #177
@@ -2954,6 +2968,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),   
   #178
@@ -2967,6 +2982,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #179
@@ -2980,6 +2996,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),  
   #180
@@ -2993,6 +3010,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #181
@@ -3006,6 +3024,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),  
   #182
@@ -3019,6 +3038,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),   
   #183
@@ -3032,6 +3052,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #184
@@ -3045,6 +3066,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),  
   #185
@@ -3058,6 +3080,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #186
@@ -3071,6 +3094,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000), 
   #187
@@ -3084,6 +3108,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),
   #188
@@ -3097,6 +3122,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),       
   #189
@@ -3110,6 +3136,7 @@ dataset_pipeline_arguments <- list(
        cores = 4,
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
+       norm = "norm_log_cpm_simple",
        classifier_feature_imp = TRUE,
        random_seed = 2000),  
   
@@ -3126,7 +3153,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #191
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3139,7 +3168,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #192
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3152,7 +3183,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),              
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),              
   #193
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3165,7 +3198,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #194
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3178,7 +3213,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #195
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3191,7 +3228,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),  
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),  
   #196
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3204,7 +3243,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #197
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3217,7 +3258,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #198
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3230,7 +3273,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),      
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),      
   #199
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3243,7 +3288,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #200
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3256,7 +3303,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #201
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3269,7 +3318,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),   
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),   
   #202
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3282,7 +3333,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #203
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3295,7 +3348,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #204
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3308,7 +3363,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #205
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3321,7 +3378,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000), 
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"), 
   #206
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3334,7 +3393,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #207
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3347,7 +3408,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),                                   
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),                                   
   #208
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3360,7 +3423,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #209
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3373,7 +3438,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #210
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3386,7 +3453,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),    
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),    
   #211
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3399,7 +3468,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #212
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3412,7 +3483,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #213
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3425,7 +3498,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #214
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3438,7 +3513,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),              
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),              
   #215
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3451,7 +3528,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #216
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3464,7 +3543,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #217
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3477,7 +3558,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #218
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3490,7 +3573,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   #219
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3503,7 +3588,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),  
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),  
   #220
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3516,7 +3603,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),   
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),   
   #221
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3529,7 +3618,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),  
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),  
   #222
   list(phenotype_file_name = "Data/proteomic_phenotype.txt",
        read_count_dir_path = "Data/Protein/subset",
@@ -3542,7 +3633,9 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000),
+       random_seed = 2000,
+       perform_filter = FALSE,
+       norm = "quantile"),
   
   
   #new set of comparisons transcriptomic
