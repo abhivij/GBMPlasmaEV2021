@@ -125,6 +125,20 @@ phenotype_info <- phenotype_info %>%
     GROUP_Q1to6 == "REC_T" | GROUP_Q1to6 == "REC_P" ~ "REC_TP",
     TRUE ~ NA_character_))  
 
+phenotype_info <- phenotype_info %>%
+  mutate(HC_MET_PREOPE_REC_TP = case_when(
+    GROUP_Q1to6 == "HC" ~ "HC",
+    GROUP_Q1to6 == "MET" ~ "MET",
+    GROUP_Q1to6 == "PREOPE" ~ "PREOPE",
+    GROUP_Q1to6 == "REC_T" | GROUP_Q1to6 == "REC_P" ~ "REC_TP",
+    TRUE ~ NA_character_)) %>%
+  mutate(PREOPE_POSTOPE_TP_PREREC_REC_TP = case_when(
+    GROUP_Q1to6 == "PREOPE" ~ "PREOPE",
+    GROUP_Q1to6 == "POSTOPE_T" | GROUP_Q1to6 == "POSTOPE_P" ~ "POSTOPE_TP",
+    GROUP_Q1to6 == "PREREC" ~ "PREREC",
+    GROUP_Q1to6 == "REC_T" | GROUP_Q1to6 == "REC_P" ~ "REC_TP",
+    TRUE ~ NA_character_))   
+
 write.table(phenotype_info, 
             file = "Data/transcriptomic_phenotype.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
