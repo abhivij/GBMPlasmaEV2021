@@ -105,6 +105,25 @@ phenotype_info <- insert_comparison_columns(phenotype_info,
 phenotype_info <- insert_comparison_columns(phenotype_info,
                                             comparison_list = list(c("PREOPE", "REC_TP")), 
                                             class_column_name = "GROUP_Q7")
+phenotype_info <- insert_comparison_columns(phenotype_info,
+                                            comparison_list = list(c("POSTOPE_T", "HC"),
+                                                                   c("POSTOPE_P", "HC")
+                                            ), 
+                                            class_column_name = "GROUP_Q1to6")
+phenotype_info <- phenotype_info %>%   
+  mutate(POSTOPE_TPVsHC = case_when(
+    GROUP_Q1to6 == "POSTOPE_T" | GROUP_Q1to6 == "POSTOPE_P" ~ "POSTOPE_TP",
+    GROUP_Q1to6 == "HC" ~ "HC",
+    TRUE ~ NA_character_)) %>%
+  mutate(PREOPEVsPOSTOPE_TP = case_when(
+    GROUP_Q1to6 == "PREOPE" ~ "PREOPE",
+    GROUP_Q1to6 == "POSTOPE_T" | GROUP_Q1to6 == "POSTOPE_P" ~ "POSTOPE_TP",
+    TRUE ~ NA_character_)) %>%
+  mutate(POSTOPE_TPVsREC_TP = case_when(
+    #not using GROUP_Q7 because POSTOPE_T, POSTOPE_P are not properly marked in it
+    GROUP_Q1to6 == "POSTOPE_T" | GROUP_Q1to6 == "POSTOPE_P" ~ "POSTOPE_TP",
+    GROUP_Q1to6 == "REC_T" | GROUP_Q1to6 == "REC_P" ~ "REC_TP",
+    TRUE ~ NA_character_))  
 
 write.table(phenotype_info, 
             file = "Data/transcriptomic_phenotype.txt", 
