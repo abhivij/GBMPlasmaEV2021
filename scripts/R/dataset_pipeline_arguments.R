@@ -3542,6 +3542,390 @@ dataset_pipeline_arguments <- list(
        results_dir_path = "fem_pipeline_results_subset",
        fems_to_run = c("all"),
        classifier_feature_imp = TRUE,
-       random_seed = 2000)  
+       random_seed = 2000),
+  
+  
+  #new set of comparisons transcriptomic
+  #223
+  #transcriptomic POSTOPE_TVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TVsHC",
+       classes = c("HC", "POSTOPE_T"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       norm = "norm_log_cpm_simple"),
+  
+  #224
+  #transcriptomic POSTOPE_TVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TVsHC",
+       classes = c("HC", "POSTOPE_T"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       norm = "norm_log_cpm_simple"),
+  
+  #225
+  #transcriptomic POSTOPE_PVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_PVsHC",
+       classes = c("HC", "POSTOPE_P"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       norm = "norm_log_cpm_simple"),
+  
+  #226
+  #transcriptomic POSTOPE_PVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_PVsHC",
+       classes = c("HC", "POSTOPE_P"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       norm = "norm_log_cpm_simple"),
+  
+  #227
+  #transcriptomic POSTOPE_TPVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TPVsHC",
+       classes = c("HC", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       norm = "norm_log_cpm_simple"),
+  
+  #228
+  #transcriptomic POSTOPE_TPVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TPVsHC",
+       classes = c("HC", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       norm = "norm_log_cpm_simple"),
+  
+  #229
+  #transcriptomic PREOPEVsPOSTOPE_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("PREOPE", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       norm = "norm_log_cpm_simple"),
+  
+  #230
+  #transcriptomic PREOPEVsPOSTOPE_TP
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("PREOPE", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       norm = "norm_log_cpm_simple"),   
+  
+  #231
+  #transcriptomic POSTOPE_TPVsREC_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("POSTOPE_TP", "REC_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       norm = "norm_log_cpm_simple"),
+  
+  #232
+  #transcriptomic POSTOPE_TPVsREC_TP
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA",
+       read_count_file_name = "umi_counts.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_transcriptomic_simple_norm",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("POSTOPE_TP", "REC_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       norm = "norm_log_cpm_simple"),
+  
+
+  #new set of comparisons proteomic
+  #233
+  #proteomic POSTOPE_TVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TVsHC",
+       classes = c("HC", "POSTOPE_T"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #234
+  #proteomic POSTOPE_TVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TVsHC",
+       classes = c("HC", "POSTOPE_T"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #235
+  #proteomic POSTOPE_PVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_PVsHC",
+       classes = c("HC", "POSTOPE_P"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #236
+  #proteomic POSTOPE_PVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_PVsHC",
+       classes = c("HC", "POSTOPE_P"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #237
+  #proteomic POSTOPE_TPVsHC
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TPVsHC",
+       classes = c("HC", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #238
+  #proteomic POSTOPE_TPVsHC
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TPVsHC",
+       classes = c("HC", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #239
+  #proteomic PREOPEVsPOSTOPE_TP
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("PREOPE", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #240
+  #proteomic PREOPEVsPOSTOPE_TP
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("PREOPE", "POSTOPE_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
+       norm = "quantile"),   
+  
+  #241
+  #proteomic POSTOPE_TPVsREC_TP
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("POSTOPE_TP", "REC_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("all", 
+                       "t-test", "t-test_BH",
+                       "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
+                       "wilcoxontest", "wilcoxontest_BH",
+                       "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
+                       "ranger_impu_cor", 
+                       "mrmr10", "mrmr20",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100"),
+       perform_filter = FALSE,
+       norm = "quantile"),
+  
+  #242
+  #proteomic POSTOPE_TPVsREC_TP
+  # to run "RF_RFE", "ga_rf"
+  list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+       read_count_dir_path = "Data/Protein/formatted_data",
+       read_count_file_name = "Q1-6_nonorm_formatted_impute50fil.csv",
+       sep = ",",
+       dataset_id = "GBMPlasmaEV_proteomic_impute50fil_quantile",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("POSTOPE_TP", "REC_TP"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results",
+       fems_to_run = c("RF_RFE", "ga_rf"),
+       perform_filter = FALSE,
+       norm = "quantile")    
 
 )  

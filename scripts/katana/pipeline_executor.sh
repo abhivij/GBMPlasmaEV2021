@@ -42,3 +42,12 @@ qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 159-162 pipeline_executor
 qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 163-189 pipeline_executor.pbs
 qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 190-218 pipeline_executor.pbs
 qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 219-222 pipeline_executor.pbs
+
+
+
+
+#transcriptomics new comparisons
+qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 223-232 pipeline_executor.pbs
+
+#proteomics new comparisons
+qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 233-242 pipeline_executor.pbs
