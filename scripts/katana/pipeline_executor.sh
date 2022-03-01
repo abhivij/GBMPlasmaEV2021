@@ -51,3 +51,9 @@ qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 223-232 pipeline_execut
 
 #proteomics new comparisons
 qsub -l select=1:ncpus=16:mem=124gb,walltime=24:00:00 -J 233-242 pipeline_executor.pbs
+
+
+
+#new comparisons subset
+qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 243-247 pipeline_executor.pbs
+qsub -l select=1:ncpus=4:mem=124gb,walltime=4:00:00 -J 248-254 pipeline_executor.pbs
