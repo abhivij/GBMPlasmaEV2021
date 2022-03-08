@@ -10,8 +10,16 @@ source("scripts/R/results_analysis/results_analysis_utils.R")
 # omics_type = "transcriptomic"
 # phenotype_column = "HC_MET_PREOPE_REC_TP"
 # conditions <- c("HC", "MET", "PREOPE", "REC_TP")
-# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# best_features_file_path <- "Data/selected_features/made_old_2022Feb23/best_features_with_add_col.csv"
 # plot_dir_path <- "plots/FEMPipeline/biomarker_linegraph/HC_MET_PREOPE_REC_TP"
+
+
+conditions = c("PREOPE", "POSTOPE_TP", "PREREC", "REC_TP")
+comparison = "PREOPEVsPOSTOPE_TP"
+omics_type = "proteomic"
+phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+plot_dir_path = "plots/FEMPipeline/biomarker_linegraph/PREOPE_POSTOPE_TP_PREREC_REC_TP"
 
 #plot linegraph with median value of biomarkers as different lines against different conditions
 #also plots the associated boxplots to show the variation os biomarkers within the samples
@@ -47,6 +55,8 @@ plot_biomarker_linegraph <- function(conditions,
     norm <- "norm_log_cpm_simple"
     split_str <- "simple_norm_"
     phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
+    lim = c(-3, 5)
+    breaks = seq(-3, 5, 1)
   } else {
     norm <- "quantile"
     split_str <- "quantile_"
@@ -60,6 +70,8 @@ plot_biomarker_linegraph <- function(conditions,
       data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
     }
+    lim = c(5, 17.5)
+    breaks = seq(5, 17.5, 2.5)
   } 
   
   extracted_samples <- phenotype %>%
@@ -78,7 +90,19 @@ plot_biomarker_linegraph <- function(conditions,
     select(biomarkers) %>%
     rownames_to_column("Sample") %>%
     inner_join(extracted_samples) %>%
-    select(-c(Sample))
+    select(-c(Sample)) %>%
+    mutate(category = factor(category, levels = conditions))
+  
+  if(omics_type == "proteomic"){ #obtain id to name mapping for protein biomarkers
+    mapping_info <- read.csv("Data/selected_features/protein_biomarker_info.csv") 
+    mapping_info <- mapping_info[, 1:2]
+    colnames(mapping_info) <- c("id", "name")
+    mapping_info <- data.frame("id" = biomarkers) %>%
+      inner_join(mapping_info %>%
+                   mutate(name = gsub("_HUMAN", "", name)))
+    colnames(data_to_plot) <- c(mapping_info$name, "category")
+
+  }
   
   data_to_plot_boxplot <- data_to_plot %>%
     pivot_longer(cols = !category, names_to = "biomarker", values_to = "norm_expr")
@@ -92,18 +116,19 @@ plot_biomarker_linegraph <- function(conditions,
     ggtitle(paste("Biomarkers from", comparison, "comparison", 
                   "from", omics_type, "data")) +
     ylab("normalized expression") +
+    scale_y_continuous(limits = lim, breaks = breaks) +
     theme(axis.text.x = element_text(size=rel(1.2), angle = 45, hjust = 1),
           axis.text.y = element_text(size=rel(1.2)),
-          axis.title.x = element_text(size=rel(1.5)),
-          axis.title.y = element_text(size=rel(1.5)),
-          plot.title  = element_text(size=rel(1.5)))
+          axis.title.x = element_text(size=rel(1.2)),
+          axis.title.y = element_text(size=rel(1.2)),
+          plot.title  = element_text(size=rel(1.2)))
   
   plot_file_name <- paste0(plot_dir_path, "/",
                            comparison, 
                            "_", omics_type,
                            "_", "boxplot",
                            ".png")
-  ggsave(plot_file_name)
+  ggsave(plot_file_name, width = 20, units = "cm")
   
   
   data_to_plot <- data_to_plot %>%
@@ -123,14 +148,14 @@ plot_biomarker_linegraph <- function(conditions,
                   "from", omics_type, "data")) +
     theme(axis.text.x = element_text(size=rel(1.2)),
           axis.text.y = element_text(size=rel(1.2)),
-          axis.title.x = element_text(size=rel(1.3)),
-          axis.title.y = element_text(size=rel(1.3)),
-          plot.title  = element_text(size=rel(1.5)))
+          axis.title.x = element_text(size=rel(1.2)),
+          axis.title.y = element_text(size=rel(1.2)),
+          plot.title  = element_text(size=rel(1.2)))
   
   plot_file_name <- paste0(plot_dir_path, "/",
                            comparison, 
                            "_", omics_type,
                            "_", "connectedscatter",
                            ".png")
-  ggsave(plot_file_name)  
+  ggsave(plot_file_name, width = 20, units = "cm")  
 }  
