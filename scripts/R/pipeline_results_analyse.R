@@ -5,39 +5,6 @@ library(ComplexHeatmap)
 source("scripts/R/utils.R")
 source("scripts/R/dataset_pipeline_arguments.R")
 
-# data_info <- read.table('data_info.csv', sep = ',', header = TRUE)
-# fsm_info <- read.table('fsm_info.csv', sep = ',', header = TRUE)
-# model_results <- read.table('model_results.csv', sep = ',', header = TRUE)
-
-# setwd("~/UNSW/VafaeeLab/GBMPlasmaEV/")
-
-dataset_vec <- c("GBMPlasmaEV_transcriptomic_PREOPEVsMET",
-                 "GBMPlasmaEV_transcriptomic_PREOPEVsHC",
-                 "GBMPlasmaEV_transcriptomic_METVsHC",
-                 "GBMPlasmaEV_proteomic_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_norm_quantile_METVsHC",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_impute75fil_norm_quantile_METVsHC",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsMET",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_PREOPEVsHC",
-                 "GBMPlasmaEV_proteomic_impute50fil_norm_quantile_METVsHC"                 
-                 )
-dataset_vec <- dataset_vec[c(1:3, 10:12)]
-
-fsm_vec <- c("all", 
-  "t-test", "t-test_BH",
-  "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
-  "wilcoxontest", "wilcoxontest_BH",
-  "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
-  "ranger_impu_cor", 
-  "mrmr10", "mrmr20",
-  "mrmr30", "mrmr50", 
-  "mrmr75", "mrmr100",
-  "RF_RFE", "ga_rf")
-
-# fsm_vec[c(1:2, 4, 6:12)]
 
 
 data_info <- data_info %>%
@@ -133,6 +100,48 @@ plot_heatmap <- function(dparg_vec,
     
   }
   
+  ds_heatmap_dir_path <- paste0(dir_path, "/ds/") 
+  if(!dir.exists(ds_heatmap_dir_path)){
+    dir.create(ds_heatmap_dir_path)
+  }
+  for(ds in replaced_dataset_id_vec){
+    print(ds)
+    
+    model_results_sub <- model_results %>%
+      filter(Model != "Simple logistic regression") %>%
+      mutate(Model = gsub("Regularized logistic regression", "regu log_reg", Model)) %>%
+      filter(DataSetId == ds)
+    
+    data_to_plot <- model_results_sub %>%
+      select(Model, FSM, Mean_AUC) %>%
+      # pivot_wider(names_from = DataSetId, values_from = Mean_AUC, values_fn = length) %>%          
+      pivot_wider(names_from = Model, values_from = Mean_AUC) %>%
+      column_to_rownames("FSM")
+    data_to_plot <- data.matrix(data_to_plot)
+    
+    file_name_curr <- paste0("Mean_AUC",
+                             gsub(" ", "_", ds),
+                             ".png")
+    
+    file_name_curr <- paste0(ds_heatmap_dir_path, file_name_curr)
+    
+    png(file_name_curr, units = "cm", width = 20, height = 15, res = 1200)
+    ht <- Heatmap(data_to_plot, name = "Mean AUC",
+                  col = magma(5),
+                  rect_gp = gpar(col = "white", lwd = 1),
+                  column_names_rot = 60,
+                  column_names_gp = gpar(fontsize = 10),
+                  row_title = "Feature Selection Methods",
+                  row_names_side = "left",
+                  cell_fun = function(j, i, x, y, width, height, fill) {
+                    grid.text(sprintf("%.3f", data_to_plot[i, j]), x, y, gp = gpar(fontsize = 7, col = "slateblue3"))
+                  })
+    draw(ht, column_title = paste("Mean AUC results for", ds))
+    dev.off()
+    
+  }
+  
+  
   dir_path <- paste0(dir_path, "common_barplot/")
   if(!dir.exists(dir_path)){
     dir.create(dir_path)
@@ -178,6 +187,19 @@ plot_heatmap(dparg_vec = c(139:141, 145:147, 151, 153, 155, 157),
              results_dir = "fem_pipeline_results",
              dir_path = "plots/FEMPipeline/heatmap/transcriptomic_simple_norm_all/",
              dataset_replace_string = "transcriptomic_simple_norm_")
+
+
+plot_heatmap(dparg_vec = c(139:141, 145:147, 151, 153, 155, 157,
+                           223, 225, 227, 229, 231),   #transcriptomic new set of comparisons
+             results_dir = "fem_pipeline_results",
+             dir_path = "plots/FEMPipeline/heatmap/transcriptomic_simple_norm_all_2022Feb23/",
+             dataset_replace_string = "transcriptomic_simple_norm_")
+
+plot_heatmap(dparg_vec = c(41:43, 125:127, 131, 133, 135, 137,
+                           233, 235, 237, 239, 241),  #proteomic new set of comparisons)
+             results_dir = "fem_pipeline_results",
+             dir_path = "plots/FEMPipeline/heatmap/proteomic_quantile_all_2022Feb23/",
+             dataset_replace_string = "proteomic_impute50fil_")
 
 
 classification_models <- unique(model_results$Model)
@@ -276,8 +298,9 @@ plot_JI_heatmap <- function(filename = "all_ji.csv", dir = "JI",
     mutate(DataSetId = gsub("GBMPlasmaEV_", "", DataSetId)) %>%
     mutate(DataSetId = gsub(dataset_replace_string, "", DataSetId)) %>%
     pivot_wider(names_from = DataSetId, values_from = JI) %>%
-    column_to_rownames(var = "FSM1") %>%
-    drop_na()
+    column_to_rownames(var = "FSM1")
+  
+  all_ji_df[is.na(all_ji_df)] <- 0
   
   all_ji_mat <- data.matrix(all_ji_df)
   
@@ -314,8 +337,18 @@ plot_JI_heatmap(filename = "all_ji.csv",
                 heatmapfilename = "prot_JI.svg",
                 heatmapfiledir = "plots/FEMPipeline/JI",
                 fsm_allowed = fsm_vec,
-                dparg_vec = c(41:43, 126:127, 131, 133, 137),
+                dparg_vec = c(41:43, 125:127, 131, 133, 135, 137,
+                              233, 235, 237, 239, 241),
                 dataset_replace_string = "proteomic_impute50fil_")
+
+plot_JI_heatmap(filename = "all_ji.csv",
+                dir = "fem_pipeline_results/JI/",
+                heatmapfilename = "tra_JI.svg",
+                heatmapfiledir = "plots/FEMPipeline/JI",
+                fsm_allowed = fsm_vec,
+                dparg_vec = c(139:141, 145:147, 151, 153, 155, 157,
+                              223, 225, 227, 229, 231),
+                dataset_replace_string = "transcriptomic_simple_norm_")
 
 ##########################
 
@@ -328,20 +361,25 @@ source("scripts/R/utils.R")
 
 
 
-setwd("~/UNSW/VafaeeLab/GBMPlasmaEV/")
-
-
 # dparg_vec <- c(31:35)
 # criteria <- 28
 
-dparg_vec <- c(159:162)
+dparg_vec <- c(163:165)
 criteria <- 29
 results_dir = "fem_pipeline_results_subset"
+dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_"
+heatmap_file_name = "tr_PREOPEVsMET.png"
 
-#make sure that only subsets from same classification criteria runs in one call,
-#   else the dir path will be incorrect
-plot_heatmap_and_var_plot <- function(dparg_vec, criteria, 
-                                      results_dir = "fem_pipeline_results"){
+plot_common_feature_heatmap(c(163:165),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_",
+                            heatmap_file_name = "tr_PREOPEVsMET.png"
+                            )
+
+plot_common_feature_heatmap <- function(dparg_vec, 
+                                      results_dir = "fem_pipeline_results",
+                                      dataset_replace_string = "",
+                                      heatmap_file_name){
   data_info <- read.table(paste(results_dir, "data_info.csv", sep = "/"), 
                           sep = ',', header = TRUE)
   fsm_info <- read.table(paste(results_dir, "fsm_info.csv", sep = "/"),
@@ -360,17 +398,10 @@ plot_heatmap_and_var_plot <- function(dparg_vec, criteria,
   }
   dataset_id_vec 
   
-  subset_file_name_components <- strsplit(dataset_id_vec[1],split = "_")[[1]]
-  
   model_results <- model_results %>%
     filter(DataSetId %in% dataset_id_vec) %>%
-    mutate(DataSetId = gsub("GBMPlasmaEV_", "", DataSetId, fixed = TRUE)) %>%
-    mutate(DataSetId = gsub(subset_file_name_components[2], "", DataSetId, fixed = TRUE)) %>%
-    mutate(DataSetId = gsub(subset_file_name_components[3], "", DataSetId, fixed = TRUE)) %>%
-    mutate(DataSetId = gsub("__", "", DataSetId, fixed = TRUE))
-  
-  model_results <- model_results %>%
-    mutate(DataSetId = gsub("_PREOPEVsMET", "", DataSetId, fixed = TRUE))
+    mutate(DataSetId = gsub(dataset_replace_string, "", DataSetId, fixed = TRUE)) %>%
+    mutate(DataSetId = gsub("GBMPlasmaEV_", "", DataSetId, fixed = TRUE))
   
   data_to_plot <- model_results %>%
     select(DataSetId, Model, Mean_AUC) %>%
@@ -378,21 +409,16 @@ plot_heatmap_and_var_plot <- function(dparg_vec, criteria,
     column_to_rownames("Model")
   data_to_plot <- data.matrix(data_to_plot)
   
-  dir_path <- "plots/FEMPipeline/common_heatmap/tr_preope_met/"
   
-  dir_path <- paste0("plots/FEMPipeline/common_heatmap/",
-                     paste(subset_file_name_components[2],
-                           subset_file_name_components[3],
-                           sep = "_"),
-                     "/")
+  dir_path <- paste0("plots/FEMPipeline/common_heatmap/")
   if(!dir.exists(dir_path)){
     dir.create(dir_path)
   }
-  file_name <- paste0(dir_path, criteria, "_AUC.png")
+  file_path <- paste0(dir_path, heatmap_file_name)
   
   heatmap_title <- paste("Mean AUC results from selected common features")
   
-  png(file_name, units = "cm", width = 20, height = 15, res = 1200)
+  png(file_path, units = "cm", width = 20, height = 15, res = 1200)
   ht <- Heatmap(data_to_plot, name = "Mean AUC",
                 col = magma(5),
                 rect_gp = gpar(col = "white", lwd = 1),
@@ -405,58 +431,162 @@ plot_heatmap_and_var_plot <- function(dparg_vec, criteria,
                 })
   draw(ht, column_title = heatmap_title)
   dev.off()
-  
-  
-  dir_path <- paste0("plots/FEMPipeline/common_barplot/",
-                     paste(subset_file_name_components[2],
-                           subset_file_name_components[3],
-                           sep = "_"),
-                     "/")
-  if(!dir.exists(dir_path)){
-    dir.create(dir_path)
-  }
-  classification_models <- unique(model_results$Model)
-  for (cm in classification_models) {
-    individual_model <- model_results %>%
-      filter(Model == cm)
-    model_barplot <- ggplot(individual_model, aes(x=DataSetId, fill=FSM, y=Mean_AUC)) +
-      geom_bar(stat="identity", position="dodge") +
-      geom_errorbar( aes(x=DataSetId, ymin=X95.CI_AUC_lower, ymax=X95.CI_AUC_upper), position="dodge") +
-      scale_fill_viridis_d() +
-      theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
-            axis.text.y = element_text(size=rel(1.2), face="italic", hjust=0.95),
-            strip.text = element_text(size=rel(1.2), face="bold"),
-            legend.title = element_text(size=rel(1.2)),
-            legend.text = element_text(size=rel(1.1))
-      ) +
-      facet_wrap(facets = vars(Model))  
-
-    file_name <- paste0(dir_path, criteria, "_", str_replace(cm, " ", ""), "_barplot.png")
-    ggsave(file_name, model_barplot, width=20, height=10, dpi=500)
-  }  
 }
 
-plot_heatmap_and_var_plot(c(31:35), 28)
 
-plot_heatmap_and_var_plot(c(73:74), 29, "fem_pipeline_results_subset")
+plot_common_feature_heatmap(c(163:165),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_",
+                            heatmap_file_name = "tr_PREOPEVsMET.png"
+)
+plot_common_feature_heatmap(c(166:169),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsHC_",
+                            heatmap_file_name = "tr_PREOPEVsHC.png"
+)
+plot_common_feature_heatmap(c(170:173),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_METVsHC_",
+                            heatmap_file_name = "tr_METVsHC.png"
+)
+plot_common_feature_heatmap(c(174:175),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsPOSTOPE_T_",
+                            heatmap_file_name = "tr_PREOPEVsPOSTOPE_T.png"
+)
+plot_common_feature_heatmap(c(176:177),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsPOSTOPE_P_",
+                            heatmap_file_name = "tr_PREOPEVsPOSTOPE_P.png"
+)
+plot_common_feature_heatmap(c(178:179),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_POSTOPE_TVsPOSTOPE_P_",
+                            heatmap_file_name = "tr_POSTOPE_TVsPOSTOPE_P.png"
+)
+plot_common_feature_heatmap(c(180:182),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_POSTOPE_TVsREC_T_",
+                            heatmap_file_name = "tr_POSTOPE_TVsREC_T.png"
+)
+plot_common_feature_heatmap(c(183:184),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_POSTOPE_PVsREC_P_",
+                            heatmap_file_name = "tr_POSTOPE_PVsREC_P.png"
+)
+plot_common_feature_heatmap(c(185:186),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_POSTOPE_TVsPREREC_",
+                            heatmap_file_name = "tr_POSTOPE_TVsPREREC.png"
+)
+plot_common_feature_heatmap(c(187:189),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsREC_TP_",
+                            heatmap_file_name = "tr_PREOPEVsREC_TP.png"
+)
 
-plot_heatmap_and_var_plot(c(31:35), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(36:40), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
 
-plot_heatmap_and_var_plot(c(75:79), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(80:84), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+plot_common_feature_heatmap(c(190:192),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsMET_",
+                            heatmap_file_name = "pr_PREOPEVsMET.png"
+)
+plot_common_feature_heatmap(c(193:198),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsHC_",
+                            heatmap_file_name = "pr_PREOPEVsHC.png"
+)
+plot_common_feature_heatmap(c(199:201),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_METVsHC_",
+                            heatmap_file_name = "pr_METVsHC.png"
+)
 
-plot_heatmap_and_var_plot(c(85:89), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(90:94), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+plot_common_feature_heatmap(c(202:205),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsPOSTOPE_P_",
+                            heatmap_file_name = "pr_PREOPEVsPOSTOPE_P.png"
+)
+plot_common_feature_heatmap(c(206:207),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_POSTOPE_TVsPOSTOPE_P_",
+                            heatmap_file_name = "pr_POSTOPE_TVsPOSTOPE_P.png"
+)
+plot_common_feature_heatmap(c(208:210),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_POSTOPE_TVsREC_T_",
+                            heatmap_file_name = "pr_POSTOPE_TVsREC_T.png"
+)
+plot_common_feature_heatmap(c(211:214),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_POSTOPE_PVsREC_P_",
+                            heatmap_file_name = "pr_POSTOPE_PVsREC_P.png"
+)
 
-plot_heatmap_and_var_plot(c(95:99), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(100:104), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+plot_common_feature_heatmap(c(215:218),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsREC_TP_",
+                            heatmap_file_name = "pr_PREOPEVsREC_TP.png"
+)
 
-plot_heatmap_and_var_plot(c(105:109), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(110:114), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+plot_common_feature_heatmap(c(219:220),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsPOSTOPE_T_",
+                            heatmap_file_name = "pr_PREOPEVsPOSTOPE_T.png"
+)
 
-plot_heatmap_and_var_plot(c(115:119), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
-plot_heatmap_and_var_plot(c(120:124), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+plot_common_feature_heatmap(c(221:222),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_POSTOPE_TVsPREREC_",
+                            heatmap_file_name = "pr_POSTOPE_TVsPREREC.png"
+)
+
+
+
+plot_common_feature_heatmap(c(243:245),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsPOSTOPE_TP_",
+                            heatmap_file_name = "tr_PREOPEVsPOSTOPE_TP.png"
+)
+plot_common_feature_heatmap(c(246:247),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "transcriptomic_simple_norm_POSTOPE_TPVsREC_TP_",
+                            heatmap_file_name = "tr_POSTOPE_TPVsREC_TP.png"
+)
+
+
+plot_common_feature_heatmap(c(248:251),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_PREOPEVsPOSTOPE_TP_",
+                            heatmap_file_name = "pr_PREOPEVsPOSTOPE_TP.png"
+)
+
+plot_common_feature_heatmap(c(252:254),
+                            results_dir = "fem_pipeline_results_subset",
+                            dataset_replace_string = "proteomic_impute50fil_quantile_POSTOPE_TPVsREC_TP_",
+                            heatmap_file_name = "pr_POSTOPE_TPVsREC_TP.png"
+)
+# plot_heatmap_and_var_plot(c(31:35), 28)
+# 
+# plot_heatmap_and_var_plot(c(73:74), 29, "fem_pipeline_results_subset")
+# 
+# plot_heatmap_and_var_plot(c(31:35), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(36:40), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# 
+# plot_heatmap_and_var_plot(c(75:79), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(80:84), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# 
+# plot_heatmap_and_var_plot(c(85:89), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(90:94), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# 
+# plot_heatmap_and_var_plot(c(95:99), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(100:104), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# 
+# plot_heatmap_and_var_plot(c(105:109), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(110:114), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# 
+# plot_heatmap_and_var_plot(c(115:119), 28, "fem_pipeline_results_Nov18/fem_pipeline_results")
+# plot_heatmap_and_var_plot(c(120:124), 29, "fem_pipeline_results_Nov18/fem_pipeline_results")
 
 
 fsm <- "ranger"
@@ -499,3 +629,4 @@ plot_feature_imp("ranger", 28,
 
 plot_feature_imp("ranger", 29, 
                  "fem_pipeline_results/GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29_PREOPEVsMET_feature_imp.csv")
+
