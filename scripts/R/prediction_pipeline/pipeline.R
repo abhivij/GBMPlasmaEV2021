@@ -88,6 +88,7 @@ execute_pipeline <- function(phenotype_file_name,
   
   #conditions : c(pos_class, neg_class, validation_class)
   conditions = c("POSTOPE_TP", "REC_TP", "PREREC")
+  classes = conditions[1:2]
   
   phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
   
@@ -137,7 +138,7 @@ execute_pipeline <- function(phenotype_file_name,
   output_labels <- phenotype %>%
     rename("Label" = phenotype_column) %>%
     filter(Label %in% conditions) %>%
-    select(Sample, Label)
+    dplyr::select(Sample, Label)
   
   
   #create 3 groups : train, test, test2
@@ -146,17 +147,17 @@ execute_pipeline <- function(phenotype_file_name,
   test2_class <- conditions[3]
   test2_samples <- output_labels %>%
     filter(Label == test2_class)
-  test2_data <- data %>% select(test2_samples$Sample)  
+  test2_data <- data %>% dplyr::select(test2_samples$Sample)  
   test2_data <- as.data.frame(t(as.matrix(test2_data)))
   
   output_labels <- output_labels %>%
     filter(Label != test2_class)
-  data <- data %>% select(output_labels$Sample)
+  data <- data %>% dplyr::select(output_labels$Sample)
   data <- as.data.frame(t(as.matrix(data)))
   
   #now data, test2_data format : (samples x transcripts)
   
-  # random_seed = 1000
+  random_seed = 1000
   set.seed(random_seed)
   train_index <- caret::createDataPartition(output_labels$Label, p = .8, 
                                             list = FALSE, 
@@ -170,7 +171,56 @@ execute_pipeline <- function(phenotype_file_name,
   
   
 
+  if(perform_filter){
+    data.train <- as.data.frame(t(as.matrix(data.train)))
+    data.test <- as.data.frame(t(as.matrix(data.test)))
+    test2_data <- as.data.frame(t(as.matrix(test2_data)))
+    
+    keep <- edgeR::filterByExpr(data.train, group = label.train$Label)
+    data.train <- data.train[keep, ]
+    data.test <- data.test[keep, ]  
+    test2_data <- test2_data[keep, ]
+  }
   
+  
+  if(norm == "norm_log_cpm_simple"){
+    #calculating norm log cpm
+    print("norm_log_cpm_simple")
+    
+    data.train <- edgeR::cpm(data.train, log=TRUE)
+    data.test <- edgeR::cpm(data.test, log=TRUE)
+    test2_data <- edgeR::cpm(test2_data, log=TRUE) 
+    
+    data.train <- as.data.frame(t(as.matrix(data.train)))
+    data.test <- as.data.frame(t(as.matrix(data.test)))
+    test2_data <- as.data.frame(t(as.matrix(test2_data)))
+    
+    #normalizing the data
+    normparam <- caret::preProcess(data.train) 
+    data.train <- predict(normparam, data.train)
+    data.test <- predict(normparam, data.test) #normalizing test data using params from train data   
+    test2_data <- predict(normparam, test2_data)
+  } else if(norm == "quantile"){
+    norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.train))
+    norm_data <- data.frame(norm_data, row.names = rownames(data.train))
+    colnames(norm_data) <- colnames(data.train)
+    data.train <- norm_data
+    
+    norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.test))
+    norm_data <- data.frame(norm_data, row.names = rownames(data.test))
+    colnames(norm_data) <- colnames(data.test)
+    data.test <- norm_data
+    
+    data.train <- as.data.frame(t(as.matrix(data.train)))
+    data.test <- as.data.frame(t(as.matrix(data.test)))
+  }
+  
+  
+  #now data, test2_data format : (samples x transcripts)
+  
+  logistic_regression(data.train, label.train, data.test, label.test, 
+                      classes = classes, 
+                      regularize = 'l2')
   
   
   ######################################################################
