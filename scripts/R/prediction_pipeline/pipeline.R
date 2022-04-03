@@ -85,6 +85,7 @@ execute_pipeline <- function(phenotype_file_name,
   
   comparison = "POSTOPE_TPVsREC_TP"
   omics_type = "transcriptomic"
+  # omics_type = "proteomic"
   
   #conditions : c(pos_class, neg_class, validation_class)
   conditions = c("POSTOPE_TP", "REC_TP", "PREREC")
@@ -145,17 +146,17 @@ execute_pipeline <- function(phenotype_file_name,
   
   #currently data format : (transcripts x samples)
   test2_class <- conditions[3]
-  test2_samples <- output_labels %>%
+  label.test2 <- output_labels %>%
     filter(Label == test2_class)
-  test2_data <- data %>% dplyr::select(test2_samples$Sample)  
-  test2_data <- as.data.frame(t(as.matrix(test2_data)))
+  data.test2 <- data %>% dplyr::select(label.test2$Sample)  
+  data.test2 <- as.data.frame(t(as.matrix(data.test2)))
   
   output_labels <- output_labels %>%
     filter(Label != test2_class)
   data <- data %>% dplyr::select(output_labels$Sample)
   data <- as.data.frame(t(as.matrix(data)))
   
-  #now data, test2_data format : (samples x transcripts)
+  #now data, data.test2 format : (samples x transcripts)
   
   random_seed = 1000
   set.seed(random_seed)
@@ -174,12 +175,12 @@ execute_pipeline <- function(phenotype_file_name,
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
-    test2_data <- as.data.frame(t(as.matrix(test2_data)))
+    data.test2 <- as.data.frame(t(as.matrix(data.test2)))
     
     keep <- edgeR::filterByExpr(data.train, group = label.train$Label)
     data.train <- data.train[keep, ]
     data.test <- data.test[keep, ]  
-    test2_data <- test2_data[keep, ]
+    data.test2 <- data.test2[keep, ]
   }
   
   
@@ -189,18 +190,22 @@ execute_pipeline <- function(phenotype_file_name,
     
     data.train <- edgeR::cpm(data.train, log=TRUE)
     data.test <- edgeR::cpm(data.test, log=TRUE)
-    test2_data <- edgeR::cpm(test2_data, log=TRUE) 
+    data.test2 <- edgeR::cpm(data.test2, log=TRUE) 
     
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
-    test2_data <- as.data.frame(t(as.matrix(test2_data)))
+    data.test2 <- as.data.frame(t(as.matrix(data.test2)))
     
     #normalizing the data
     normparam <- caret::preProcess(data.train) 
     data.train <- predict(normparam, data.train)
     data.test <- predict(normparam, data.test) #normalizing test data using params from train data   
-    test2_data <- predict(normparam, test2_data)
+    data.test2 <- predict(normparam, data.test2)
+    
   } else if(norm == "quantile"){
+    
+    #TO DO : process data.test2 in this
+    
     norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.train))
     norm_data <- data.frame(norm_data, row.names = rownames(data.train))
     colnames(norm_data) <- colnames(data.train)
@@ -211,56 +216,31 @@ execute_pipeline <- function(phenotype_file_name,
     colnames(norm_data) <- colnames(data.test)
     data.test <- norm_data
     
+    norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.test2))
+    norm_data <- data.frame(norm_data, row.names = rownames(data.test2))
+    colnames(norm_data) <- colnames(data.test2)
+    data.test2 <- norm_data
+    
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
+    data.test2 <- as.data.frame(t(as.matrix(data.test2)))
   }
+  #now data, data.test2 format : (samples x transcripts)
+  
+  #get best biomarkers only
+  data.train <- data.frame(data.train)[, biomarkers]  #data.frame() replaces - in colnames to .
+  data.test <- data.frame(data.test)[, biomarkers]
+  data.test2 <- data.frame(data.test2)[, biomarkers]
   
   
-  #now data, test2_data format : (samples x transcripts)
-  
-  logistic_regression(data.train, label.train, data.test, label.test, 
-                      classes = classes, 
-                      regularize = 'l2')
-  
-  
-  ######################################################################
+  if(omics_type == "transcriptomic"){
+    logistic_regression(data.train, label.train, data.test, label.test, 
+                        data.test2, label.test2,
+                        classes = classes, 
+                        regularize = 'l2',
+                        result_file_name = "Data/prediction_result/transcriptomics.csv")    
+  } else if(omics_type == "proteomic"){
     
-  
-  
-  
-
-  x <- data_list[[1]]                   #format : (transcripts x samples)
-  x <- as.data.frame(t(as.matrix(x)))   #format : (samples x transcripts)
-  output_labels <- data_list[[2]]       #format : (2 columns : Sample, Label)
-
-  
-  all_results <- list()
-  result_count <- 1
-
-  for (fe_arg in feature_extraction_arguments) {
-    if( (!fe_arg[["fsm_name"]] %in% fems_to_ignore) &&
-        (  length(fems_to_run) == 0 ||
-          (length(fems_to_run) > 0 && fe_arg[["fsm_name"]] %in% fems_to_run) )
-      ){
-      all_args <- c(list(x = x, output_labels = output_labels, classes = classes,
-                         perform_filter = perform_filter, norm = norm,
-                         classifier_feature_imp = classifier_feature_imp,
-                         random_seed = random_seed),
-                    fe_arg)
-      try({
-        all_results[[result_count]] <- do.call(run_fsm_and_models, all_args)
-        result_count <- result_count + 1
-      })
-    }
-  }
-  
-  parallel::stopCluster(cl)
-  
-  dataset_id <- paste(dataset_id, classification_criteria, sep = "_")
-  if(length(all_results) != 0){
-    write_results(all_results, raw_data_dim,
-                  output_labels, dataset_id, classes,
-                  results_dir_path)
   }
 
   
