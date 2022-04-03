@@ -85,7 +85,7 @@ execute_pipeline <- function(phenotype_file_name,
   
   comparison = "POSTOPE_TPVsREC_TP"
   omics_type = "transcriptomic"
-  # omics_type = "proteomic"
+  omics_type = "proteomic"
   
   #conditions : c(pos_class, neg_class, validation_class)
   conditions = c("POSTOPE_TP", "REC_TP", "PREREC")
@@ -204,8 +204,6 @@ execute_pipeline <- function(phenotype_file_name,
     
   } else if(norm == "quantile"){
     
-    #TO DO : process data.test2 in this
-    
     norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.train))
     norm_data <- data.frame(norm_data, row.names = rownames(data.train))
     colnames(norm_data) <- colnames(data.train)
@@ -220,10 +218,6 @@ execute_pipeline <- function(phenotype_file_name,
     norm_data <- data.frame(norm_data, row.names = rownames(data.test2))
     colnames(norm_data) <- colnames(data.test2)
     data.test2 <- norm_data
-    
-    data.train <- as.data.frame(t(as.matrix(data.train)))
-    data.test <- as.data.frame(t(as.matrix(data.test)))
-    data.test2 <- as.data.frame(t(as.matrix(data.test2)))
   }
   #now data, data.test2 format : (samples x transcripts)
   
@@ -240,7 +234,10 @@ execute_pipeline <- function(phenotype_file_name,
                         regularize = 'l2',
                         result_file_name = "Data/prediction_result/transcriptomics.csv")    
   } else if(omics_type == "proteomic"){
-    
+    svm_model(data.train, label.train, data.test, label.test, 
+                          data.test2, label.test2,
+                          classes, kernel = "sigmoid", 
+                          result_file_name = "Data/prediction_result/proteomics.csv")
   }
 
   
