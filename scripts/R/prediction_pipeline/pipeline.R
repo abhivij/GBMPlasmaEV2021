@@ -1,86 +1,10 @@
-# source("R/data_extraction/extract.R")
-# source("R/feature_extraction_arguments.R")
-# source("R/run_fsm_and_models.R")
-# source("R/helper.R")
+library(tidyverse)
+base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
+setwd(base_dir)
 
-#' FEM pipeline
-#' 
-#' Runs the Feature Extraction Method Comparsion pipeline for the given data
-#' @param phenotype_file_name Name of the file containing phenotype info - class of each sample.
-#' 
-#' - should be a tab separated file 
-#' 
-#' - should have one field named "Sample" and contain sample names as in the read count file
-#' 
-#' 
-#' example phenotype file contents given below :
-#' 
-#' Sample Age Gender Technology    GBMVsControl     GBMVsGlioma
-#' 
-#' s1     60    M    Microarray    GBM     GBM
-#' 
-#' s2     65    M   RNASeq        GBM     GBM
-#' 
-#' s3     59    F    RNASeq        Control NA
-#' 
-#' s4     55    F    Microarray    NA        Glioma
-#' 
-#' s5     50    M     RNASeq        Control NA
-#' 
-#' @param read_count_dir_path directory path for read count file
-#' @param read_count_file_name filename of the read count file. Should be in (transcripts x samples) format.
-#' Other biomarkers can also be used.
-#' In general case : (biomarkers x samples) : biomarkers along rows, samples along columns
-#'
-#' @param sep field separator character in read count file
-#' @param classification_criteria Column in the phenotype file to perform classification on
-#' Eg : GBMVsControl 
-#' @param filter_expression Filtering to be done on the samples based on a column in the phenotype file 
-#' Eg: Age > 55
-#' @param classes Classes to be compared : c("negativeclassname", "positiveclassname")
-#' @param extracted_count_file_name name of the file to output the read count file after filtering for classification_criteria and filter_expression.
-#' File data format : (transcripts x samples)
-#' @param output_label_file_name name of the file with labels for filtered samples as in extracted_count_file.
-#' File data format : (2 columns : Sample, Label)
-#' @param dataset_id An ID for the data to be written in results
-#' @param cores Number of cores to be used for parallel processing
-#' @param fems_to_run Vector of names of FEMs to run  Eg: c("t-test", "mrmr30", "mrmr50"). Empty vector value runs pipeline on all FEMs
-#' @param fems_to_ignore Vector of names of FEMs to not run from the list of all allowed FEMs  Eg: c("t-test_holm", "ga_rf")
-#' 
-#'  To see all allowed FEMs use show_allowed_fems()
-#' 
-#' @param perform_filter Should filtering for low expressed transcripts be performed
-#' @param norm Normalization method to be used
-#' @param classifier_feature_imp Should feature importance by the classifier be written to a file. 
-#' Applicable only for Random Forest
-#' @param random_seed random seed value set before train test k-fold split
-#' @export 
-execute_pipeline <- function(phenotype_file_name, 
-                             read_count_dir_path, 
-                             read_count_file_name,
-                             sep = "",
-                             skip_row_count = 0, 
-                             row_count = -1,
-                             na_strings = "NA",
-                             classification_criteria, 
-                             filter_expression = expression(TRUE), 
-                             classes,
-                             extracted_count_file_name = "read_counts.txt",
-                             output_label_file_name = "output_labels.txt",
-                             dataset_id, 
-                             cores = 3,
-                             results_dir_path = "results",
-                             fems_to_run = c(),
-                             fems_to_ignore = c(),
-                             perform_filter = TRUE,
-                             norm = c("norm_log_cpm", "norm_log_cpm_simple",
-                                      "quantile", "norm_quantile", 
-                                      "vsn", FALSE),
-                             classifier_feature_imp = FALSE,
-                             random_seed = 1000){
-  start_time <- Sys.time()
-  print(paste("Pipeline Execution on", dataset_id, classification_criteria))
-  
+source("scripts/R/prediction_pipeline/cm_logistic_regression.R")
+source("scripts/R/prediction_pipeline/cm_svm.R")
+
   ######################################################################
   
   comparison = "POSTOPE_TPVsREC_TP"
@@ -94,6 +18,14 @@ execute_pipeline <- function(phenotype_file_name,
   phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
   
   best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+  
+  train_index = NA
+  
+  
+pipeline <- function(comparison, omics_type, conditions, classes, 
+                     phenotype_column, best_features_file_path,
+                     train_index = NA){
+  
   best_features <- read.csv(best_features_file_path)  
   
   categories <- strsplit(comparison, split = "Vs", fixed = TRUE)[[1]]
@@ -142,6 +74,16 @@ execute_pipeline <- function(phenotype_file_name,
     dplyr::select(Sample, Label)
   
   
+  if(omics_type == "proteomic"){
+    #converting the proteomic labels to be same as proteomic label
+    #NOTE : currently this is specific to POSTOPE_TP, REC_TP, PREREC samples
+    output_labels <- output_labels %>%
+      mutate(Sample = gsub("HB0", "HB", Sample, fixed = TRUE)) %>%
+      filter(Sample != "HB6")
+    
+    colnames(data) <- gsub("HB0", "HB", colnames(data), fixed = TRUE)
+  }
+  
   #create 3 groups : train, test, test2
   
   #currently data format : (transcripts x samples)
@@ -157,12 +99,17 @@ execute_pipeline <- function(phenotype_file_name,
   data <- as.data.frame(t(as.matrix(data)))
   
   #now data, data.test2 format : (samples x transcripts)
-  
-  random_seed = 1000
-  set.seed(random_seed)
-  train_index <- caret::createDataPartition(output_labels$Label, p = .8, 
-                                            list = FALSE, 
-                                            times = 1)
+
+  if(is.na(train_index)){
+    print("create data partition")
+    random_seed = 1000
+    set.seed(random_seed)
+    train_index <- caret::createDataPartition(output_labels$Label, p = .8, 
+                                              list = FALSE, 
+                                              times = 1)    
+  } else{
+    print("using existing partition")
+  }
   
   data.train <- data[train_index, ]
   label.train <- output_labels[train_index, ]
@@ -170,8 +117,6 @@ execute_pipeline <- function(phenotype_file_name,
   data.test <- data[-train_index, ]
   label.test <- output_labels[-train_index, ]
   
-  
-
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
@@ -226,21 +171,27 @@ execute_pipeline <- function(phenotype_file_name,
   data.test <- data.frame(data.test)[, biomarkers]
   data.test2 <- data.frame(data.test2)[, biomarkers]
   
-  
   if(omics_type == "transcriptomic"){
-    logistic_regression(data.train, label.train, data.test, label.test, 
+    result_df <- logistic_regression(data.train, label.train, data.test, label.test, 
                         data.test2, label.test2,
                         classes = classes, 
-                        regularize = 'l2',
-                        result_file_name = "Data/prediction_result/transcriptomics.csv")    
+                        regularize = 'l2')    
+    result_file_name <- "Data/prediction_result/transcriptomics.csv"
   } else if(omics_type == "proteomic"){
-    svm_model(data.train, label.train, data.test, label.test, 
-                          data.test2, label.test2,
-                          classes, kernel = "sigmoid", 
-                          result_file_name = "Data/prediction_result/proteomics.csv")
+    result_df <- svm_model(data.train, label.train, data.test, label.test, 
+              data.test2, label.test2,
+              classes, kernel = "sigmoid")
+    result_file_name <- "Data/prediction_result/proteomics.csv"
   }
-
+  write.csv(format(result_df, digits = 3), result_file_name)
   
-  end_time <- Sys.time()
-  print(end_time - start_time)
-}
+  return (train_index)
+  
+}  
+
+
+pr_op_label <- output_labels
+pr_op_label <- pr_op_label %>%
+  mutate(Sample = gsub("HB0", "HB", Sample, fixed = TRUE)) %>%
+  filter(Sample != "HB6")
+all.equal(tr_op_label, pr_op_label)

@@ -1,10 +1,8 @@
-# library(glmnet)
-# source("R/metrics/compute_metrics.R")
+source("scripts/R/prediction_pipeline/compute_metrics.R")
 
 logistic_regression <- function(data.train, label.train, data.test, label.test, 
                                 data.test2, label.test2,
                                 classes, regularize = NA, 
-                                result_file_name,
                                 ...){
   
   model_name <- "logistic regression"
@@ -76,21 +74,23 @@ logistic_regression <- function(data.train, label.train, data.test, label.test,
     print(metrics)
     result_df1 <- data.frame("TestDataClassName" = ifelse(label.test$Label == 0, classes[1], classes[2]),
                             "TestDataExpectedClassName" = ifelse(label.test$Label == 0, classes[1], classes[2]),
-                            "TestDataClassId" = label.test$Label,
                             "Pred_prob" = pred_prob[,1],
                             "Prediction" = pred[,1])
     
     result_df2 <- data.frame("TestDataClassName" = "PREREC",
                              "TestDataExpectedClassName" = "REC_TP", 
-                             "TestDataClassId" = label.test2$Label,
                              "Pred_prob" = pred_prob2[,1],
                              "Prediction" = pred2[,1])
     
-    result_df <- rbind(result_df1, result_df2) 
-    colnames(result_df)[5] <- paste0("prediction_with_cutoff_", best_cut_off) 
+    result_df <- rbind(result_df1, result_df2) %>%
+      mutate(Pred_prob = as.double(Pred_prob)) %>%
+      mutate(Prediction = ifelse(Prediction == 0, classes[1], classes[2]))
+    colnames(result_df)[4] <- paste0("prediction_with_cutoff_", best_cut_off) 
     
     # result_file_name <- "Data/prediction_result/transcriptomics.csv"
-    write.csv(result_df, result_file_name)  
+    # write.csv(result_df, result_file_name) 
+    
+    return (result_df)
   })
   
 

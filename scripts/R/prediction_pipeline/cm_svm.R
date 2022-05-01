@@ -1,10 +1,8 @@
-#library(e1071)
-# source("R/metrics/compute_metrics.R")
+source("scripts/R/prediction_pipeline/compute_metrics.R")
 
 svm_model <- function(data.train, label.train, data.test, label.test, 
                       data.test2, label.test2,
                       classes, kernel = "sigmoid", 
-                      result_file_name,
                       ...){
   
   # kernel = "sigmoid"
@@ -32,14 +30,19 @@ svm_model <- function(data.train, label.train, data.test, label.test,
                              "Pred_prob" = pred_prob2[,1],
                              "Prediction" = pred2)
     
-    result_df <- rbind(result_df1, result_df2) 
+    result_df <- rbind(result_df1, result_df2) %>%
+      mutate(Pred_prob = as.double(Pred_prob)) 
     
     # result_file_name <- "Data/prediction_result/transcriptomics.csv"
-    write.csv(result_df, result_file_name)  
+    # write.csv(result_df, result_file_name)  
     
     
     metrics <- compute_metrics(pred = pred, pred_prob = pred_prob, true_label = label.test$Label, classes = classes)    
     print(metrics)
+    
+    
+    return (result_df)
+    
     })
   
   
