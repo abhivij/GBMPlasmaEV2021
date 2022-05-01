@@ -5,27 +5,30 @@ setwd(base_dir)
 source("scripts/R/prediction_pipeline/cm_logistic_regression.R")
 source("scripts/R/prediction_pipeline/cm_svm.R")
 
-  ######################################################################
+######################################################################
   
-  comparison = "POSTOPE_TPVsREC_TP"
-  omics_type = "transcriptomic"
-  omics_type = "proteomic"
+# comparison = "POSTOPE_TPVsREC_TP"
+# omics_type = "transcriptomic"
+# omics_type = "proteomic"
+# 
+# #conditions : c(pos_class, neg_class, validation_class)
+# conditions = c("POSTOPE_TP", "REC_TP", "PREREC")
+# 
+# 
+# phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
+# 
+# best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+# 
+# train_index = NA
+
   
-  #conditions : c(pos_class, neg_class, validation_class)
-  conditions = c("POSTOPE_TP", "REC_TP", "PREREC")
-  classes = conditions[1:2]
-  
-  phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
-  
-  best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-  
-  train_index = NA
   
   
-pipeline <- function(comparison, omics_type, conditions, classes, 
+pipeline <- function(comparison, omics_type, conditions,
                      phenotype_column, best_features_file_path,
                      train_index = NA){
   
+  classes = conditions[1:2]
   best_features <- read.csv(best_features_file_path)  
   
   categories <- strsplit(comparison, split = "Vs", fixed = TRUE)[[1]]
@@ -189,9 +192,13 @@ pipeline <- function(comparison, omics_type, conditions, classes,
   
 }  
 
-
-pr_op_label <- output_labels
-pr_op_label <- pr_op_label %>%
-  mutate(Sample = gsub("HB0", "HB", Sample, fixed = TRUE)) %>%
-  filter(Sample != "HB6")
-all.equal(tr_op_label, pr_op_label)
+train_index <- pipeline(comparison = "POSTOPE_TPVsREC_TP", omics_type = "transcriptomic", 
+                        conditions = c("POSTOPE_TP", "REC_TP", "PREREC"),
+                        phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                        best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                        train_index = NA)  
+pipeline(comparison = "POSTOPE_TPVsREC_TP", omics_type = "proteomic", 
+         conditions = c("POSTOPE_TP", "REC_TP", "PREREC"),
+         phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+         train_index = train_index)
