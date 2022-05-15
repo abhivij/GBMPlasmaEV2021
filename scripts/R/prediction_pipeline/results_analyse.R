@@ -17,3 +17,16 @@ mean(p.t$TestDataExpectedClassName == p.t$Prediction)
 p.v <- proteomics %>%
   filter(TestDataClassName == "PREREC") 
 mean(p.v$TestDataExpectedClassName == p.v$Prediction)
+
+
+result_file_name = "Data/prediction_result/transcriptomics_POSTOPE_TPVsREC_TP_with_new_validation_data.csv"
+comparison = "POSTOPE_TPVsREC_TP"
+
+create_result_heatmap <- function(result_file_name, comparison){
+  result_df <- read.csv(result_file_name) %>%
+    select(-c(3))
+  cutoff <- strsplit(colnames(result_df)[4], split = "cutoff_")[[1]][2]
+  
+  colnames(result_df) <- c("sample", "true_label", "pred_prob", "pred", "type")
+  
+}
