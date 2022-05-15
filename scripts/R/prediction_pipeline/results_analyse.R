@@ -35,8 +35,16 @@ create_result_heatmap <- function(result_file_name, comparison){
   sum(train_result$true_label == train_result$pred)
   mean(train_result$true_label == train_result$pred)
   
+  caret::confusionMatrix(data = factor(train_result$pred), 
+                         reference = factor(train_result$true_label))
+  
+  
   test_result <- result_df %>%
     filter(type == "test", !is.na(true_label))
   sum(test_result$true_label == test_result$pred)
   mean(test_result$true_label == test_result$pred)
+  
+  caret::confusionMatrix(data = factor(test_result$pred), 
+                         reference = factor(test_result$true_label))
+  
 }
