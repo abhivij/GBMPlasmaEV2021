@@ -171,3 +171,31 @@ write.table(phenotype_info,
 # filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
 # colnames(filtered_samples_output_labels) <- c("Sample", "Label")
 
+
+##############################
+
+
+#metadata for new cohort - glionet cohort
+
+metadata_glionet <- read_xlsx("Data/RNA_validation/External_validation_cohort_glionet.xlsx")[, 1:7]
+colnames(metadata_glionet) <- c("patient_id", "sample_id", "age", "gender", 
+                                "sample_instance", "sample_category", "test_label")
+
+#filling empty values of age and gender
+#assuming the structure :age, gender present in one row and then not present in next few rows
+for(i in c(1:dim(metadata_glionet)[1])){
+  if(!is.na(metadata_glionet[i, "age"]) && !is.na(metadata_glionet[i, "gender"])){
+    specified_age <- round(metadata_glionet[i, ]$age, 2)
+    specified_gender <- metadata_glionet[i, ]$gender
+    print(specified_age)
+    print(specified_gender)
+  }
+  metadata_glionet[i, ]$age <- specified_age
+  metadata_glionet[i, ]$gender <- specified_gender
+}
+
+metadata_glionet[52:55, ]$age <- round(metadata_glionet[52:55, ]$age, 1) 
+metadata_glionet <- metadata_glionet %>%
+  mutate(sample_id = gsub("-", "", sample_id, fixed = TRUE))
+
+write.csv(metadata_glionet, "Data/RNA_validation/metadata_glionet.csv", row.names = FALSE)
