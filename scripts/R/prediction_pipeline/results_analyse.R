@@ -28,5 +28,15 @@ create_result_heatmap <- function(result_file_name, comparison){
   cutoff <- strsplit(colnames(result_df)[4], split = "cutoff_")[[1]][2]
   
   colnames(result_df) <- c("sample", "true_label", "pred_prob", "pred", "type")
+
   
+  train_result <- result_df %>%
+    filter(type == "train")
+  sum(train_result$true_label == train_result$pred)
+  mean(train_result$true_label == train_result$pred)
+  
+  test_result <- result_df %>%
+    filter(type == "test", !is.na(true_label))
+  sum(test_result$true_label == test_result$pred)
+  mean(test_result$true_label == test_result$pred)
 }
