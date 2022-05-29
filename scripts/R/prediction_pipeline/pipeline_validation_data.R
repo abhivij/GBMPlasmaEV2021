@@ -1,4 +1,5 @@
 library(tidyverse)
+library(readxl)
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
@@ -56,6 +57,16 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
     lim = c(-3, 5)
     breaks = seq(-3, 5, 1)
+    
+    validation_data <- read.table("Data/RNA_validation/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
+                                  nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+    validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
+      mutate(sample_category = factor(sample_category)) %>%
+      mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
+                                       "POST-OP" = "POSTOPE_TP",
+                                       "RECURRENCE" = "REC_TP"))
+    
+    
   } else {
     norm <- "quantile"
     perform_filter <- FALSE
@@ -102,8 +113,14 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
   label.train <- output_labels
   
   #TODO : get new data and labels as data.test
-  data.test <- data
-  label.test <- output_labels
+  label.test <- validation_metadata %>%
+    select(sample_id, sample_category) %>%
+    filter(sample_category %in% c(conditions, NA)) %>%
+    arrange(sample_category)
+  colnames(label.test) <- colnames(label.train)
+  
+  data.test <- validation_data %>% dplyr::select(label.test$Sample)
+  data.test <- as.data.frame(t(as.matrix(data.test)))
   
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
@@ -111,6 +128,8 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     
     keep <- edgeR::filterByExpr(data.train, group = label.train$Label)
     data.train <- data.train[keep, ]
+    
+    keep <- edgeR::filterByExpr(data.test, group = label.test$Label)
     data.test <- data.test[keep, ]  
   }
   
@@ -128,6 +147,8 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     #normalizing the data
     normparam <- caret::preProcess(data.train) 
     data.train <- predict(normparam, data.train)
+    
+    normparam <- caret::preProcess(data.test)
     data.test <- predict(normparam, data.test) #normalizing test data using params from train data   
     
   } else if(norm == "quantile"){
@@ -146,10 +167,26 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
   
   #get best biomarkers only
   data.train <- data.frame(data.train)[, biomarkers]  #data.frame() replaces - in colnames to .
-  data.test <- data.frame(data.test)[, biomarkers]
-  data.test2 = NA
-  label.test2 = NA
-  regularize = 'l2'
+  
+  colnames(data.test) <- gsub("-", ".", colnames(data.test))
+  
+  sum(biomarkers %in% colnames(data.test))
+  
+  available_biomarkers <- c(biomarkers[biomarkers %in% colnames(data.test)])
+  print(available_biomarkers)
+  non_available_biomarkers <- biomarkers[!biomarkers %in% colnames(data.test)] 
+  print(non_available_biomarkers)
+  
+  data.test <- data.test %>%
+    select(available_biomarkers)
+  for(nab in non_available_biomarkers){
+    data.test[[nab]] <- 0
+  }
+  
+  
+  # data.test2 = NA
+  # label.test2 = NA
+  # regularize = 'l2'
   if(omics_type == "transcriptomic"){
     result_df <- logistic_regression(data.train, label.train, data.test, label.test, 
                                      classes = classes, 
@@ -169,3 +206,62 @@ pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", omics_type = "t
                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                         result_file_name = "Data/prediction_result/transcriptomics_POSTOPE_TPVsREC_TP_with_new_validation_data.csv") 
 
+
+
+
+
+
+#################
+#check number of transcripts
+
+
+best_features <- read.csv("Data/selected_features/best_features_with_add_col.csv")  
+comparison = "POSTOPE_TPVsREC_TP"
+
+categories <- strsplit(comparison, split = "Vs", fixed = TRUE)[[1]]
+if(omics_type == "transcriptomic"){
+  dataset_id <- paste0("GBMPlasmaEV_transcriptomic_simple_norm_",
+                       comparison)
+}else{
+  dataset_id <- paste0("GBMPlasmaEV_proteomic_impute50fil_quantile_",
+                       comparison)
+}
+best_features_sub <- best_features %>%
+  filter(dataset_id == !!dataset_id,
+         is_best == 1) 
+biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]  
+
+
+validation_data <- read.table("Data/RNA_validation/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
+                              nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+rownames(validation_data)[1:10]
+transcripts_identified <- gsub("-", ".", rownames(validation_data), fixed = TRUE)
+biomarkers[biomarkers %in% transcripts_identified]
+
+validation_data[gsub(".", "-", c("hsa.miR.1307.3p", "hsa.miR.328.3p", "hsa.miR.4513"), fixed = TRUE),]
+
+data <- read_excel("Data/qiagen_results_test/GBMPlasmaEV_initial_cohort_RNAData/219155.all_samples.summary.xlsx", 
+                   sheet = "miRNA_piRNA")
+mirna_data <- data[1:324,]
+pirna_data <- data[326:461,] %>%
+  separate(miRNA, c("miRNA", NA, NA, NA), sep = "/")
+
+dim(data)[1]
+dim(mirna_data)[1] + dim(pirna_data)[1]
+
+data <- rbind(mirna_data, pirna_data) %>%
+  column_to_rownames("miRNA")
+
+umi_counts_a <- data %>%
+  select(ends_with("UMIs"))
+colnames(umi_counts_a) <- gsub("-UMIs", "", colnames(umi_counts_a))
+colnames(umi_counts_a) <- sapply(colnames(umi_counts_a), FUN = 
+                                   function(x){
+                                     strsplit(x, split = "_", fixed = TRUE)[[1]][1]
+                                   }
+)
+
+transcripts_identified <- gsub("-", ".", rownames(umi_counts_a), fixed = TRUE)
+biomarkers[biomarkers %in% transcripts_identified]
+
+umi_counts_a[gsub(".", "-", c("hsa.miR.1307.3p", "hsa.miR.328.3p", "hsa.miR.4513"), fixed = TRUE),]
