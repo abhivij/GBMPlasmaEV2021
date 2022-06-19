@@ -1,6 +1,6 @@
 library(tidyverse)
 source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
-setwd("fem_pipeline_results")
+setwd("fem_pipeline_results_tr")
 
 compute_jaccard_index_pairwise <- function(fsm1, fsm2, features_info, total_iter = 30){
   features_info_subset <- features_info %>%
