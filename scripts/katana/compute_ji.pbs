@@ -3,7 +3,9 @@
 #PBS -l select=1:ncpus=4:mem=16gb
 #PBS -l walltime=12:00:00
 
-cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/scripts/R
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/
 
-module load R/3.6.3
-Rscript pipeline_results_ji.R
+module load gcc/7.5.0
+module load R/4.2.0-gcc7-clean
+
+Rscript scripts/R/pipeline_results_ji.R

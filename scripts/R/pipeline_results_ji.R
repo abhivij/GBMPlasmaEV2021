@@ -1,6 +1,6 @@
 library(tidyverse)
-source("dataset_pipeline_arguments.R")
-setwd("../../fem_pipeline_results/")
+source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
+setwd("fem_pipeline_results")
 
 compute_jaccard_index_pairwise <- function(fsm1, fsm2, features_info, total_iter = 30){
   features_info_subset <- features_info %>%
@@ -51,24 +51,20 @@ compute_all_jaccard_index <- function(fsm_vector, features_info){
 
 print("Computing JI.....")
 
-dparg_id_vec <- c(41:43, 125:127, 131, 133, 135, 137,   #proteomic
-                  139:141, 145:147, 151, 153, 155, 157,  #transcriptomic
-                  233, 235, 237, 239, 241,  #proteomic new set of comparisons
-                  223, 225, 227, 229, 231   #transcriptomic new set of comparisons
-                  )
+dparg_id_vec <- c(1, 5, 9)
 fsm_vector <- c("all", 
-                "t-test", "t-test_BH",
-                "t-test_pval_0.025", "t-test_pval_0.01", "t-test_pval_0.005",
-                "wilcoxontest", "wilcoxontest_BH",
-                "wilcoxontest_pval_0.025", "wilcoxontest_pval_0.001", "wilcoxontest_pval_0.005",
-                "ranger_impu_cor", 
+                "t-test", "wilcoxontest",
+                "ranger_impu_cor",
+                "ranger_pos_impu_cor",
                 "mrmr10", "mrmr20",
                 "mrmr30", "mrmr50", 
                 "mrmr75", "mrmr100",
-                "RF_RFE", "ga_rf")
+                "mrmr_perc50",
+                "RF_RFE",
+                "ga_rf")
 
 for(arg in dparg_id_vec){
-  ds <- dataset_pipeline_arguments[[arg]]
+  ds <- dataset_pipeline_arguments_transcriptomic[[arg]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
   print(dataset_id)  
   
