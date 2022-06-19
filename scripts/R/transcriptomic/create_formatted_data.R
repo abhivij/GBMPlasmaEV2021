@@ -190,6 +190,38 @@ colnames(umi_counts) <- sapply(colnames(umi_counts), FUN =
 
 write.csv(umi_counts, "Data/RNA/umi_counts_initial_cohort.csv")
 
+# test read
+
+# phenotype_file_name = "Data/transcriptomic_phenotype.txt"
+# read_count_dir_path = "Data/RNA"
+# read_count_file_name = "umi_counts_initial_cohort.csv"
+# sep = ","
+# dataset_id = "GBM_tr_initial"
+# classification_criteria = "PREOPEVsPOSTOPE_TP"
+# classes = c("POSTOPE_TP", "PREOPE")
+# cores = 16
+# results_dir_path = "fem_pipeline_results_tr"
+# norm = "norm_log_cpm_simple"
+# filter_expression = expression(TRUE)
+# 
+# read_count_file_path <- paste(read_count_dir_path, read_count_file_name, sep = "/")
+# 
+# data <- read.table(read_count_file_path, header=TRUE, sep=sep, row.names=1, skip=0,
+#                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+# #data format : (transcripts x samples)
+# data[is.na(data)] <- 0
+# phenotype <- read.table(phenotype_file_name, header=TRUE, sep="\t")
+# 
+# extracted_samples <- phenotype %>% subset(eval(filter_expression))
+# extracted_samples <- extracted_samples[!is.na(extracted_samples[classification_criteria]), ]
+# extracted_samples$Sample <- factor(extracted_samples$Sample)
+# 
+# filtered_samples_read_count <- data %>% dplyr::select(extracted_samples$Sample)
+# 
+# #from the extracted_samples, select the 'Sample' column and classification_criteria column
+# filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
+# colnames(filtered_samples_output_labels) <- c("Sample", "Label")
+
 
 
 
