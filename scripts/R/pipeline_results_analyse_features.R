@@ -1,5 +1,6 @@
 setwd("~/UNSW/VafaeeLab/GBMPlasmaEV/")
 source("scripts/R/dataset_pipeline_arguments.R")
+source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
 source("scripts/R/utils.R")
 library(tidyverse)
 library(viridis)
@@ -28,14 +29,17 @@ min_iter_feature_presence = 28
 
 
 explore_common_features <- function(dparg_id, best_fsm_vec, 
-                                    min_iter_feature_presence){
+                                    min_iter_feature_presence,
+                                    dataset_pipeline_arguments = dataset_pipeline_arguments,
+                                    results_dir = "fem_pipeline_results",
+                                    dir_path = "plots/FEMPipeline/common_features_upset"){
   
   ds <- dataset_pipeline_arguments[[dparg_id]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
   print(dataset_id)
   
   features_file <- paste(dataset_id, "features.csv", sep = "_")
-  features_file <- paste("fem_pipeline_results", features_file, sep = "/")
+  features_file <- paste(results_dir, features_file, sep = "/")
   print(features_file)
   
   selected_features <- list()
@@ -47,8 +51,10 @@ explore_common_features <- function(dparg_id, best_fsm_vec,
       filter(FSM == best_fsm) %>%
       select(-c(FSM, Iter))
     print(best_fsm)
-    print(dim(features_info[,colSums(features_info) >= min_iter_feature_presence]))
-    selected_features[[best_fsm]] <- colnames(features_info[,colSums(features_info) >= min_iter_feature_presence])   
+    print(dim(features_info))
+    
+    print(dim(features_info[,colSums(features_info) >= min_iter_feature_presence, drop = FALSE]))
+    selected_features[[best_fsm]] <- colnames(features_info[,colSums(features_info) >= min_iter_feature_presence, drop = FALSE])   
     
     size <- length(selected_features[[best_fsm]])
     if(size > max_size){
@@ -60,7 +66,6 @@ explore_common_features <- function(dparg_id, best_fsm_vec,
   file_name <- paste(dataset_id, min_iter_feature_presence, 
                      "upset.png", sep = "_")
   
-  dir_path <- "plots/FEMPipeline/common_features_upset"
   if(!dir.exists(dir_path)){
     dir.create(dir_path, recursive = TRUE)
   }
@@ -148,7 +153,8 @@ create_data_subsets <- function(dparg_id,
                                 min_iter_feature_presence,
                                 subset_creation_criteria,
                                 subset_file_name_substr = "common3",
-                                create_all_common = TRUE){
+                                create_all_common = TRUE,
+                                dataset_pipeline_arguments = dataset_pipeline_arguments){
   
   ds <- dataset_pipeline_arguments[[dparg_id]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
@@ -165,11 +171,11 @@ create_data_subsets <- function(dparg_id,
   
   ######create new data subsets
   
-  if(grepl(pattern = "transcriptomic", x = dataset_id, fixed = TRUE)){
-    data <- read.table("Data/RNA/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
+  if(grepl(pattern = "tr", x = dataset_id, fixed = TRUE)){
+    data <- read.table("Data/RNA/umi_counts_initial_cohort.csv", header=TRUE, sep=",", row.names=1, skip=0,
                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")   
-    output_dir <- "Data/RNA/subset/"
-  } else if(grepl(pattern = "proteomic", x = dataset_id, fixed = TRUE)){
+    output_dir <- "Data/RNA/subset_initial_cohort/"
+  } else if(grepl(pattern = "pr", x = dataset_id, fixed = TRUE)){
     if(grepl(pattern = "REC-TP", x = dataset_id, fixed = TRUE)){
       data <- read.table("Data/Protein/formatted_data/Q7_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
@@ -177,7 +183,7 @@ create_data_subsets <- function(dparg_id,
       data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
     }
-    output_dir <- "Data/Protein/subset/"
+    output_dir <- "Data/Protein/subset_initial_cohort/"
   } else{
     print("Unknown dataset_id type !")
     return
@@ -936,3 +942,70 @@ features <- Reduce(intersect, intersect_list)
 names(intersect_list) <- best_features_tr$dataset_id
 upset(fromList(intersect_list), set_size.show = TRUE)  
 dev.off()
+
+
+#####################################
+
+#initial cohort with new quantified results
+
+
+dparg_id = 1
+dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic
+best_fsm_vec = c("t-test")
+min_iter_feature_presence = 28
+results_dir = "fem_pipeline_results_tr"
+dir_path = "plots/FEMPipeline_new_quant/common_features_upset"
+
+
+#t PREOPEVsPOSTOPE_TP
+explore_common_features(dparg_id = 1,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("t-test", "mrmr10", 
+                                         "mrmr75", "mrmr_perc50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_tr",
+                        dir_path = "plots/FEMPipeline_new_quant/common_features_upset")
+
+
+
+create_data_subsets(dparg_id = 1,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)
+
+
+
+#t POSTOPE_TPVSREC_TP
+explore_common_features(dparg_id = 5,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("t-test", "mrmr_perc50", 
+                                         "mrmr75"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_tr",
+                        dir_path = "plots/FEMPipeline_new_quant/common_features_upset")
+
+create_data_subsets(dparg_id = 5,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)
+
+
+#t PREOPEVSREC_TP
+explore_common_features(dparg_id = 9,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("mrmr30", "mrmr_perc50", 
+                                         "mrmr75"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_tr",
+                        dir_path = "plots/FEMPipeline_new_quant/common_features_upset")
+
+create_data_subsets(dparg_id = 9,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)

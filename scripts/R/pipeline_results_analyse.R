@@ -4,6 +4,7 @@ library(viridis)
 library(ComplexHeatmap)
 source("scripts/R/utils.R")
 source("scripts/R/dataset_pipeline_arguments.R")
+source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
 
 
 
@@ -30,6 +31,7 @@ dir_path = "plots/FEMPipeline/heatmap/transcriptomic_simple_norm_all/"
 dataset_replace_string = "proteomic_impute50fil_"
 
 plot_heatmap <- function(dparg_vec,
+                         dataset_pipeline_arguments = dataset_pipeline_arguments,
                          results_dir = "fem_pipeline_results",
                          dir_path = "",
                          dataset_replace_string = ""){
@@ -37,11 +39,11 @@ plot_heatmap <- function(dparg_vec,
                           sep = ',', header = TRUE)
   fsm_info <- read.table(paste(results_dir, "fsm_info.csv", sep = "/"),
                          sep = ',', header = TRUE)
-  model_results <- read.table(paste(results_dir, "model_results.csv", sep = "/"),
+  model_results <- read.table(paste(results_dir, "model_results_test.csv", sep = "/"),
                               sep = ',', header = TRUE)
   
   if(!dir.exists(dir_path)){
-    dir.create(dir_path)
+    dir.create(dir_path, recursive = TRUE)
   }
   
   dataset_id_vec <- c()
@@ -227,52 +229,73 @@ for (cm in classification_models) {
 }
 
 
-plot_features_count_barplot <- function(dir_path = "") {
-  tr_fsm_info <- fsm_info %>%
-    filter(DataSetId %in% dataset_vec[1:3])
-  pr_fsm_info <- fsm_info %>%
-    filter(DataSetId %in% dataset_vec[4:12])
+plot_features_count_barplot <- function(dparg_vec, dataset_pipeline_arguments,
+                                        results_dir_path, output_dir_path) {
   
-  if (dir_path != "" & !dir.exists(dir_path)){
-    dir.create(dir_path, recursive = TRUE)
+  data_info <- read.table(paste(results_dir_path, "data_info.csv", sep = "/"), 
+                          sep = ',', header = TRUE)
+  fsm_info <- read.table(paste(results_dir_path, "fsm_info.csv", sep = "/"),
+                         sep = ',', header = TRUE)
+  model_results <- read.table(paste(results_dir_path, "model_results_test.csv", sep = "/"),
+                              sep = ',', header = TRUE)
+  
+  
+  dataset_id_vec <- c()
+  for(id in dparg_vec){
+    dataset_id <- paste(dataset_pipeline_arguments[[id]]$dataset_id,
+                        dataset_pipeline_arguments[[id]]$classification_criteria,
+                        sep = "_")
+    print(dataset_id)
+    dataset_id_vec <- append(dataset_id_vec, dataset_id)
   }
-
+  dataset_id_vec 
+  
+  tr_fsm_info <- fsm_info %>%
+    filter(DataSetId %in% dataset_id_vec)
+  # pr_fsm_info <- fsm_info %>%
+  #   filter(DataSetId %in% dataset_vec[4:12])
+  
+  if (output_dir_path != "" & !dir.exists(output_dir_path)){
+    dir.create(output_dir_path, recursive = TRUE)
+  }
+  
   features_barplot_tr <- ggplot(tr_fsm_info, aes(x=DataSetId, fill=FSM, y=Mean_Number.of.features)) +
     geom_bar(stat="identity", position="dodge") +
     geom_errorbar( aes(x=DataSetId, ymin=X95.CI_Number.of.features_lower, ymax=X95.CI_Number.of.features_upper), position="dodge") +
-    theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
+    theme(axis.text.x = element_text(size=rel(1.2), angle=45, hjust=1, vjust=1),
           axis.text.y = element_text(size=rel(1.2), face="italic", hjust=0.95),
           axis.title.x = element_text(size=rel(1.5)),
           axis.title.y = element_text(size=rel(1.5), angle=90),
           legend.title = element_text(size=rel(1.5)),
           legend.text = element_text(size=rel(1.2))) +
-    scale_y_log10() +
     scale_fill_viridis_d() +
+    scale_y_continuous(limits = c(0, 150), breaks = seq(0, 150, by = 10)) +
     ylab("Mean number of features used")
-  ggsave(append_path(dir_path, "features_count_barplot_tr.png"),
+  ggsave(append_path(output_dir_path, "features_count_barplot_tr.png"),
          features_barplot_tr, width=12, height=12, dpi=500)
   
-  features_barplot_pr <- ggplot(pr_fsm_info, aes(x=DataSetId, fill=FSM, y=Mean_Number.of.features)) +
-    geom_bar(stat="identity", position="dodge") +
-    geom_errorbar( aes(x=DataSetId, ymin=X95.CI_Number.of.features_lower, ymax=X95.CI_Number.of.features_upper), position="dodge") +
-    theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
-          axis.text.y = element_text(size=rel(1.2), face="italic", hjust=0.95),
-          axis.title.x = element_text(size=rel(1.5)),
-          axis.title.y = element_text(size=rel(1.5), angle=90),
-          legend.title = element_text(size=rel(1.5)),
-          legend.text = element_text(size=rel(1.2))) +
-    scale_y_log10() +
-    scale_fill_viridis_d() +
-    ylab("Mean number of features used")
-  ggsave(append_path(dir_path, "features_count_barplot_pr.png"),
-         features_barplot_pr, width=12, height=12, dpi=500)
+  # features_barplot_pr <- ggplot(pr_fsm_info, aes(x=DataSetId, fill=FSM, y=Mean_Number.of.features)) +
+  #   geom_bar(stat="identity", position="dodge") +
+  #   geom_errorbar( aes(x=DataSetId, ymin=X95.CI_Number.of.features_lower, ymax=X95.CI_Number.of.features_upper), position="dodge") +
+  #   theme(axis.text.x = element_text(angle=45, hjust=1, vjust=1),
+  #         axis.text.y = element_text(size=rel(1.2), face="italic", hjust=0.95),
+  #         axis.title.x = element_text(size=rel(1.5)),
+  #         axis.title.y = element_text(size=rel(1.5), angle=90),
+  #         legend.title = element_text(size=rel(1.5)),
+  #         legend.text = element_text(size=rel(1.2))) +
+  #   scale_y_log10() +
+  #   scale_fill_viridis_d() +
+  #   ylab("Mean number of features used")
+  # ggsave(append_path(output_dir_path, "features_count_barplot_pr.png"),
+  #        features_barplot_pr, width=12, height=12, dpi=500)
 }
 
-# dir_path = "plots/FEMPipeline/feature_count"
-plot_features_count_barplot(dir_path = "plots/FEMPipeline/feature_count")
+# output_dir_path = "plots/FEMPipeline/feature_count"
+plot_features_count_barplot(output_dir_path = "plots/FEMPipeline/feature_count")
 
 
-plot_JI_heatmap <- function(filename = "all_ji.csv", dir = "JI", 
+plot_JI_heatmap <- function(filename = "all_ji.csv", dir = "JI",
+                            dataset_pipeline_arguments = dataset_pipeline_arguments,
                             heatmapfiledir = "",
                             heatmapfilename = "ji.svg",
                             dparg_vec,
@@ -630,3 +653,29 @@ plot_feature_imp("ranger", 28,
 plot_feature_imp("ranger", 29, 
                  "fem_pipeline_results/GBMPlasmaEV_transcriptomic_PREOPEVsMET_ranger_impu_cor_29_PREOPEVsMET_feature_imp.csv")
 
+
+
+
+####################### initial cohort plots on newly quantified results
+#### plot_heatmap(dparg_vec = c(41:43, 47:49, 53:55),
+plot_heatmap(
+  dparg_vec = c(1, 5, 9),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_tr",
+  dir_path = "plots/FEMPipeline_new_quant/heatmap/transcriptomic/",
+  dataset_replace_string = "_initial"
+)
+
+plot_JI_heatmap(filename = "all_ji.csv",
+                dir = "fem_pipeline_results_tr/JI/",
+                dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                heatmapfilename = "tr_JI.svg",
+                heatmapfiledir = "plots/FEMPipeline_new_quant/",
+                fsm_allowed = fsm_vector,
+                dparg_vec = c(1, 5, 9),
+                dataset_replace_string = "_initial")
+
+plot_features_count_barplot(dparg_vec = c(1, 5, 9), 
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir_path = "fem_pipeline_results_tr", 
+                            output_dir_path = "plots/FEMPipeline_new_quant/features_count/transcriptomic/")

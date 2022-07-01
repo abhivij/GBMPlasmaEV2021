@@ -187,6 +187,98 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr",
        norm = "norm_log_cpm_simple",
-       fems_to_run = c("ga_rf"))
+       fems_to_run = c("ga_rf")),
+  
+  #13
+  #transcriptomic PREOPEVsPOSTOPE_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_PREOPEVsPOSTOPE_TP_mrmr75_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_PREOPEVsPOSTOPE_TP_mrmr75_28",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("POSTOPE_TP", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000),
+  
+  #14
+  #transcriptomic PREOPEVsPOSTOPE_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_PREOPEVsPOSTOPE_TP_mrmr75_nopir_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_PREOPEVsPOSTOPE_TP_mrmr75_nopir_28",
+       classification_criteria = "PREOPEVsPOSTOPE_TP",
+       classes = c("POSTOPE_TP", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000),
+  
+
+  #15
+  #transcriptomic POSTOPE_TPVsREC_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_POSTOPE_TPVsREC_TP_mrmr75_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_POSTOPE_TPVsREC_TP_mrmr75_28",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("REC_TP", "POSTOPE_TP"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000),
+  
+  #16
+  #transcriptomic POSTOPE_TPVsREC_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_POSTOPE_TPVsREC_TP_mrmr75_nopir_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_POSTOPE_TPVsREC_TP_mrmr75_nopir_28",
+       classification_criteria = "POSTOPE_TPVsREC_TP",
+       classes = c("REC_TP", "POSTOPE_TP"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000),
+  
+
+  #17
+  #transcriptomic PREOPEVsREC_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_PREOPEVsREC_TP_mrmr75_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_PREOPEVsREC_TP_mrmr75_28",
+       classification_criteria = "PREOPEVsREC_TP",
+       classes = c("REC_TP", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000),
+  
+  #18
+  #transcriptomic PREOPEVsREC_TP
+  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+       read_count_dir_path = "Data/RNA/subset_initial_cohort",
+       read_count_file_name = "GBM_tr_initial_PREOPEVsREC_TP_mrmr75_nopir_28.csv",
+       sep = ",",
+       dataset_id = "GBM_tr_initial_PREOPEVsREC_TP_mrmr75_nopir_28",
+       classification_criteria = "PREOPEVsREC_TP",
+       classes = c("REC_TP", "PREOPE"),
+       cores = 4,
+       results_dir_path = "fem_pipeline_results_tr_subset",
+       norm = "norm_log_cpm_simple",
+       fems_to_run = c("all"),
+       random_seed = 2000)      
   
 )
