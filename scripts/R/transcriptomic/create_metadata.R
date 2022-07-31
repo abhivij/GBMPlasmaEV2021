@@ -198,4 +198,16 @@ metadata_glionet[52:55, ]$age <- round(metadata_glionet[52:55, ]$age, 1)
 metadata_glionet <- metadata_glionet %>%
   mutate(sample_id = gsub("-", "", sample_id, fixed = TRUE))
 
+
+metadata_glionet <- metadata_glionet %>%
+  mutate(category_old_name = case_when(is.na(sample_category) ~ "UNK",
+                                       sample_category == "PRE-OP" ~ "PREOPE",
+                                       sample_category == "POST-OP" ~ "POSTOPE_TP",
+                                       sample_category == "RECURRENCE" ~ "REC_TP",
+                                       TRUE ~ NA_character_),
+         .after = sample_category)
+
 write.csv(metadata_glionet, "Data/RNA_validation/metadata_glionet.csv", row.names = FALSE)
+
+
+summary(factor(metadata_glionet$sample_category))
