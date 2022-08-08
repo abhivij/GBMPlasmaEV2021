@@ -250,3 +250,27 @@ colnames(umi_counts) <- sapply(colnames(umi_counts), FUN =
 )
 
 write.csv(umi_counts, "Data/RNA/umi_counts_validation_cohort.csv")
+
+
+
+######## verifying if data output files for validation cohort obtained via 
+###################### 2 different Geneglobe quantification jobs are the same
+
+validation_data1 <- read.csv("Data/RNA_validation/umi_counts.csv", row.names = 1)
+validation_data2 <- read.csv("Data/RNA/umi_counts_validation_cohort.csv", row.names = 1)
+
+colnames(validation_data2) <- paste0("S", colnames(validation_data2))
+
+sample_names1 <- sort(colnames(validation_data1))
+sample_names2 <- sort(colnames(validation_data2))
+
+all.equal(sample_names1, sample_names2)
+
+validation_data1 <- validation_data1[, sample_names1]
+rownames(validation_data1) <- gsub("-", "_", rownames(validation_data1), fixed = TRUE)
+
+validation_data2 <- validation_data2[, sample_names2]
+
+all.equal(validation_data1, validation_data2)
+
+####################################################################################
