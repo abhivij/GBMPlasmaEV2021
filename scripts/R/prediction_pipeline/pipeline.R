@@ -1,4 +1,6 @@
 library(tidyverse)
+library(ggvenn)
+
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
@@ -21,7 +23,8 @@ comparison = "PREOPEVsREC_TP"
 omics_type = "transcriptomic"
 classes = c("REC_TP", "PREOPE")
 best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-  
+
+
 pipeline <- function(comparison, omics_type, classes, 
                      best_features_file_path){
 
@@ -100,6 +103,16 @@ pipeline <- function(comparison, omics_type, classes,
   
   #now data.train, data.test format : (samples x transcripts)
   
+  
+  ggvenn(list("selected biomarkers" = biomarkers, 
+              "Validation Cohort before filter" = colnames(data.test)),
+         fill_color = c("green", "blue"),
+         stroke_size = 0.1,
+         set_name_size = 5,
+         text_size = 3)
+  ggsave(paste0("plots/", comparison, "_beforefilter.png"))
+  
+  
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
@@ -157,7 +170,7 @@ pipeline <- function(comparison, omics_type, classes,
          stroke_size = 0.1,
          set_name_size = 5,
          text_size = 3)
-  ggsave(paste0("plots/", comparison, ".png"))
+  ggsave(paste0("plots/", comparison, "_afterfilter.png"))
   
   
   missing_biomarkers <- setdiff(biomarkers, colnames(data.test))
@@ -194,6 +207,14 @@ pipeline <- function(comparison, omics_type, classes,
 #          best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
 #          train_index = train_index)
 
+
+pipeline(comparison = "PREOPEVsREC_TP", 
+         omics_type = "transcriptomic", 
+         classes = c("REC_TP", "PREOPE"),
+         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv")
+
+
+result_df <- read.csv("Data/validation_prediction_result/PREOPEVsREC_TP.csv")
 train_results <- result_df %>%
   filter(Type == "train")
 acc.train <- sum(train_results$TrueLabel == train_results$PredictedLabel)/dim(train_results)[1]
