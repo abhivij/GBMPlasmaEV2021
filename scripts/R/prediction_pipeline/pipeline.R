@@ -26,6 +26,7 @@ best_features_file_path = "Data/selected_features/best_features_with_add_col.csv
 use_common_biomarkers = TRUE
 result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP.csv"
 result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP_commonbiomarkerswithtest.csv"
+result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP_trainnorm_commonbiomarkerswithtest.csv"
 take_common_at_start = TRUE
 
 #use_common_biomarkers - from the biomarker set identified using train data,
@@ -127,14 +128,6 @@ pipeline <- function(comparison, omics_type, classes,
          text_size = 3)
   ggsave(paste0("plots/", comparison, "_beforefilter.png"))
   
-  
-  if(use_common_biomarkers && take_common_at_start){
-    #get best biomarkers present in test_data
-    common_biomarkers <- intersect(biomarkers, colnames(data.test))
-    data.train <- data.train[, common_biomarkers]
-    data.test <- data.test[, common_biomarkers]
-  }
-  
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
@@ -142,12 +135,15 @@ pipeline <- function(comparison, omics_type, classes,
     keep <- edgeR::filterByExpr(data.train, group = output_labels$Label)
     data.train <- data.train[keep, ]
     
-    if(use_common_biomarkers && take_common_at_start){
-      data.test <- data.test[keep, ]  
-    } else{
-      keep <- edgeR::filterByExpr(data.test, group = output_labels_test$Label)
-      data.test <- data.test[keep, ]
-    }
+    keep <- edgeR::filterByExpr(data.test, group = output_labels_test$Label)
+    data.test <- data.test[keep, ]
+  }
+
+  if(use_common_biomarkers && take_common_at_start){
+    #get best biomarkers present in test_data
+    common_biomarkers <- intersect(biomarkers, rownames(data.test))
+    data.train <- data.train[common_biomarkers, ]
+    data.test <- data.test[common_biomarkers, ]
   }
   
   
@@ -191,13 +187,15 @@ pipeline <- function(comparison, omics_type, classes,
   }
   #now data, data.test2 format : (samples x transcripts)
   
-  ggvenn(list("selected biomarkers" = biomarkers, 
-              "Validation Cohort after filter" = colnames(data.test)),
-         fill_color = c("green", "orange"),
-         stroke_size = 0.1,
-         set_name_size = 5,
-         text_size = 3)
-  ggsave(paste0("plots/", comparison, "_afterfilter.png"))
+  if(!(use_common_biomarkers && take_common_at_start)){
+    ggvenn(list("selected biomarkers" = biomarkers, 
+                "Validation Cohort after filter" = colnames(data.test)),
+           fill_color = c("green", "orange"),
+           stroke_size = 0.1,
+           set_name_size = 5,
+           text_size = 3)
+    ggsave(paste0("plots/", comparison, "_afterfilter.png"))    
+  }
   
   
   if(use_common_biomarkers && !take_common_at_start){
@@ -205,7 +203,7 @@ pipeline <- function(comparison, omics_type, classes,
     common_biomarkers <- intersect(biomarkers, colnames(data.test))
     data.train <- data.train[, common_biomarkers]
     data.test <- data.test[, common_biomarkers]
-  } else{
+  } else if(!use_common_biomarkers){
     #get all best biomarkers only
     data.train <- data.train[, biomarkers]
     
@@ -293,3 +291,22 @@ acc.test <- sum(test_results$TrueLabel == test_results$PredictedLabel) / dim(tes
 
 pr <- ROCR::prediction(test_results$Probability, test_results$TrueLabel, label.ordering = classes)
 auc <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+
+
+
+
+result_df <- read.csv("Data/validation_prediction_result/PREOPEVsREC_TP_trainnorm_commonbiomarkerswithtest.csv")
+train_results <- result_df %>%
+  filter(Type == "train")
+acc.train <- sum(train_results$TrueLabel == train_results$PredictedLabel)/dim(train_results)[1]
+
+pr <- ROCR::prediction(train_results$Probability, train_results$TrueLabel, label.ordering = classes)
+auc.train <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+
+
+test_results <- result_df %>%
+  filter(Type == "test", TrueLabel != "UNK")
+acc.test <- sum(test_results$TrueLabel == test_results$PredictedLabel) / dim(test_results)[1]
+
+pr <- ROCR::prediction(test_results$Probability, test_results$TrueLabel, label.ordering = classes)
+auc.test <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
