@@ -255,8 +255,23 @@ pipeline(comparison = "PREOPEVsREC_TP",
          classes = c("REC_TP", "PREOPE"),
          best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
          use_common_biomarkers = TRUE,
-         result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP_commonbiomarkerswithtest.csv")
+         result_file_name = "Data/validation_prediction_result/PREOPEVsREC_TP_commonbiomarkerswithtest.csv")
 
+
+pipeline(comparison = "PREOPEVsREC_TP", 
+         omics_type = "transcriptomic", 
+         classes = c("REC_TP", "PREOPE"),
+         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+         use_common_biomarkers = TRUE,
+         take_common_at_start = TRUE,
+         result_file_name = "Data/validation_prediction_result/PREOPEVsREC_TP_trainnorm_commonbiomarkerswithtest.csv")
+
+
+all_result_df <- data.frame(matrix(nrow = 0, ncol = 6, dimnames = list(c(),
+                                                                       c("Comparison",
+                                                                         "Method",
+                                                                         "Acc.train", "AUC.train",
+                                                                         "Acc.test", "AUC.test"))))
 
 result_df <- read.csv("Data/validation_prediction_result/PREOPEVsREC_TP.csv")
 train_results <- result_df %>%
@@ -264,7 +279,7 @@ train_results <- result_df %>%
 acc.train <- sum(train_results$TrueLabel == train_results$PredictedLabel)/dim(train_results)[1]
 
 pr <- ROCR::prediction(train_results$Probability, train_results$TrueLabel, label.ordering = classes)
-auc <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+auc.train <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
 
 
 test_results <- result_df %>%
@@ -272,8 +287,12 @@ test_results <- result_df %>%
 acc.test <- sum(test_results$TrueLabel == test_results$PredictedLabel) / dim(test_results)[1]
 
 pr <- ROCR::prediction(test_results$Probability, test_results$TrueLabel, label.ordering = classes)
-auc <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+auc.test <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
 
+all_result_df[nrow(all_result_df) + 1, ] <- c("Comparison" = "PREOPEVsREC_TP",
+                                              "Method" = "Replace missing with 0",
+                                              "Acc.train" = acc.train, "AUC.train" = auc.train,
+                                              "Acc.test" = acc.test, "AUC.test" = auc.test)
 
 
 result_df <- read.csv("Data/validation_prediction_result/PREOPEVsREC_TP_commonbiomarkerswithtest.csv")
@@ -282,7 +301,7 @@ train_results <- result_df %>%
 acc.train <- sum(train_results$TrueLabel == train_results$PredictedLabel)/dim(train_results)[1]
 
 pr <- ROCR::prediction(train_results$Probability, train_results$TrueLabel, label.ordering = classes)
-auc <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+auc.train <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
 
 
 test_results <- result_df %>%
@@ -290,8 +309,12 @@ test_results <- result_df %>%
 acc.test <- sum(test_results$TrueLabel == test_results$PredictedLabel) / dim(test_results)[1]
 
 pr <- ROCR::prediction(test_results$Probability, test_results$TrueLabel, label.ordering = classes)
-auc <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+auc.test <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
 
+all_result_df[nrow(all_result_df) + 1, ] <- c("Comparison" = "PREOPEVsREC_TP",
+                                              "Method" = "Common biomarker with test",
+                                              "Acc.train" = acc.train, "AUC.train" = auc.train,
+                                              "Acc.test" = acc.test, "AUC.test" = auc.test)
 
 
 
@@ -310,3 +333,10 @@ acc.test <- sum(test_results$TrueLabel == test_results$PredictedLabel) / dim(tes
 
 pr <- ROCR::prediction(test_results$Probability, test_results$TrueLabel, label.ordering = classes)
 auc.test <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+
+
+all_result_df[nrow(all_result_df) + 1, ] <- c("Comparison" = "PREOPEVsREC_TP",
+                                              "Method" = "Common biomarker with test and norm with train param",
+                                              "Acc.train" = acc.train, "AUC.train" = auc.train,
+                                              "Acc.test" = acc.test, "AUC.test" = auc.test)
+
