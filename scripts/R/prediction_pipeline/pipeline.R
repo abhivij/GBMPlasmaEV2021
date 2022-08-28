@@ -26,11 +26,18 @@ best_features_file_path = "Data/selected_features/best_features_with_add_col.csv
 use_common_biomarkers = TRUE
 result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP.csv"
 result_file_name <- "Data/validation_prediction_result/PREOPEVsREC_TP_commonbiomarkerswithtest.csv"
+take_common_at_start = TRUE
 
+#use_common_biomarkers - from the biomarker set identified using train data,
+#                         use only the subset found in test data
+
+#take_common_at_start - perform this common biomarker subset at the start so as to use 
+#                         filter and norm params from train data on test data
 pipeline <- function(comparison, omics_type, classes, 
                      best_features_file_path, 
                      result_file_name = "Data/validation_prediction_result/PREOPEVsREC_TP.csv",
-                     use_common_biomarkers = FALSE){
+                     use_common_biomarkers = FALSE,
+                     take_common_at_start = FALSE){
 
   best_features <- read.csv(best_features_file_path)  
   
@@ -82,11 +89,15 @@ pipeline <- function(comparison, omics_type, classes,
     filter(Label %in% classes) %>%
     dplyr::select(Sample, Label)
   
+  print(summary(factor(output_labels$Label)))
+  
   output_labels_test <- test_metadata %>%
     rename("Label" = "category_old_name") %>%
     filter(Label %in% c(classes, "UNK")) %>%
     rename("Sample" = "sample_id") %>%
     dplyr::select(Sample, Label)
+  
+  print(summary(factor(output_labels_test$Label)))
   
   # if(omics_type == "proteomic"){
   #   #converting the proteomic labels to be same as proteomic label
@@ -117,6 +128,13 @@ pipeline <- function(comparison, omics_type, classes,
   ggsave(paste0("plots/", comparison, "_beforefilter.png"))
   
   
+  if(use_common_biomarkers && take_common_at_start){
+    #get best biomarkers present in test_data
+    common_biomarkers <- intersect(biomarkers, colnames(data.test))
+    data.train <- data.train[, common_biomarkers]
+    data.test <- data.test[, common_biomarkers]
+  }
+  
   if(perform_filter){
     data.train <- as.data.frame(t(as.matrix(data.train)))
     data.test <- as.data.frame(t(as.matrix(data.test)))
@@ -124,8 +142,12 @@ pipeline <- function(comparison, omics_type, classes,
     keep <- edgeR::filterByExpr(data.train, group = output_labels$Label)
     data.train <- data.train[keep, ]
     
-    keep <- edgeR::filterByExpr(data.test, group = output_labels_test$Label)
-    data.test <- data.test[keep, ]  
+    if(use_common_biomarkers && take_common_at_start){
+      data.test <- data.test[keep, ]  
+    } else{
+      keep <- edgeR::filterByExpr(data.test, group = output_labels_test$Label)
+      data.test <- data.test[keep, ]
+    }
   }
   
   
@@ -143,8 +165,12 @@ pipeline <- function(comparison, omics_type, classes,
     normparam <- caret::preProcess(data.train) 
     data.train <- predict(normparam, data.train)
     
-    normparam <- caret::preProcess(data.test)
-    data.test <- predict(normparam, data.test) 
+    if(use_common_biomarkers && take_common_at_start){
+      data.test <- predict(normparam, data.test) 
+    } else{
+      normparam <- caret::preProcess(data.test)
+      data.test <- predict(normparam, data.test) 
+    }
     
   } else if(norm == "quantile"){
     
@@ -174,7 +200,7 @@ pipeline <- function(comparison, omics_type, classes,
   ggsave(paste0("plots/", comparison, "_afterfilter.png"))
   
   
-  if(use_common_biomarkers){
+  if(use_common_biomarkers && !take_common_at_start){
     #get best biomarkers present in test_data
     common_biomarkers <- intersect(biomarkers, colnames(data.test))
     data.train <- data.train[, common_biomarkers]
