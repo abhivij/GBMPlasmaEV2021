@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#PBS -l select=1:ncpus=4:mem=124gb
+#PBS -l walltime=12:00:00
+
 module load R/3.6.3
 
 cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/
