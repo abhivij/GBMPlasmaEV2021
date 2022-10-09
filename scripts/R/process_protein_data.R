@@ -72,8 +72,8 @@ process_protein_data <- function(data_dir, condition_type, norm, remove_50_missi
   saveRDS(data_process_output, file = append_path(output_dir, file_name))
   
   normed <- data_process_output$RunlevelData %>%
-    select(Protein, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL) %>%
-    separate(Protein, c(NA, "Protein", NA), sep = "\\|") %>% 
+    select(ProteinName, LogIntensities, GROUP_ORIGINAL, SUBJECT_ORIGINAL) %>%
+    separate(ProteinName, c(NA, "Protein", NA), sep = "\\|") %>% 
     pivot_wider(names_from = Protein, values_from = LogIntensities)
   
   file_name <- paste(paste("norm", data_dir, file_name_substring, norm, sep = "_"), "csv", sep = ".")
