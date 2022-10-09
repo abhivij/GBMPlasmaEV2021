@@ -1,0 +1,6 @@
+#!/bin/bash
+
+module load R/3.6.3
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/
+Rscript scripts/R/validation_format_data.R
