@@ -24,6 +24,12 @@ for(f in file_names){
   
   # length(unique(data$BioReplicate))
   
+  data <- data %>% rename("ProteinName" = "Protein", 
+                          "PeptideSequence" = "Peptide", 
+                          "FileName" = "Result.File.Locator")
+  data <- data %>% filter(!grepl("precursor", Fragment.Ion))
+  
+  
   f_actual_name <- sub(paste0(data_path,"/"), "", f, fixed = TRUE)
   if(!dir.exists(output_dir_path)){
     dir.create(output_dir_path, recursive = TRUE)
