@@ -12,13 +12,9 @@ for(f in file_names){
   # data <- data_copy
   # length(unique(data$Replicate))
   
-  #unselecting Condition column because 3.6.3 version of R gives error while assigning factor column to existing
-  #                  char column
-  
   data <- data %>%
     mutate(BioReplicate = sub("4_Eclipse-OT_SH_|9_Eclipse-OT_SH_", "", Replicate)) %>%
-    mutate(BioReplicate = sub("-", "", BioReplicate, fixed = "")) %>%
-    select(-c(Condition))
+    mutate(BioReplicate = sub("-", "", BioReplicate, fixed = ""))
   
   data <- data %>%
     left_join(validation_metadata %>% select(sample_id, category_old_name), by = c("BioReplicate" = "sample_id")) %>%
