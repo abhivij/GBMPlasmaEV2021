@@ -28,5 +28,5 @@ for(f in file_names){
   if(!dir.exists(output_dir_path)){
     dir.create(output_dir_path, recursive = TRUE)
   }
-  write.csv(data, paste(output_dir_path, f_actual_name, sep = "/"), row.names = FALSE, quote = FALSE)
+  write.csv(data, paste(output_dir_path, f_actual_name, sep = "/"), row.names = FALSE)
 }
