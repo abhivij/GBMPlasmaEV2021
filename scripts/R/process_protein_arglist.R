@@ -102,7 +102,7 @@ process_protein_arglist <- list(
   
   
   #24
-  list(data_dir = "_newcohort_SBGNPlasma",
+  list(data_dir = "_newcohort_processed",
        condition_type = NA,
        norm = FALSE,
        remove_50_missing = FALSE)  
