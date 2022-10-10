@@ -54,10 +54,20 @@ process_protein_data <- function(data_dir, condition_type, norm, remove_50_missi
                     lapply(file_names, get_data_from_file, condition_type))
   }
   
+  output_dir <- "Data/Protein/data_process_output"
+  file_name <- paste(paste("combined_data", data_dir, sep = "_"), "csv", sep = ".")
+  write.csv(data, paste(output_dir, file_name, sep = "/"), row.names = FALSE)
   
   print(paste("Normalization :", norm))
   
   data <- SkylinetoMSstatsFormat(data)
+  
+  file_name <- paste(paste("msstatsformat_data", data_dir, sep = "_"), "csv", sep = ".")
+  write.csv(data, paste(output_dir, file_name, sep = "/"), row.names = FALSE)
+  
+  print(dim(data))
+  print(nrow(distinct(data)))
+  
   data_process_output <- dataProcess(data, logTrans = 2, normalization = norm,
                                      censoredInt = '0', remove50missing = remove_50_missing)
   
@@ -68,7 +78,6 @@ process_protein_data <- function(data_dir, condition_type, norm, remove_50_missi
   
   
   file_name <- paste(paste("data_process_output", data_dir, file_name_substring, norm, sep = "_"), "rds", sep = ".")
-  output_dir <- "Data/Protein/data_process_output"
   saveRDS(data_process_output, file = append_path(output_dir, file_name))
   
   normed <- data_process_output$RunlevelData %>%
