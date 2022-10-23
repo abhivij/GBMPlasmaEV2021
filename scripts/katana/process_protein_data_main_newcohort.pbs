@@ -1,8 +1,6 @@
 #!/bin/bash
 
-module load nlopt/2.7.0
-module load gcc/7.5.0
-module load R/4.2.0-gcc7-clean
+module load R/3.6.3
 
 cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/scripts/R
 Rscript process_protein_data_main.R --args 24
