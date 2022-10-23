@@ -69,8 +69,8 @@ process_protein_data <- function(data_dir, condition_type, norm, remove_50_missi
   print(nrow(distinct(data)))
   
   data.processed <- data %>% group_by(BioReplicate, ProteinName, 
-                                      PeptideSequence, Precursor.Charge, 
-                                      Fragment.Ion, Product.Charge) %>%
+                                      PeptideSequence, PrecursorCharge, 
+                                      FragmentIon, ProductCharge) %>%
     slice_min(order_by = DetectionQValue, n = 1, with_ties = FALSE) %>%
     ungroup()
 
