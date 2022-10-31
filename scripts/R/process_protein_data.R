@@ -67,18 +67,8 @@ process_protein_data <- function(data_dir, condition_type, norm, remove_50_missi
   
   print(dim(data))
   print(nrow(distinct(data)))
-  
-  data.processed <- data %>% group_by(BioReplicate, ProteinName, 
-                                      PeptideSequence, PrecursorCharge, 
-                                      FragmentIon, ProductCharge) %>%
-    slice_min(order_by = DetectionQValue, n = 1, with_ties = FALSE) %>%
-    ungroup()
-
-  print(dim(data.processed))
-  file_name <- paste(paste("processed_msstatsformat_data", data_dir, sep = "_"), "csv", sep = ".")
-  write.csv(data.processed, paste(output_dir, file_name, sep = "/"), row.names = FALSE)
     
-  data_process_output <- dataProcess(data.processed, logTrans = 2, normalization = norm,
+  data_process_output <- dataProcess(data, logTrans = 2, normalization = norm,
                                      censoredInt = '0', remove50missing = remove_50_missing)
   
   file_name_substring <- condition_type
