@@ -388,23 +388,19 @@ source("scripts/R/utils.R")
 # dparg_vec <- c(31:35)
 # criteria <- 28
 
-dparg_vec <- c(163:165)
-criteria <- 29
-results_dir = "fem_pipeline_results_subset"
-dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_"
-heatmap_file_name = "tr_PREOPEVsMET.png"
+# dparg_vec <- c(163:165)
+# criteria <- 29
+# results_dir = "fem_pipeline_results_subset"
+# dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_"
+# heatmap_file_name = "tr_PREOPEVsMET.png"
 
-plot_common_feature_heatmap(c(163:165),
-                            results_dir = "fem_pipeline_results_subset",
-                            dataset_replace_string = "transcriptomic_simple_norm_PREOPEVsMET_",
-                            heatmap_file_name = "tr_PREOPEVsMET.png"
-                            )
 
 plot_common_feature_heatmap <- function(dparg_vec, 
                                         dataset_pipeline_arguments = dataset_pipeline_arguments,
                                       results_dir = "fem_pipeline_results",
                                       dataset_replace_string = "",
-                                      heatmap_file_name){
+                                      heatmap_file_name,
+                                      dir_path = "plots/FEMPipeline_new_quant/common_heatmap/"){
   data_info <- read.table(paste(results_dir, "data_info.csv", sep = "/"), 
                           sep = ',', header = TRUE)
   fsm_info <- read.table(paste(results_dir, "fsm_info.csv", sep = "/"),
@@ -434,10 +430,8 @@ plot_common_feature_heatmap <- function(dparg_vec,
     column_to_rownames("Model")
   data_to_plot <- data.matrix(data_to_plot)
   
-  
-  dir_path <- paste0("plots/FEMPipeline_new_quant/common_heatmap/")
   if(!dir.exists(dir_path)){
-    dir.create(dir_path)
+    dir.create(dir_path, recursive = TRUE)
   }
   file_path <- paste0(dir_path, heatmap_file_name)
   
@@ -449,7 +443,7 @@ plot_common_feature_heatmap <- function(dparg_vec,
                 rect_gp = gpar(col = "white", lwd = 1),
                 column_names_rot = 30,
                 column_names_gp = gpar(fontsize = 10),
-                row_title = "Feature Selection Methods",
+                row_title = "Classification Models",
                 row_names_side = "left",
                 cell_fun = function(j, i, x, y, width, height, fill) {
                   grid.text(sprintf("%.4f", data_to_plot[i, j]), x, y, gp = gpar(fontsize = 10, col = "slateblue3"))
@@ -702,8 +696,16 @@ plot_common_feature_heatmap(c(17, 18),
                             heatmap_file_name = "tr_PREOPEVsREC_TP.png")
 
 
+plot_common_feature_heatmap(dparg_vec = c(17, 18),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_tr_subset",
+                            dataset_replace_string = "GBM_tr_initial_",
+                            heatmap_file_name = "tr_PREOPEVsREC_TP.png", 
+                            dir_path = )
 
 
+  
+  
 
 ##########
 
@@ -731,3 +733,57 @@ plot_heatmap(
   dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/",
   dataset_replace_string = "GBM_initial_proteomic_impute50fil_"
 )
+
+
+
+
+#### proteomic subsets
+
+plot_common_feature_heatmap(c(25, 26),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_no_norm_PREOPEVsPOSTOPE_TP_",
+                            dir_path = "plots/FEMPipeline_prot_no_norm/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsPOSTOPE_TP.png"
+)
+
+plot_common_feature_heatmap(c(27, 28),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_no_norm_POSTOPE_TPVsREC_TP_",
+                            dir_path = "plots/FEMPipeline_prot_no_norm/common_heatmap/",
+                            heatmap_file_name = "POSTOPE_TPVsREC_TP.png"
+)
+
+plot_common_feature_heatmap(c(29, 30),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_no_norm_PREOPEVsREC_TP_",
+                            dir_path = "plots/FEMPipeline_prot_no_norm/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsREC_TP.png"
+)
+
+plot_common_feature_heatmap(c(31, 32),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_quantile_train_param_PREOPEVsPOSTOPE_TP_",
+                            dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsPOSTOPE_TP.png"
+)
+
+plot_common_feature_heatmap(c(33, 34),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_quantile_train_param_POSTOPE_TPVsREC_TP_",
+                            dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_heatmap/",
+                            heatmap_file_name = "POSTOPE_TPVsREC_TP.png"
+)
+
+plot_common_feature_heatmap(c(35, 36),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_proteomic_subset",
+                            dataset_replace_string = "GBM_initial_proteomic_impute50fil_quantile_train_param_PREOPEVsREC_TP_",
+                            dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsREC_TP.png"
+)
+
