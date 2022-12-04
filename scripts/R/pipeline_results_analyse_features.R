@@ -1,6 +1,7 @@
 setwd("~/UNSW/VafaeeLab/GBMPlasmaEV/")
 source("scripts/R/dataset_pipeline_arguments.R")
 source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
+source("scripts/R/dataset_pipeline_arguments_proteomic.R")
 source("scripts/R/utils.R")
 library(tidyverse)
 library(viridis)
@@ -78,7 +79,7 @@ explore_common_features <- function(dparg_id, best_fsm_vec,
       units = "cm", width = 30, height = 15, res = 1200)
   print({
     upset(fromList(selected_features), set_size.show = TRUE,  
-          set_size.scale_max = max_size + 20)  
+          set_size.scale_max = max_size + max_size/10)  
   })
   grid.text(paste(dataset_id, min_iter_feature_presence),
             x = 0.6, y = 0.95)
@@ -149,6 +150,15 @@ write_subset_file <- function(data, features, subset_file_path){
 # create_all_common = TRUE
 
 
+dparg_id = 13
+dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic
+min_iter_feature_presence = 28
+subset_creation_criteria <- list("i"= c("ga_rf"))
+subset_file_name_substr = "ga_rf"
+create_all_common = FALSE
+
+
+
 create_data_subsets <- function(dparg_id, 
                                 min_iter_feature_presence,
                                 subset_creation_criteria,
@@ -171,18 +181,13 @@ create_data_subsets <- function(dparg_id,
   
   ######create new data subsets
   
-  if(grepl(pattern = "tr", x = dataset_id, fixed = TRUE)){
+  if(grepl(pattern = "transcript", x = dataset_id, fixed = TRUE)){
     data <- read.table("Data/RNA/umi_counts_initial_cohort.csv", header=TRUE, sep=",", row.names=1, skip=0,
                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")   
     output_dir <- "Data/RNA/subset_initial_cohort/"
-  } else if(grepl(pattern = "pr", x = dataset_id, fixed = TRUE)){
-    if(grepl(pattern = "REC-TP", x = dataset_id, fixed = TRUE)){
-      data <- read.table("Data/Protein/formatted_data/Q7_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
-                         nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
-    } else{
-      data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
+  } else if(grepl(pattern = "prot", x = dataset_id, fixed = TRUE)){
+    data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
-    }
     output_dir <- "Data/Protein/subset_initial_cohort/"
   } else{
     print("Unknown dataset_id type !")
@@ -1009,3 +1014,136 @@ create_data_subsets(dparg_id = 9,
                     subset_creation_criteria <- list("i"= c("mrmr75")),
                     subset_file_name_substr = "mrmr75",
                     create_all_common = FALSE)
+
+
+#####################################
+#proteomic with no norm
+
+explore_common_features(dparg_id = 1,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ga_rf", "mrmr_perc50", "mrmr75", "mrmr100"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_no_norm/common_features_upset")
+
+explore_common_features(dparg_id = 5,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("RF_RFE", "ranger_pos_impu_cor", "ga_rf", 
+                                         "mrmr_perc50", "mrmr50", "mrmr100"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_no_norm/common_features_upset")
+
+explore_common_features(dparg_id = 9,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr30", "mrmr50", "mrmr75", 
+                                         "wilcoxontest", "t-test"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_no_norm/common_features_upset")
+
+
+create_data_subsets(dparg_id = 1,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 1,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)
+
+create_data_subsets(dparg_id = 5,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 5,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+create_data_subsets(dparg_id = 9,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 9,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE)
+
+#####################################
+#proteomic with quantile train param norm
+
+explore_common_features(dparg_id = 13,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ga_rf", "mrmr30", "mrmr75", "mrmr100", "mrmr50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_features_upset")
+
+explore_common_features(dparg_id = 17,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr_perc50", "ranger_pos_impu_cor", "ga_rf", 
+                                         "RF_RFE", "t-test"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_features_upset")
+
+explore_common_features(dparg_id = 21,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr30", "t-test", "ga_rf", "RF_RFE", 
+                                         "wilcoxontest"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr",
+                        dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/common_features_upset")
+
+create_data_subsets(dparg_id = 13,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ga_rf")),
+                    subset_file_name_substr = "ga_rf",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 13,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE)
+
+create_data_subsets(dparg_id = 17,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 17,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE)
+
+create_data_subsets(dparg_id = 21,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE)
+create_data_subsets(dparg_id = 21,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("wilcoxontest")),
+                    subset_file_name_substr = "wilcoxontest",
+                    create_all_common = FALSE)
+

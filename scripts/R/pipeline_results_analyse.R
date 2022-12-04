@@ -5,6 +5,7 @@ library(ComplexHeatmap)
 source("scripts/R/utils.R")
 source("scripts/R/dataset_pipeline_arguments.R")
 source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
+source("scripts/R/dataset_pipeline_arguments_proteomic.R")
 
 
 
@@ -400,6 +401,7 @@ plot_common_feature_heatmap(c(163:165),
                             )
 
 plot_common_feature_heatmap <- function(dparg_vec, 
+                                        dataset_pipeline_arguments = dataset_pipeline_arguments,
                                       results_dir = "fem_pipeline_results",
                                       dataset_replace_string = "",
                                       heatmap_file_name){
@@ -407,7 +409,7 @@ plot_common_feature_heatmap <- function(dparg_vec,
                           sep = ',', header = TRUE)
   fsm_info <- read.table(paste(results_dir, "fsm_info.csv", sep = "/"),
                          sep = ',', header = TRUE)
-  model_results <- read.table(paste(results_dir, "model_results.csv", sep = "/"),
+  model_results <- read.table(paste(results_dir, "model_results_test.csv", sep = "/"),
                               sep = ',', header = TRUE)
   
   
@@ -433,7 +435,7 @@ plot_common_feature_heatmap <- function(dparg_vec,
   data_to_plot <- data.matrix(data_to_plot)
   
   
-  dir_path <- paste0("plots/FEMPipeline/common_heatmap/")
+  dir_path <- paste0("plots/FEMPipeline_new_quant/common_heatmap/")
   if(!dir.exists(dir_path)){
     dir.create(dir_path)
   }
@@ -445,7 +447,7 @@ plot_common_feature_heatmap <- function(dparg_vec,
   ht <- Heatmap(data_to_plot, name = "Mean AUC",
                 col = magma(5),
                 rect_gp = gpar(col = "white", lwd = 1),
-                column_names_rot = 60,
+                column_names_rot = 30,
                 column_names_gp = gpar(fontsize = 10),
                 row_title = "Feature Selection Methods",
                 row_names_side = "left",
@@ -679,3 +681,53 @@ plot_features_count_barplot(dparg_vec = c(1, 5, 9),
                             dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
                             results_dir_path = "fem_pipeline_results_tr", 
                             output_dir_path = "plots/FEMPipeline_new_quant/features_count/transcriptomic/")
+
+
+plot_common_feature_heatmap(c(13, 14),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_tr_subset",
+                            dataset_replace_string = "GBM_tr_initial_",
+                            heatmap_file_name = "tr_PREOPEVsPOSTOPE_TP.png")
+
+plot_common_feature_heatmap(c(15, 16),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_tr_subset",
+                            dataset_replace_string = "GBM_tr_initial_",
+                            heatmap_file_name = "tr_POSTOPE_TPVsREC_TP.png")
+
+plot_common_feature_heatmap(c(17, 18),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_tr_subset",
+                            dataset_replace_string = "GBM_tr_initial_",
+                            heatmap_file_name = "tr_PREOPEVsREC_TP.png")
+
+
+
+
+
+##########
+
+#proteomic - with no norm
+
+plot_heatmap(
+  dparg_vec = c(1, 5, 9),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_pr",
+  dir_path = "plots/FEMPipeline_prot_no_norm/",
+  dataset_replace_string = "GBM_initial_proteomic_impute50fil_"
+)
+
+
+
+
+##########
+
+#proteomic - with quantile norm with train param
+
+plot_heatmap(
+  dparg_vec = c(13, 17, 21),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_pr",
+  dir_path = "plots/FEMPipeline_prot_quantile_norm_with_train_param/",
+  dataset_replace_string = "GBM_initial_proteomic_impute50fil_"
+)
