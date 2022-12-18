@@ -116,3 +116,47 @@ plot_data(t(for_data3), "impute_NA_replace_after50fil.png", "50% filter & impute
 compare_filter_na_from_input("Data/Protein/norm_output/norm__newcohort_processed_NA_FALSE.csv",
                              output_filename = "Data/Protein/formatted_data/newcohort_filter_na_result.csv")
 
+
+##################################################################
+### create data files with common proteins 
+
+data <- read.csv("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", 
+                 row.names=1)
+validation_data <- read.csv("Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv", 
+                            row.names = 1)
+length(intersect(rownames(data), rownames(validation_data)))
+common_proteins <- intersect(rownames(data), rownames(validation_data))
+
+initial_data_common <- data[common_proteins, ]
+validation_data_common <- validation_data[common_proteins, ]
+
+write.csv(initial_data_common, 
+          "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+write.csv(validation_data_common, 
+          "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+
+##################################################################
+###create validation data with proteins from train data
+
+data <- read.csv("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", 
+                 row.names=1)
+validation_data <- read.csv("Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv", 
+                            row.names = 1)
+length(intersect(rownames(data), rownames(validation_data)))
+common_proteins <- intersect(rownames(data), rownames(validation_data))
+initial_cohort_specific_proteins <- setdiff(rownames(data), rownames(validation_data))
+initial_cohort_proteins <- rownames(data)
+
+validation_data_common <- validation_data[common_proteins, ]
+validation_data.2 <-  data.frame(matrix(data = NA, nrow = length(initial_cohort_specific_proteins),
+                             ncol = ncol(validation_data),
+                             dimnames = list(initial_cohort_specific_proteins,
+                                             colnames(validation_data)))
+                             )
+
+validation_data_initial_cohort_proteins <- rbind(validation_data_common, validation_data.2)
+
+combined_data <- cbind(validation_data_initial_cohort_proteins[rownames(data), ],
+                       data)
+write.csv(combined_data, 
+          "Data/Protein/formatted_data/combined_data_with_initial_cohort_proteins.csv")

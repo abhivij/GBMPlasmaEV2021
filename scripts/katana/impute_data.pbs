@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#PBS -l select=1:ncpus=8:mem=124gb
+#PBS -l walltime=12:00:00
+
+module load gcc/7.5.0
+module load R/4.2.0-gcc7-clean
+
+cd /srv/scratch/vafaeelab/AbhishekVijayan/GBMPlasmaEV2021/
+Rscript scripts/R/proteomic/impute_data.R
