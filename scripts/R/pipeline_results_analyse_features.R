@@ -164,7 +164,8 @@ create_data_subsets <- function(dparg_id,
                                 subset_creation_criteria,
                                 subset_file_name_substr = "common3",
                                 create_all_common = TRUE,
-                                dataset_pipeline_arguments = dataset_pipeline_arguments){
+                                dataset_pipeline_arguments = dataset_pipeline_arguments,
+                                data_file_path = NA){
   
   ds <- dataset_pipeline_arguments[[dparg_id]]
   dataset_id <- paste(ds$dataset_id, ds$classification_criteria, sep = "_")
@@ -182,11 +183,17 @@ create_data_subsets <- function(dparg_id,
   ######create new data subsets
   
   if(grepl(pattern = "transcript", x = dataset_id, fixed = TRUE)){
-    data <- read.table("Data/RNA/umi_counts_initial_cohort.csv", header=TRUE, sep=",", row.names=1, skip=0,
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
+    }
+    data <- read.table(data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
                        nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")   
     output_dir <- "Data/RNA/subset_initial_cohort/"
   } else if(grepl(pattern = "prot", x = dataset_id, fixed = TRUE)){
-    data <- read.table("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", header=TRUE, sep=",", row.names=1, skip=0,
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
+    }
+    data <- read.table(data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
                          nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
     output_dir <- "Data/Protein/subset_initial_cohort/"
   } else{
@@ -1147,3 +1154,112 @@ create_data_subsets(dparg_id = 21,
                     subset_file_name_substr = "wilcoxontest",
                     create_all_common = FALSE)
 
+
+#####################################
+#proteomic common with no norm
+
+explore_common_features(dparg_id = 41,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr75", "mrmr100", "mrmr50", "RF_RFE"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_no_norm/common_features_upset")
+
+explore_common_features(dparg_id = 37,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr_perc50", "ga_rf", "t-test", "mrmr30", "wilcoxontest"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_no_norm/common_features_upset")
+
+explore_common_features(dparg_id = 45,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr30", "mrmr50", "wilcoxontest", "t-test", "mrmr75"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_no_norm/common_features_upset")
+
+
+create_data_subsets(dparg_id = 41,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 37,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 37,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 45,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr50")),
+                    subset_file_name_substr = "mrmr50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+
+#####################################
+#proteomic common with quantile train param norm
+
+explore_common_features(dparg_id = 53,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ranger_pos_impu_cor", "mrmr_perc50", "RF_RFE", "mrmr50",
+                                         "t-test", "wilcoxontest", "mrmr75", "mrmr100"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_quantile_norm_with_train_param/common_features_upset")
+
+explore_common_features(dparg_id = 49,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ga_rf", "mrmr75", "mrmr50", "mrmr30"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_quantile_norm_with_train_param/common_features_upset")
+
+explore_common_features(dparg_id = 57,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr100", "mrmr75", "mrmr50", "RF_RFE"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_pr_common",
+                        dir_path = "plots/FEMPipeline_prot_common_quantile_norm_with_train_param/common_features_upset")
+
+
+create_data_subsets(dparg_id = 53,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 53,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 49,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")
+create_data_subsets(dparg_id = 57,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv")

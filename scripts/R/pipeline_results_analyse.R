@@ -787,3 +787,33 @@ plot_common_feature_heatmap(c(35, 36),
                             heatmap_file_name = "PREOPEVsREC_TP.png"
 )
 
+
+####################
+
+
+##########
+
+#proteomic common - with no norm
+
+plot_heatmap(
+  dparg_vec = c(37, 41, 45),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_pr_common",
+  dir_path = "plots/FEMPipeline_prot_common_no_norm/",
+  dataset_replace_string = "GBM_initial_proteomic_impute50fil_"
+)
+
+
+
+
+##########
+
+#proteomic common - with quantile norm with train param
+
+plot_heatmap(
+  dparg_vec = c(49, 53, 57),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_pr_common",
+  dir_path = "plots/FEMPipeline_prot_common_quantile_norm_with_train_param/",
+  dataset_replace_string = "GBM_initial_proteomic_impute50fil_"
+)
