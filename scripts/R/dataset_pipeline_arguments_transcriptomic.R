@@ -467,7 +467,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "POSTOPE_TP"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("all", 
                        "t-test", "wilcoxontest",
                        "ranger_pos_impu_cor",
@@ -484,7 +484,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "POSTOPE_TP"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("mrmr_perc50")),
   
   #POSTOPE_TPVsREC_TP
@@ -497,7 +497,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "POSTOPE_TP"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("RF_RFE")),
   
   #POSTOPE_TPVsREC_TP
@@ -510,7 +510,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "POSTOPE_TP"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("ga_rf")),    
   
   
@@ -524,7 +524,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("POSTOPE_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("all", 
                        "t-test", "wilcoxontest",
                        "ranger_pos_impu_cor",
@@ -541,7 +541,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("POSTOPE_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsPOSTOPE_TP
@@ -554,7 +554,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("POSTOPE_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsPOSTOPE_TP
@@ -567,7 +567,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("POSTOPE_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("ga_rf")),  
   
   
@@ -581,7 +581,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("all", 
                        "t-test", "wilcoxontest",
                        "ranger_pos_impu_cor",
@@ -598,7 +598,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsREC_TP
@@ -611,7 +611,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsREC_TP
@@ -624,7 +624,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("REC_TP", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm",
        fems_to_run = c("ga_rf"))
   
 )
