@@ -274,3 +274,21 @@ validation_data2 <- validation_data2[, sample_names2]
 all.equal(validation_data1, validation_data2)
 
 ####################################################################################
+
+
+
+#fetching common set of transcripts and write to file
+
+data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
+validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"      
+
+data <- read.csv(data_file_path, row.names = 1)
+validation_data <- read.csv(validation_data_file_path, row.names = 1)
+
+common <- intersect(rownames(data), rownames(validation_data))  
+data.common <- data[common, ]
+
+write.csv(data.common, "Data/RNA/umi_counts_initial_cohort_common_tr.csv")
+
+# data.common <- read.csv("Data/RNA/umi_counts_initial_cohort_common_tr.csv",
+#                         row.names = 1)
