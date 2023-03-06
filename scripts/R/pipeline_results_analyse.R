@@ -859,3 +859,44 @@ plot_common_feature_heatmap(c(68),
                             dir_path = "plots/FEMPipeline_prot_common_quantile_norm_with_train_param/common_heatmap/",
                             heatmap_file_name = "PREOPEVsREC_TP.png"
 )
+
+
+####################
+
+#proteomic common combat
+
+plot_heatmap(
+  dparg_vec = c(69, 73, 77),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_pr_common_combat",
+  dir_path = "plots/FEMPipeline_prot_common_combat/",
+  dataset_replace_string = "GBM_initial_proteomic_common_combat_"
+)
+
+
+####################
+
+#transcriptomic common combat
+
+plot_heatmap(
+  dparg_vec = c(19, 23, 27),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_tr_common_combat",
+  dir_path = "plots/FEMPipeline_tr_common_combat/",
+  dataset_replace_string = "GBM_initial_transcriptomic_common_combat_"
+)
+
+
+
+####################
+
+#transcriptomic common
+
+
+plot_heatmap(
+  dparg_vec = c(31, 35, 39),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_tr_common",
+  dir_path = "plots/FEMPipeline_tr_common/",
+  dataset_replace_string = "GBM_initial_transcriptomic_common_"
+)
