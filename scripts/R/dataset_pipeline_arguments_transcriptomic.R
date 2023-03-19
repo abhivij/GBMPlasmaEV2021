@@ -1050,8 +1050,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   #PREOPEVsREC_TP
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
        read_count_dir_path = "Data/RNA/subset_initial_cohort",
-       read_count_file_name = "GBM_initial_transcriptomic_common_combat_PREOPEVsREC_TP_ranger_pos_impu_cor_nopir_28.csv
-",
+       read_count_file_name = "GBM_initial_transcriptomic_common_combat_PREOPEVsREC_TP_ranger_pos_impu_cor_nopir_28.csv",
        sep = ",",
        dataset_id = "GBM_initial_transcriptomic_common_combat_PREOPEVsREC_TP_ranger_pos_impu_cor_nopir_28",
        classification_criteria = "PREOPEVsREC_TP",
