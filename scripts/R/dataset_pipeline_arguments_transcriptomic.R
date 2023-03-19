@@ -1044,11 +1044,8 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common_combat_subset",
        norm = "none", perform_filter = FALSE,
-       fems_to_run = c("all", 
-                       "t-test", "wilcoxontest",
-                       "ranger_pos_impu_cor",
-                       "mrmr30", "mrmr50", 
-                       "mrmr75", "mrmr100")),
+       fems_to_run = c("all"),
+       random_seed = 2000),
   
   #PREOPEVsREC_TP
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
@@ -1062,11 +1059,8 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common_combat_subset",
        norm = "none", perform_filter = FALSE,
-       fems_to_run = c("all", 
-                       "t-test", "wilcoxontest",
-                       "ranger_pos_impu_cor",
-                       "mrmr30", "mrmr50", 
-                       "mrmr75", "mrmr100")),
+       fems_to_run = c("all"),
+       random_seed = 2000),
   
   #PREOPEVsREC_TP
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
@@ -1079,11 +1073,8 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common_combat_subset",
        norm = "none", perform_filter = FALSE,
-       fems_to_run = c("all", 
-                       "t-test", "wilcoxontest",
-                       "ranger_pos_impu_cor",
-                       "mrmr30", "mrmr50", 
-                       "mrmr75", "mrmr100")),
+       fems_to_run = c("all"),
+       random_seed = 2000),
   
   #PREOPEVsREC_TP
   list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
@@ -1096,11 +1087,8 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_tr_common_combat_subset",
        norm = "none", perform_filter = FALSE,
-       fems_to_run = c("all", 
-                       "t-test", "wilcoxontest",
-                       "ranger_pos_impu_cor",
-                       "mrmr30", "mrmr50", 
-                       "mrmr75", "mrmr100")),
+       fems_to_run = c("all"),
+       random_seed = 2000),
   
   #subset common transcripts with validation cohort
   
