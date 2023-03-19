@@ -8,14 +8,15 @@ perform_filter = TRUE
 norm = "quantile_train_param"
 batch_effect_correction = "combat"
 
-comparison = "PREOPEVsPOSTOPE_TP"
-classes = c("PREOPE", "POSTOPE_TP")
+comparison = "PREOPEVsREC_TP"
+classes = c("PREOPE", "REC_TP")
 omics_type = "proteomics"
 norm = "quantile_train_param"
+filter_before_common = TRUE
 
 create_batch_corrected_data <- function(comparison, classes, omics_type,
                                         norm,
-                                        perform_filter = TRUE,
+                                        perform_filter = TRUE, filter_before_common = FALSE,
                                         batch_effect_correction = "combat"){
   if(omics_type == "proteomics"){
     data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
@@ -74,14 +75,28 @@ create_batch_corrected_data <- function(comparison, classes, omics_type,
   data.train <- data %>% dplyr::select(output_labels.train$Sample)
   data.test <- validation_data %>% dplyr::select(output_labels.test$Sample)
   
-  common <- intersect(rownames(data.train), rownames(data.test))  
-  data.train <- data.train[common, ]
-  data.test <- data.test[common, ]
-
-  if(perform_filter){
-    keep <- edgeR::filterByExpr(data.train, group = output_labels.train$Label)
-    data.train <- data.train[keep, ]
-    data.test <- data.test[keep, ]  
+  if(filter_before_common){
+    if(perform_filter){
+      keep <- edgeR::filterByExpr(data.train, group = output_labels.train$Label)
+      data.train <- data.train[keep, ]
+      keep <- edgeR::filterByExpr(data.test, group = output_labels.test$Label)
+      data.test <- data.test[keep, ]  
+    }    
+    common <- intersect(rownames(data.train), rownames(data.test))  
+    data.train <- data.train[common, ]
+    data.test <- data.test[common, ]
+    
+    file_name_prefix = "filter_before."
+  } else{
+    common <- intersect(rownames(data.train), rownames(data.test))  
+    data.train <- data.train[common, ]
+    data.test <- data.test[common, ]
+    if(perform_filter){
+      keep <- edgeR::filterByExpr(data.train, group = output_labels.train$Label)
+      data.train <- data.train[keep, ]
+      data.test <- data.test[keep, ]  
+    }        
+    file_name_prefix = ""
   }
   
   if(norm == "quantile_train_param"){
@@ -133,8 +148,19 @@ create_batch_corrected_data <- function(comparison, classes, omics_type,
   data.train <- data.combat[, output_labels.train$Sample]
   data.test <- data.combat[, output_labels.test$Sample]
 
-  write.csv(data.train, file = paste0(output_dir_path, "/initial_data.combat.", comparison, ".csv"))
-  write.csv(data.test, file = paste0(output_dir_path, "/validation_data.combat.", comparison, ".csv"))
+  print(dim(data.combat))
+  print(dim(data.train))
+  print(dim(data.test))
+  
+  write.csv(data.combat, file = paste0(output_dir_path, "/combined_data.combat.", 
+                                      file_name_prefix,
+                                      comparison, ".csv"))
+  write.csv(data.train, file = paste0(output_dir_path, "/initial_data.combat.", 
+                                      file_name_prefix,
+                                      comparison, ".csv"))
+  write.csv(data.test, file = paste0(output_dir_path, "/validation_data.combat.", 
+                                     file_name_prefix,
+                                     comparison, ".csv"))
 }
 
 
@@ -169,3 +195,40 @@ create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
 
 # d1 <- read.csv("Data/RNA/initial_data.combat.PREOPEVsPOSTOPE_TP.csv", row.names = 1)
 # d2 <- read.csv("Data/RNA/validation_data.combat.PREOPEVsPOSTOPE_TP.csv", row.names = 1)
+
+#note : though files with filter_before_common = TRUE were created as shown below,
+#it has not been run in the pipeline because proteins were similar or lesser in count 
+#compared to previous
+#didn't compare transcriptomics data
+
+create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+                            classes = c("POSTOPE_TP", "REC_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            filter_before_common = TRUE)
+create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+                            classes = c("PREOPE", "POSTOPE_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            filter_before_common = TRUE)
+create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+                            classes = c("PREOPE", "REC_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            filter_before_common = TRUE)
+
+create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+                            classes = c("POSTOPE_TP", "REC_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            filter_before_common = TRUE)
+create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+                            classes = c("PREOPE", "POSTOPE_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            filter_before_common = TRUE)
+create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+                            classes = c("PREOPE", "REC_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            filter_before_common = TRUE)
