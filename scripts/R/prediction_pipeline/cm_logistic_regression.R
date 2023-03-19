@@ -1,9 +1,5 @@
-source("scripts/R/prediction_pipeline/compute_metrics.R")
-
-logistic_regression <- function(data.train, label.train, data.test, label.test, 
-                                data.test2 = NA, label.test2 = NA,
-                                classes, regularize = NA, 
-                                ...){
+log_reg_model <- function(data.train, label.train, data.test, label.test, 
+                          classes, regularize = NA, ...){
   
   model_name <- "logistic regression"
   if (is.na(regularize)) {
@@ -13,18 +9,10 @@ logistic_regression <- function(data.train, label.train, data.test, label.test,
   } else {
     model_name <- paste("L2 Regularized", model_name)
   }
-
-  #setting default value for metrics, to handle case where unable to train / execute classification model
-  metrics <- c(0, 0) 
   
   try({
     label.train$Label <- ifelse(label.train$Label == classes[1], 0, 1)
     label.test$Label <- ifelse(label.test$Label == classes[1], 0, 1)
-    
-    if(!is.na(label.test2)){
-      #PREREC samples expected to be shown as REC_TP
-      label.test2$Label <- ifelse(label.test2$Label == "PREREC", 1, 0)      
-    }
     
     if (!is.na(regularize)) {
       #alpha = 1 => l1 regularization (lasso)
@@ -43,8 +31,8 @@ logistic_regression <- function(data.train, label.train, data.test, label.test,
       lambda_1se <- model$lambda.1se
       
       best_acc <- -1
-      best_cut_off <- 0.3
-      for(cut_off in seq(0.3, 0.7, 0.01)){
+      best_cut_off <- 0.5
+      for(cut_off in c(0.5, seq(0.2, 0.8, 0.01))){
         print(cut_off)
         pred_prob.train <- predict(model, newx = as.matrix(data.train), s = lambda_1se, type = 'response')
         pred.train <- ifelse(pred_prob.train > cut_off, 1, 0)
@@ -63,66 +51,69 @@ logistic_regression <- function(data.train, label.train, data.test, label.test,
       pred <- ifelse(pred_prob > best_cut_off, 1, 0)
       mean(pred == label.test$Label)
       
-      if(!is.na(label.test2)){
-        pred_prob2 <- predict(model, newx = as.matrix(data.test2), s = lambda_1se, type = 'response')
-        pred2 <- ifelse(pred_prob2 > best_cut_off, 1, 0)
-        mean(pred2 == 1)
-      }
+      
+      result_df.train <- data.frame("TrueLabel" = ifelse(label.train$Label == 0, classes[1], classes[2]),
+                                    "Pred_prob" = pred_prob.train[,1],
+                                    "PredictedLabel" = pred.train[,1],
+                                    "Type" = "train",
+                                    "cutoff" = best_cut_off)
+      
+      result_df.test <- data.frame("TrueLabel" = ifelse(label.test$Label == 0, classes[1], classes[2]),
+                                   "Pred_prob" = pred_prob[,1],
+                                   "PredictedLabel" = pred[,1],
+                                   "Type" = "test",
+                                   "cutoff" = best_cut_off)
     }
     else {
       model <- glm(label.train$Label ~., data = data.train, family = binomial)
-      pred_prob <- predict(model, newdata = data.test, type = 'response')
-      pred <- ifelse(pred_prob > 0.5, 1, 0)
       
-      if(!is.na(label.test2)){
-        pred_prob2 <- predict(model, newdata = data.test2, type = 'response')
-        pred2 <- ifelse(pred_prob2 > 0.5, 1, 0)
+      best_acc <- -1
+      best_cut_off <- 0.5
+      for(cut_off in c(0.5, seq(0.2, 0.8, 0.01))){
+        print(cut_off)
+        pred_prob.train <- predict(model, newdata = data.train, type = 'response')
+        pred.train <- ifelse(pred_prob.train > cut_off, 1, 0)
+        acc <- mean(pred.train == label.train$Label)
+        if(acc > best_acc){
+          best_acc <- acc
+          best_cut_off <- cut_off
+        }
       }
+
+      pred_prob.train <- predict(model, newdata = data.train, type = 'response')
+      pred.train <- ifelse(pred_prob.train > best_cut_off, 1, 0)
+            
+      pred_prob <- predict(model, newdata = data.test, type = 'response')
+      pred <- ifelse(pred_prob > best_cut_off, 1, 0)
+      
+      result_df.train <- data.frame("TrueLabel" = ifelse(label.train$Label == 0, classes[1], classes[2]),
+                                    "Pred_prob" = pred_prob.train,
+                                    "PredictedLabel" = pred.train,
+                                    "Type" = "train",
+                                    "cutoff" = best_cut_off)
+      
+      result_df.test <- data.frame("TrueLabel" = ifelse(label.test$Label == 0, classes[1], classes[2]),
+                                   "Pred_prob" = pred_prob,
+                                   "PredictedLabel" = pred,
+                                   "Type" = "test",
+                                   "cutoff" = best_cut_off)
     }
-    metrics <- compute_metrics(pred = pred.train, pred_prob = pred_prob.train, true_label = label.train$Label, classes = c(0, 1))  
-    print(metrics)
-    result_df <- data.frame("DataClassName" = ifelse(label.train$Label == 0, classes[1], classes[2]),
-                             "DataExpectedClassName" = ifelse(label.train$Label == 0, classes[1], classes[2]),
-                             "Pred_prob" = pred_prob.train[,1],
-                             "Prediction" = pred.train[,1],
-                             "Type" = "train")
     
-    metrics <- compute_metrics(pred = pred, pred_prob = pred_prob, true_label = label.test$Label, classes = c(0, 1))  
-    print(metrics)
-    result_df1 <- data.frame("DataClassName" = ifelse(label.test$Label == 0, classes[1], classes[2]),
-                            "DataExpectedClassName" = ifelse(label.test$Label == 0, classes[1], classes[2]),
-                            "Pred_prob" = pred_prob[,1],
-                            "Prediction" = pred[,1],
-                            "Type" = "test")
+
     
-    result_df <- rbind(result_df %>%
+    result_df <- rbind(result_df.train %>%
                          rownames_to_column("sample"), 
-                       result_df1 %>%
+                       result_df.test %>%
                          rownames_to_column("sample"))
-    
-    if(!is.na(label.test2)){
-      result_df2 <- data.frame("DataClassName" = "PREREC",
-                               "DataExpectedClassName" = "REC_TP", 
-                               "Pred_prob" = pred_prob2[,1],
-                               "Prediction" = pred2[,1],
-                               "Type" = "test2")  
-      result_df <- rbind(result_df, 
-                         result_df2 %>%
-                           rownames_to_column("sample"))
-    }
     
     result_df <- result_df %>%
       mutate(Pred_prob = as.double(Pred_prob)) %>%
-      mutate(Prediction = ifelse(Prediction == 0, classes[1], classes[2]))
-    colnames(result_df)[5] <- paste0("Prediction_with_cutoff_", best_cut_off) 
-    
-    # result_file_name <- "Data/prediction_result/transcriptomics.csv"
-    # write.csv(result_df, result_file_name) 
+      mutate(PredictedLabel = ifelse(PredictedLabel == 0, classes[1], classes[2]))
     
     return (result_df)
   })
   
-
+  
 }
 
 
