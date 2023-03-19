@@ -287,8 +287,9 @@ validation_data <- read.csv(validation_data_file_path, row.names = 1)
 
 common <- intersect(rownames(data), rownames(validation_data))  
 data.common <- data[common, ]
+validation_data.common <- validation_data[common, ]
 
 write.csv(data.common, "Data/RNA/umi_counts_initial_cohort_common_tr.csv")
-
+write.csv(validation_data.common, "Data/RNA/umi_counts_validation_cohort_common_tr.csv")
 # data.common <- read.csv("Data/RNA/umi_counts_initial_cohort_common_tr.csv",
 #                         row.names = 1)
