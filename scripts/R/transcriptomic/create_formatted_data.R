@@ -284,6 +284,7 @@ validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"
 
 data <- read.csv(data_file_path, row.names = 1)
 validation_data <- read.csv(validation_data_file_path, row.names = 1)
+colnames(validation_data) <- paste0("S", colnames(validation_data))
 
 common <- intersect(rownames(data), rownames(validation_data))  
 data.common <- data[common, ]
