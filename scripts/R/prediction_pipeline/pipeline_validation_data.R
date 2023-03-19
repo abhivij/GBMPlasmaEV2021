@@ -32,21 +32,41 @@ result_file_name <- "Data/prediction_result/proteomics_with_new_validation_data.
 perform_filter = FALSE
 
 
-comparison = "PREOPEVsPOSTOPE_TP"
+comparison = "POSTOPE_TPVsREC_TP"
 omics_type = "proteomic"
-conditions = c("POSTOPE_TP", "PREOPE")
+conditions = c("REC_TP", "POSTOPE_TP")
 phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
 best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-result_file_name = "Data/prediction_result/proteomics_no_norm/PREOPEVsPOSTOPE_TP.csv"
-model = "l2_log_reg"
-norm = "no_norm"
+result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param/POSTOPE_TPVsREC_TP.csv"
+model = "sigmoid_svm"
+norm = "quantile_train_param"
+dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_"
+data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv"
+validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv"
+batch_effect_correction = ""
+perform_filter = TRUE
+
+comparison = "POSTOPE_TPVsREC_TP"
+omics_type = "transcriptomic"
+conditions = c("REC_TP", "POSTOPE_TP")
+phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP"
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm/POSTOPE_TPVsREC_TP.csv"
+model = "radial_svm"
+norm = "log_cpm"
+dataset_replace_str = "GBM_initial_transcriptomic_common_"
+data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv"
+validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv"
+
 
 pipeline_with_validation_data <- function(comparison, omics_type, conditions,
                                           phenotype_column, best_features_file_path,
                                           result_file_name, model, norm = NA,
                                           dataset_replace_str = NA,
                                           data_file_path = NA,
-                                          validation_data_file_path = NA){
+                                          validation_data_file_path = NA,
+                                          batch_effect_correction = "",
+                                          perform_filter = NA){
   
   classes = conditions
   best_features <- read.csv(best_features_file_path)  
@@ -72,26 +92,39 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
   biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]  
   
   if(omics_type == "transcriptomic"){
-    data <- read.table("Data/RNA/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
-                       nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
-    norm <- "norm_log_cpm_simple"
-    perform_filter <- TRUE
+    
+    if(is.na(norm)){
+      norm <- "log_cpm"
+    }
+    if(is.na(perform_filter)){
+      perform_filter <- FALSE      
+    }
     phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/RNA/umi_counts.csv"
+    }
+    if(is.na(validation_data_file_path)){
+      validation_data_file_path <- "Data/RNA_validation/umi_counts.csv"
+    }
+    
+    data <- read.table(data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
+                       nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
+    
     lim = c(-3, 5)
     breaks = seq(-3, 5, 1)
     
-    validation_data <- read.table("Data/RNA_validation/umi_counts.csv", header=TRUE, sep=",", row.names=1, skip=0,
+    validation_data <- read.table(validation_data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
                                   nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
     validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
-      mutate(sample_category = factor(sample_category)) %>%
-      mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
-                                       "POST-OP" = "POSTOPE_TP",
-                                       "RECURRENCE" = "REC_TP"))
+      mutate(sample_category = category_old_name) %>%
+      select(-c(category_old_name))
   } else {
     if(is.na(norm)){
       norm <- "quantile"
     }
-    perform_filter <- FALSE
+    if(is.na(perform_filter)){
+      perform_filter <- FALSE      
+    }
     phenotype <- read.table("Data/proteomic_phenotype.txt", header=TRUE, sep="\t")
     if(is.na(data_file_path)){
       data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv" 
@@ -101,7 +134,7 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     }
     
     data <- read.table(data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
-                         nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
+                       nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
     lim = c(5, 17.5)
     breaks = seq(5, 17.5, 2.5)
     validation_data <- read.csv(validation_data_file_path, row.names = 1)
@@ -124,44 +157,47 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     rename("Label" = phenotype_column) %>%
     filter(Label %in% conditions) %>%
     dplyr::select(Sample, Label)
-  
+
   if(omics_type == "proteomic"){
     #converting the proteomic labels to be same as proteomic label
     #NOTE : currently this is specific to POSTOPE_TP, REC_TP, PREREC samples
+    
     output_labels <- output_labels %>%
-      mutate(Sample = gsub("HB0", "HB", Sample, fixed = TRUE)) %>%
-      filter(Sample != "HB6")
+      mutate(Sample = gsub("HB0", "HB", Sample, fixed = TRUE))
+    
+    # why filter out HB6 ?    
+    # %>%
+    #   filter(Sample != "HB6")
     
     colnames(data) <- gsub("HB0", "HB", colnames(data), fixed = TRUE)
   }
   #currently data format : (transcripts x samples)
-
+  
   data <- data %>% dplyr::select(output_labels$Sample)
   data <- as.data.frame(t(as.matrix(data)))
   
   #now data format : (samples x transcripts)
-
-  data.train <- data
-  label.train <- output_labels
   
-  #TODO : get new data and labels as data.test
-  label.test <- validation_metadata %>%
+  data.train <- data
+  output_labels.train <- output_labels
+  
+  output_labels.test <- validation_metadata %>%
     select(sample_id, sample_category) %>%
     filter(sample_category %in% c(conditions, "UNK")) %>%
     arrange(sample_category)
-  colnames(label.test) <- colnames(label.train)
+  colnames(output_labels.test) <- colnames(output_labels.train)
   
-  data.test <- validation_data %>% dplyr::select(label.test$Sample)
+  data.test <- validation_data %>% dplyr::select(output_labels.test$Sample)
   data.test <- as.data.frame(t(as.matrix(data.test)))
+  
   
   data.train <- as.data.frame(t(as.matrix(data.train)))
   data.test <- as.data.frame(t(as.matrix(data.test)))
   if(perform_filter){
-    
-    keep <- edgeR::filterByExpr(data.train, group = label.train$Label)
+    keep <- edgeR::filterByExpr(data.train, group = output_labels.train$Label)
     data.train <- data.train[keep, ]
-    
-    keep <- edgeR::filterByExpr(data.test, group = label.test$Label)
+    # 
+    # keep <- edgeR::filterByExpr(data.test, group = output_labels.test$Label)
     data.test <- data.test[keep, ]  
   }
   if(norm == "norm_log_cpm_simple"){
@@ -181,6 +217,13 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     normparam <- caret::preProcess(data.test)
     data.test <- predict(normparam, data.test) #normalizing test data using params from train data   
     
+  } else if(norm == "log_cpm"){
+      #calculating norm log cpm
+      data.train <- edgeR::cpm(data.train, log=TRUE)
+      data.test <- edgeR::cpm(data.test, log=TRUE)
+      
+      data.train <- as.data.frame(t(as.matrix(data.train)))
+      data.test <- as.data.frame(t(as.matrix(data.test))) 
   } else if(norm == "quantile"){
     
     # norm_data <- preprocessCore::normalize.quantiles(as.matrix(data.train))
@@ -219,16 +262,60 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
     data.test.norm <- apply(data.test.rank, 2, index_to_mean, data_mean = data.train.mean)
     rownames(data.test.norm) <- rownames(data.test)
     data.test <- data.test.norm
+    
+    data.train <- as.data.frame(t(as.matrix(data.train)))
+    data.test <- as.data.frame(t(as.matrix(data.test)))
+  } else{
+    data.train <- as.data.frame(t(as.matrix(data.train)))
+    data.test <- as.data.frame(t(as.matrix(data.test)))
   }
-  data.train <- as.data.frame(t(as.matrix(data.train)))
-  data.test <- as.data.frame(t(as.matrix(data.test)))
-  #now data, data.test2 format : (samples x transcripts)
+
+  #now data format : (samples x transcripts)
   
-  #get best biomarkers only
+  if(batch_effect_correction != ""){
+    output_labels.train <- output_labels.train %>%
+      mutate(cohort = "initial")
+    output_labels.test <- output_labels.test %>%
+      mutate(cohort = "validation")
+    
+    data_of_interest <- rbind(data.train, data.test)
+    output_labels <- rbind(output_labels.train, output_labels.test)
+    
+    all.equal(rownames(data_of_interest), output_labels$Sample)
+    
+    data <- data_of_interest    
+  }
+  
+  
+  if(batch_effect_correction == "combat"){
+    data <- as.data.frame(t(as.matrix(data)))
+    data.combat = ComBat(dat=data, batch=output_labels$cohort)
+    data.combat <- as.data.frame(t(as.matrix(data.combat)))
+  } else if(batch_effect_correction == "combat_ref"){
+    data <- as.data.frame(t(as.matrix(data)))
+    data.combat = ComBat(dat=data, batch=output_labels$cohort, ref.batch = 'initial')
+    data.combat <- as.data.frame(t(as.matrix(data.combat)))
+    
+    data <- as.data.frame(t(as.matrix(data)))
+    data.train <- data[output_labels.train$Sample, ]
+    data.train.combat <- data.combat[output_labels.train$Sample, ]
+    print(all.equal(data.train, data.train.combat))
+    # TRUE
+    # 
+    # data.test <- data[output_labels.test$Sample, ]
+    # data.test.combat <- data.combat[output_labels.test$Sample, ]
+    # print(all.equal(data.test, data.test.combat))
+    # FALSE
+  }
+  
+  if(batch_effect_correction != ""){
+    data.train <- data.combat[output_labels.train$Sample, ]
+    data.test <- data.combat[output_labels.test$Sample, ]
+  }
+  
+  ###############get best biomarkers only
   data.train <- data.frame(data.train)[, biomarkers]  #data.frame() replaces - in colnames to .
-  
   colnames(data.test) <- gsub("-", ".", colnames(data.test))
-  
   sum(biomarkers %in% colnames(data.test))
   
   available_biomarkers <- c(biomarkers[biomarkers %in% colnames(data.test)])
@@ -244,26 +331,30 @@ pipeline_with_validation_data <- function(comparison, omics_type, conditions,
   for(nab in non_available_biomarkers){
     data.test[[nab]] <- 0
   }
+  ###############get best biomarkers end
   
   # data.test2 = NA
-  # label.test2 = NA
+  # output_labels.test2 = NA
   # regularize = 'l2'
   if(model == "rf"){
-    result_df <- rf_model(data.train, label.train, data.test, label.test, classes)
+    result_df <- rf_model(data.train, output_labels.train, data.test, output_labels.test, classes)
   } else if(model == "radial_svm"){
-    result_df <- svm_model(data.train, label.train,
-                           data.test, label.test,
+    result_df <- svm_model(data.train, output_labels.train,
+                           data.test, output_labels.test,
                            classes, kernel = "radial")
   } else if(model == "sigmoid_svm"){
-    result_df <- svm_model(data.train, label.train,
-                           data.test, label.test,
+    result_df <- svm_model(data.train, output_labels.train,
+                           data.test, output_labels.test,
                            classes, kernel = "sigmoid")
   } else if(model == "l2_log_reg"){
-    result_df <- log_reg_model(data.train, label.train, data.test, label.test,
+    result_df <- log_reg_model(data.train, output_labels.train, data.test, output_labels.test,
                                classes, regularize = "l2")
   } else if(model == "l1_log_reg"){
-    result_df <- log_reg_model(data.train, label.train, data.test, label.test,
+    result_df <- log_reg_model(data.train, output_labels.train, data.test, output_labels.test,
                                classes, regularize = "l1")
+  } else if(model == "simple_log_reg"){
+    result_df <- log_reg_model(data.train, output_labels.train, data.test, output_labels.test,
+                               classes)
   }
   write.csv(format(result_df, digits = 3), result_file_name, row.names = FALSE)
 }  
@@ -621,7 +712,7 @@ pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP",
                               phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
                               best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                               result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param/POSTOPE_TPVsREC_TP.csv",
-                              model = "sigmoid_svm", norm = "quantile_train_param",
+                              model = "sigmoid_svm", norm = "quantile_train_param", perform_filter = TRUE,
                               dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
                               data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
                               validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
@@ -631,7 +722,7 @@ pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP",
                               phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
                               best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                               result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param/PREOPEVsPOSTOPE_TP.csv",
-                              model = "radial_svm", norm = "quantile_train_param",
+                              model = "radial_svm", norm = "quantile_train_param", perform_filter = TRUE,
                               dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
                               data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
                               validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
@@ -641,7 +732,7 @@ pipeline_with_validation_data(comparison = "PREOPEVsREC_TP",
                               phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
                               best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                               result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param/PREOPEVsREC_TP.csv",
-                              model = "radial_svm", norm = "quantile_train_param",
+                              model = "radial_svm", norm = "quantile_train_param", perform_filter = TRUE,
                               dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
                               data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
                               validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
@@ -655,3 +746,333 @@ show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOP
 show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
              result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param/PREOPEVsREC_TP.csv",
              metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param/metrics.csv")
+
+
+####################
+#common proteins no norm 
+# changed the function such that biomarker subsetting happens first 
+###################
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_no_norm/POSTOPE_TPVsREC_TP.csv",
+                              model = "sigmoid_svm", norm = "no_norm",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_no_norm_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_no_norm/PREOPEVsPOSTOPE_TP.csv",
+                              model = "radial_svm", norm = "no_norm",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_no_norm_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_no_norm/PREOPEVsREC_TP.csv",
+                              model = "rf", norm = "no_norm",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_no_norm_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_no_norm/metrics.csv")
+
+
+#########################
+#common proteins quantile train param norm
+# changed the function such that biomarker subsetting happens first 
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/POSTOPE_TPVsREC_TP.csv",
+                              model = "sigmoid_svm", norm = "quantile_train_param",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/PREOPEVsPOSTOPE_TP.csv",
+                              model = "radial_svm", norm = "quantile_train_param",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/PREOPEVsREC_TP.csv",
+                              model = "radial_svm", norm = "quantile_train_param",
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_bmfirst_quantile_train_param/metrics.csv")
+
+
+
+#########################
+
+#common proteins quantile train param norm + combat_ref
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/POSTOPE_TPVsREC_TP.csv",
+                              model = "sigmoid_svm", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat_ref")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/PREOPEVsPOSTOPE_TP.csv",
+                              model = "radial_svm", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat_ref")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/PREOPEVsREC_TP.csv",
+                              model = "radial_svm", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_impute50fil_common_quantile_train_param_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat_ref")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat_ref/metrics.csv")
+
+
+#########################
+
+#common proteins quantile train param norm + combat
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat/POSTOPE_TPVsREC_TP.csv",
+                              model = "l2_log_reg", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat/PREOPEVsPOSTOPE_TP.csv",
+                              model = "sigmoid_svm", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "proteomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/proteomics_common_quantile_train_param_combat/PREOPEVsREC_TP.csv",
+                              model = "l2_log_reg", norm = "quantile_train_param", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                              data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil_common.csv", 
+                              validation_data_file_path = "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                              batch_effect_correction = "combat")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/proteomics_common_quantile_train_param_combat/metrics.csv")
+
+
+
+#########################
+#common transcripts log cpm
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm/POSTOPE_TPVsREC_TP.csv",
+                              model = "radial_svm", norm = "log_cpm", perform_filter = TRUE, 
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm/PREOPEVsPOSTOPE_TP.csv",
+                              model = "simple_log_reg", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm/PREOPEVsREC_TP.csv",
+                              model = "sigmoid_svm", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm/metrics.csv")
+
+
+#########################
+#common transcripts log cpm + combat_ref
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/POSTOPE_TPVsREC_TP.csv",
+                              model = "radial_svm", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat_ref")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/PREOPEVsPOSTOPE_TP.csv",
+                              model = "simple_log_reg", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat_ref")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/PREOPEVsREC_TP.csv",
+                              model = "sigmoid_svm", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat_ref")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat_ref/metrics.csv")
+
+#########################
+
+#common transcripts log_cpm + combat
+pipeline_with_validation_data(comparison = "POSTOPE_TPVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "POSTOPE_TP"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat/POSTOPE_TPVsREC_TP.csv",
+                              model = "radial_svm", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat")
+pipeline_with_validation_data(comparison = "PREOPEVsPOSTOPE_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("POSTOPE_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat/PREOPEVsPOSTOPE_TP.csv",
+                              model = "l2_log_reg", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat")
+pipeline_with_validation_data(comparison = "PREOPEVsREC_TP", 
+                              omics_type = "transcriptomic", 
+                              conditions = c("REC_TP", "PREOPE"),
+                              phenotype_column = "PREOPE_POSTOPE_TP_PREREC_REC_TP", 
+                              best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                              result_file_name = "Data/prediction_result/transcriptomics_common_log_cpm_combat/PREOPEVsREC_TP.csv",
+                              model = "rf", norm = "log_cpm", perform_filter = TRUE,
+                              dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                              data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv", 
+                              validation_data_file_path = "Data/RNA/umi_counts_validation_cohort_common_tr.csv",
+                              batch_effect_correction = "combat")
+
+show_metrics(comparison = "POSTOPE_TPVsREC_TP", classes = c("REC_TP", "POSTOPE_TP"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/POSTOPE_TPVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/metrics.csv")
+show_metrics(comparison = "PREOPEVsPOSTOPE_TP", classes = c("POSTOPE_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/PREOPEVsPOSTOPE_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/metrics.csv")
+show_metrics(comparison = "PREOPEVsREC_TP", classes = c("REC_TP", "PREOPE"), 
+             result_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/PREOPEVsREC_TP.csv",
+             metric_output_file_path = "Data/prediction_result/transcriptomics_common_log_cpm_combat/metrics.csv")
+
+
+
