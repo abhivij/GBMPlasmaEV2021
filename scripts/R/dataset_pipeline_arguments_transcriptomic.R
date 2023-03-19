@@ -631,7 +631,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   #combined data - combat batch corrected - no filter, no norm
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -648,7 +648,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -661,7 +661,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -674,7 +674,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -688,7 +688,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -705,7 +705,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -718,7 +718,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -731,7 +731,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -745,7 +745,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -762,7 +762,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -775,7 +775,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -788,7 +788,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_combined.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -800,12 +800,10 @@ dataset_pipeline_arguments_transcriptomic <- list(
        norm = "none", perform_filter = FALSE,
        fems_to_run = c("ga_rf")),
   
-  
-  
   #validation cohort - combat batch corrected - no filter, no norm
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -822,7 +820,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -835,7 +833,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -848,7 +846,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #POSTOPE_TPVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
        sep = ",",
@@ -862,7 +860,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -879,7 +877,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -892,7 +890,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -905,7 +903,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsPOSTOPE_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
        sep = ",",
@@ -919,7 +917,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -936,7 +934,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
                        "mrmr75", "mrmr100")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -949,7 +947,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("mrmr_perc50")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
@@ -962,7 +960,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("RF_RFE")),
   
   #PREOPEVsREC_TP
-  list(phenotype_file_name = "Data/transcriptomic_phenotype.txt",
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_validation.txt",
        read_count_dir_path = "Data/RNA/",
        read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
        sep = ",",
