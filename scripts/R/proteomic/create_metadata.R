@@ -137,3 +137,44 @@ write.table(phenotype_info,
 # 
 # filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
 # colnames(filtered_samples_output_labels) <- c("Sample", "Label")
+
+
+
+
+#############
+#creating phenotype for validation cohort and combined cohort
+
+phenotype <- read.table("Data/proteomic_phenotype.txt", header=TRUE, sep="\t")
+validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv")
+
+validation_phenotype <- validation_metadata %>%
+  rename("Sample" = "sample_id") %>%
+  relocate(Sample, .before = patient_id) %>%
+  dplyr::select(-c(sample_instance)) %>%
+  mutate("POSTOPE_TPVsREC_TP" = case_when(category_old_name == "POSTOPE_TP" ~ "POSTOPE_TP",
+                                          category_old_name == "REC_TP" ~ "REC_TP",
+                                          TRUE ~ NA_character_),
+         "PREOPEVsPOSTOPE_TP" = case_when(category_old_name == "PREOPE" ~ "PREOPE",
+                                          category_old_name == "POSTOPE_TP" ~ "POSTOPE_TP",
+                                          TRUE ~ NA_character_),
+         "PREOPEVsREC_TP" = case_when(category_old_name == "PREOPE" ~ "PREOPE",
+                                      category_old_name == "REC_TP" ~ "REC_TP",
+                                      TRUE ~ NA_character_)
+  ) %>%
+  filter(Sample != "SB7")
+
+write.table(validation_phenotype, 
+            file = "Data/proteomic_phenotype_validation.txt", 
+            quote = FALSE, sep = "\t", row.names = FALSE)
+
+combined_phenotype <- rbind(phenotype %>% 
+                              dplyr::select(Sample, POSTOPE_TPVsREC_TP, 
+                                            PREOPEVsPOSTOPE_TP, PREOPEVsREC_TP) %>%
+                              mutate(data_cohort = "initial"),
+                            validation_phenotype %>% 
+                              dplyr::select(Sample, POSTOPE_TPVsREC_TP, 
+                                            PREOPEVsPOSTOPE_TP, PREOPEVsREC_TP) %>%
+                              mutate(data_cohort = "validation"))
+write.table(combined_phenotype, 
+            file = "Data/proteomic_phenotype_combined.txt", 
+            quote = FALSE, sep = "\t", row.names = FALSE)
