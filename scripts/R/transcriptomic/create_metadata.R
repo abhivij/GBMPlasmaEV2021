@@ -215,26 +215,23 @@ summary(factor(metadata_glionet$sample_category))
 
 #creating phenotype for validation cohort and combined cohort
 phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
-validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
-  mutate(sample_category = factor(sample_category)) %>%
-  mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
-                                         "POST-OP" = "POSTOPE_TP",
-                                         "RECURRENCE" = "REC_TP"))
+validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv")
 
 validation_phenotype <- validation_metadata %>%
   rename("Sample" = "sample_id") %>%
   relocate(Sample, .before = patient_id) %>%
   dplyr::select(-c(sample_instance)) %>%
-  mutate("POSTOPE_TPVsREC_TP" = case_when(sample_category == "POSTOPE_TP" ~ "POSTOPE_TP",
-                                          sample_category == "REC_TP" ~ "REC_TP",
+  mutate("POSTOPE_TPVsREC_TP" = case_when(category_old_name == "POSTOPE_TP" ~ "POSTOPE_TP",
+                                          category_old_name == "REC_TP" ~ "REC_TP",
                                           TRUE ~ NA_character_),
-         "PREOPEVsPOSTOPE_TP" = case_when(sample_category == "PREOPE" ~ "PREOPE",
-                                          sample_category == "POSTOPE_TP" ~ "POSTOPE_TP",
+         "PREOPEVsPOSTOPE_TP" = case_when(category_old_name == "PREOPE" ~ "PREOPE",
+                                          category_old_name == "POSTOPE_TP" ~ "POSTOPE_TP",
                                           TRUE ~ NA_character_),
-         "PREOPEVsREC_TP" = case_when(sample_category == "PREOPE" ~ "PREOPE",
-                                      sample_category == "REC_TP" ~ "REC_TP",
+         "PREOPEVsREC_TP" = case_when(category_old_name == "PREOPE" ~ "PREOPE",
+                                      category_old_name == "REC_TP" ~ "REC_TP",
                                       TRUE ~ NA_character_)
   )
+
 write.table(validation_phenotype, 
             file = "Data/transcriptomic_phenotype_validation.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
@@ -250,3 +247,4 @@ combined_phenotype <- rbind(phenotype %>%
 write.table(combined_phenotype, 
             file = "Data/transcriptomic_phenotype_combined.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
+
