@@ -15,3 +15,7 @@ process_and_format_protein_data("Data/Protein/norm_output/norm__newcohort_proces
                                 impute = TRUE, filter_na_perc = 50)
 
 
+#note : this new script file was created just to run `process_and_format_protein_data`
+#                                                       on the new cohort in Katana
+
+# formatted data creation after this that didn't require Katana, was added to create_formatted_data.R
