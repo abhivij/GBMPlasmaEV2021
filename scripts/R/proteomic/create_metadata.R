@@ -178,3 +178,70 @@ combined_phenotype <- rbind(phenotype %>%
 write.table(combined_phenotype, 
             file = "Data/proteomic_phenotype_combined.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
+
+################################################################
+# # test if read using FEM pipeline works validation cohort
+# 
+# phenotype_file <- "Data/proteomic_phenotype_validation.txt"
+# classification_criteria <- "POSTOPE_TPVsREC_TP"
+# filter <- expression(TRUE)
+# phenotype <- read.table(phenotype_file, header=TRUE, sep="\t")
+# 
+# data <- read.table("Data/Protein/formatted_data/newcohort_common_correctedsamples.csv", header=TRUE, sep=",",
+#                    row.names=1, skip=0,
+#                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+# 
+# extracted_samples <- phenotype %>% subset(eval(filter))
+# extracted_samples <- extracted_samples[!is.na(extracted_samples[classification_criteria]), ]
+# extracted_samples$Sample <- factor(extracted_samples$Sample)
+# 
+# filtered_samples_read_count <- data %>% dplyr::select(extracted_samples$Sample)
+# 
+# filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
+# colnames(filtered_samples_output_labels) <- c("Sample", "Label")
+# 
+################################################################
+# # test if read using FEM pipeline works validation cohort post combat
+# 
+# phenotype_file <- "Data/proteomic_phenotype_validation.txt"
+# classification_criteria <- "POSTOPE_TPVsREC_TP"
+# filter <- expression(TRUE)
+# phenotype <- read.table(phenotype_file, header=TRUE, sep="\t")
+# 
+# data <- read.table("Data/Protein/validation_data.combat.POSTOPE_TPVsREC_TP.csv", header=TRUE, sep=",",
+#                    row.names=1, skip=0,
+#                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+# 
+# extracted_samples <- phenotype %>% subset(eval(filter))
+# extracted_samples <- extracted_samples[!is.na(extracted_samples[classification_criteria]), ]
+# extracted_samples$Sample <- factor(extracted_samples$Sample)
+# 
+# filtered_samples_read_count <- data %>% dplyr::select(extracted_samples$Sample)
+# 
+# filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
+# colnames(filtered_samples_output_labels) <- c("Sample", "Label")
+# 
+# 
+################################################################
+# # test if read using FEM pipeline works combined cohort
+# 
+# phenotype_file <- "Data/proteomic_phenotype_combined.txt"
+# classification_criteria <- "POSTOPE_TPVsREC_TP"
+# filter <- expression(TRUE)
+# phenotype <- read.table(phenotype_file, header=TRUE, sep="\t")
+# 
+# data <- read.table("Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv", header=TRUE, sep=",",
+#                    row.names=1, skip=0,
+#                    nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")
+# 
+# extracted_samples <- phenotype %>% subset(eval(filter))
+# extracted_samples <- extracted_samples[!is.na(extracted_samples[classification_criteria]), ]
+# extracted_samples$Sample <- factor(extracted_samples$Sample)
+# 
+# filtered_samples_read_count <- data %>% dplyr::select(extracted_samples$Sample)
+# 
+# filtered_samples_output_labels <- extracted_samples[, c('Sample', classification_criteria)]
+# colnames(filtered_samples_output_labels) <- c("Sample", "Label")
+
+
+
