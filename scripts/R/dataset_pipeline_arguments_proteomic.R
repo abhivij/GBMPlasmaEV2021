@@ -1245,7 +1245,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 #combined data - combat batch corrected - no filter, no norm
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1262,7 +1262,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1275,7 +1275,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1288,7 +1288,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1302,7 +1302,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1319,7 +1319,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1332,7 +1332,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1345,7 +1345,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1359,7 +1359,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1376,7 +1376,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1389,7 +1389,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1402,7 +1402,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_combined.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "combined_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1416,10 +1416,11 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 
 
 
+
 #validation cohort combat batch corrected - no filter, no norm
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1436,7 +1437,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1449,7 +1450,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1462,7 +1463,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic POSTOPE_TPVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.POSTOPE_TPVsREC_TP.csv",
      sep = ",",
@@ -1476,7 +1477,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1493,7 +1494,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1506,7 +1507,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1519,7 +1520,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic PREOPEVsPOSTOPE_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsPOSTOPE_TP.csv",
      sep = ",",
@@ -1533,7 +1534,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
 
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1550,7 +1551,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
                      "mrmr75", "mrmr100")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1563,7 +1564,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("mrmr_perc50")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1576,7 +1577,7 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      fems_to_run = c("RF_RFE")),
 
 #proteomic PREOPEVsREC_TP
-list(phenotype_file_name = "Data/proteomic_phenotype.txt",
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      read_count_dir_path = "Data/Protein/",
      read_count_file_name = "validation_data.combat.PREOPEVsREC_TP.csv",
      sep = ",",
@@ -1586,6 +1587,192 @@ list(phenotype_file_name = "Data/proteomic_phenotype.txt",
      cores = 16,
      results_dir_path = "fem_pipeline_results_val_pr_common_combat",
      norm = "none", perform_filter = FALSE,
+     fems_to_run = c("ga_rf")),
+
+
+#validation cohort common proteins
+
+#1
+#proteomic PREOPEVsPOSTOPE_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsPOSTOPE_TP",
+     classes = c("POSTOPE_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("all", 
+                     "t-test", "wilcoxontest",
+                     "ranger_pos_impu_cor",
+                     "mrmr30", "mrmr50", 
+                     "mrmr75", "mrmr100")),
+
+#2
+#proteomic PREOPEVsPOSTOPE_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsPOSTOPE_TP",
+     classes = c("POSTOPE_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("mrmr_perc50")),
+
+#3
+#proteomic PREOPEVsPOSTOPE_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsPOSTOPE_TP",
+     classes = c("POSTOPE_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("RF_RFE")),
+
+#4
+#proteomic PREOPEVsPOSTOPE_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsPOSTOPE_TP",
+     classes = c("POSTOPE_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("ga_rf")),  
+
+
+
+#5
+#proteomic POSTOPE_TPVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "POSTOPE_TPVsREC_TP",
+     classes = c("REC_TP", "POSTOPE_TP"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("all", 
+                     "t-test", "wilcoxontest",
+                     "ranger_pos_impu_cor",
+                     "mrmr30", "mrmr50", 
+                     "mrmr75", "mrmr100")),
+
+#6
+#proteomic POSTOPE_TPVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "POSTOPE_TPVsREC_TP",
+     classes = c("REC_TP", "POSTOPE_TP"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("mrmr_perc50")),
+
+#7
+#proteomic POSTOPE_TPVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "POSTOPE_TPVsREC_TP",
+     classes = c("REC_TP", "POSTOPE_TP"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("RF_RFE")),
+
+#8
+#proteomic POSTOPE_TPVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "POSTOPE_TPVsREC_TP",
+     classes = c("REC_TP", "POSTOPE_TP"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("ga_rf")),    
+
+
+#9
+#proteomic PREOPEVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsREC_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("all", 
+                     "t-test", "wilcoxontest",
+                     "ranger_pos_impu_cor",
+                     "mrmr30", "mrmr50", 
+                     "mrmr75", "mrmr100")),
+
+#10
+#proteomic PREOPEVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsREC_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("mrmr_perc50")),
+
+#11
+#proteomic PREOPEVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsREC_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
+     fems_to_run = c("RF_RFE")),
+
+#12
+#proteomic PREOPEVsREC_TP
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/formatted_data",
+     read_count_file_name = "newcohort_common_correctedsamples.csv",
+     sep = ",",
+     dataset_id = "GBM_validation_proteomic_common",
+     classification_criteria = "PREOPEVsREC_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 16,
+     results_dir_path = "fem_pipeline_results_validation_pr_common",
+     norm = "quantile_train_param",
      fems_to_run = c("ga_rf"))
 
 
