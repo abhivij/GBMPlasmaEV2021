@@ -160,3 +160,27 @@ combined_data <- cbind(validation_data_initial_cohort_proteins[rownames(data), ]
                        data)
 write.csv(combined_data, 
           "Data/Protein/formatted_data/combined_data_with_initial_cohort_proteins.csv")
+
+combined_imputed_data <- read.csv("Data/Protein/formatted_data/combined_data_with_initial_cohort_proteins_imputed.csv",
+                                  row.names = 1)
+validation_cohort_with_initial_cohort_proteins <- combined_imputed_data[, colnames(validation_data)]
+write.csv(validation_cohort_with_initial_cohort_proteins, 
+          "Data/Protein/formatted_data/validation_cohort_with_initial_cohort_proteins.csv")
+
+
+
+
+##################################################################
+# rename samples in validation cohort as done in prediction_pipeline so as to 
+#   run this in FEMPipeline
+
+validation_data <- read.csv("Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil_common.csv",
+                                   row.names = 1)
+colnames(validation_data)[colnames(validation_data) == "SB12_01"] = "SB12"
+#use SB22.02
+colnames(validation_data)[colnames(validation_data) == "SB22.02"] = "SBtobeused22"
+colnames(validation_data)[colnames(validation_data) == "SB22"] = "SB22_dont_include"
+colnames(validation_data)[colnames(validation_data) == "SBtobeused22"] = "SB22"
+
+write.csv(validation_data, 
+          "Data/Protein/formatted_data/newcohort_common_correctedsamples.csv")
