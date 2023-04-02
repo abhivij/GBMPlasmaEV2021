@@ -1529,14 +1529,14 @@ create_data_subsets(dparg_id = 89,
                     subset_creation_criteria <- list("i"= c("mrmr75")),
                     subset_file_name_substr = "mrmr75",
                     create_all_common = FALSE, 
-                    data_file_path = "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsPOSTOPE_TP.csv")
 create_data_subsets(dparg_id = 93,
                     dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
                     min_iter_feature_presence = 28,
                     subset_creation_criteria <- list("i"= c("mrmr100")),
                     subset_file_name_substr = "mrmr100",
                     create_all_common = FALSE, 
-                    data_file_path = "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsREC_TP.csv")
 
 
 #####################################
