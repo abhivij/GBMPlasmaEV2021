@@ -2000,7 +2000,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        sep = ",",
        dataset_id = "validation_GBM_initial_transcriptomic_common_combat_PREOPEVsPOSTOPE_TP",
        classification_criteria = "PREOPEVsPOSTOPE_TP",
-       classes = c("REC_TP", "PREOPE"),
+       classes = c("POSTOPE_TP", "PREOPE"),
        cores = 4,
        results_dir_path = "fem_pipeline_results_tr_val_from_initial_combat_subset",
        fems_to_run = c("all"),
