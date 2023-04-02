@@ -2237,8 +2237,46 @@ list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
      results_dir_path = "fem_pipeline_results_val_pr_common_combat_subset",
      fems_to_run = c("all"),
      random_seed = 2000,
+     norm = "none", perform_filter = FALSE),
+
+
+#validation cohort combat with best features from initial cohort combat  
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/subset_validation_cohort/",
+     read_count_file_name = "validation_GBM_initial_proteomic_common_combat_POSTOPE_TPVsREC_TP.csv",
+     sep = ",",
+     dataset_id = "validation_GBM_initial_proteomic_common_combat_POSTOPE_TPVsREC_TP",
+     classification_criteria = "POSTOPE_TPVsREC_TP",
+     classes = c("REC_TP", "POSTOPE_TP"),
+     cores = 4,
+     results_dir_path = "fem_pipeline_results_pr_val_from_initial_combat_subset",
+     fems_to_run = c("all"),
+     random_seed = 2000,
+     norm = "none", perform_filter = FALSE),
+
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/subset_validation_cohort/",
+     read_count_file_name = "validation_GBM_initial_proteomic_common_combat_PREOPEVsPOSTOPE_TP.csv",
+     sep = ",",
+     dataset_id = "validation_GBM_initial_proteomic_common_combat_PREOPEVsPOSTOPE_TP",
+     classification_criteria = "PREOPEVsPOSTOPE_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 4,
+     results_dir_path = "fem_pipeline_results_pr_val_from_initial_combat_subset",
+     fems_to_run = c("all"),
+     random_seed = 2000,
+     norm = "none", perform_filter = FALSE),
+
+list(phenotype_file_name = "Data/proteomic_phenotype_validation.txt",
+     read_count_dir_path = "Data/Protein/subset_validation_cohort/",
+     read_count_file_name = "validation_GBM_initial_proteomic_common_combat_PREOPEVsREC_TP.csv",
+     sep = ",",
+     dataset_id = "validation_GBM_initial_proteomic_common_combat_PREOPEVsREC_TP",
+     classification_criteria = "PREOPEVsREC_TP",
+     classes = c("REC_TP", "PREOPE"),
+     cores = 4,
+     results_dir_path = "fem_pipeline_results_pr_val_from_initial_combat_subset",
+     fems_to_run = c("all"),
+     random_seed = 2000,
      norm = "none", perform_filter = FALSE)
-
-
-
 )
