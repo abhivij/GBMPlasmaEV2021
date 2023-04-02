@@ -1489,3 +1489,99 @@ create_data_subsets(dparg_id = 39,
                     create_all_common = FALSE, 
                     data_file_path = "Data/RNA/umi_counts_initial_cohort_common_tr.csv")
 
+
+#####################################
+#proteomic combined combat
+explore_common_features(dparg_id = 85,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr_perc50", "RF_RFE", "ranger_pos_impu_cor",
+                                         "t-test", "wilcoxontest"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_pr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_pr/common_features_upset")
+
+explore_common_features(dparg_id = 89,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ga_rf", "mrmr30", "mrmr50", "mrmr75", "RF_RFE"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_pr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_pr/common_features_upset")
+
+explore_common_features(dparg_id = 93,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("ga_rf", "mrmr100", "mrmr75", "RF_RFE",
+                                         "mrmr50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_pr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_pr/common_features_upset")
+
+
+create_data_subsets(dparg_id = 85,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+create_data_subsets(dparg_id = 89,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+create_data_subsets(dparg_id = 93,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+
+
+#####################################
+#transcriptomic combined combat
+
+explore_common_features(dparg_id = 43,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("mrmr30", "ranger_pos_impu_cor",
+                                         "mrmr10", "mrmr_perc50", "mrmr100"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_tr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_tr/common_features_upset")
+explore_common_features(dparg_id = 47,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("t-test", "wilcoxontest", "mrmr30",
+                                         "mrmr50", "mrmr_perc50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_tr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_tr/common_features_upset")
+explore_common_features(dparg_id = 51,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("mrmr_perc50", "mrmr50", "mrmr30",
+                                         "RF_RFE", "ga_rf"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_tr_common_combat",
+                        dir_path = "plots/fem_pipeline_combined_tr/common_features_upset")
+
+create_data_subsets(dparg_id = 43,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr30")),
+                    subset_file_name_substr = "mrmr30",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/RNA/combined_data.combat.POSTOPE_TPVsREC_TP.csv")
+create_data_subsets(dparg_id = 47,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr30")),
+                    subset_file_name_substr = "mrmr30",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/RNA/combined_data.combat.PREOPEVsPOSTOPE_TP.csv")
+create_data_subsets(dparg_id = 51,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr_perc50")),
+                    subset_file_name_substr = "mrmr_perc50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/RNA/combined_data.combat.PREOPEVsREC_TP.csv")
