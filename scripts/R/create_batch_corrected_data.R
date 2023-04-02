@@ -144,6 +144,20 @@ create_batch_corrected_data <- function(comparison, classes, omics_type,
     data <- as.data.frame(t(as.matrix(data)))
     data.combat = ComBat(dat=data, batch=output_labels$cohort)
     data.combat <- as.data.frame(data.combat)
+  } else if(batch_effect_correction == "combat_with_mod"){
+    data <- as.data.frame(t(as.matrix(data)))
+    mod <- model.matrix(~as.factor(output_labels$Label), data = data)
+    data.combat = ComBat(dat=data, batch=output_labels$cohort, mod=mod)
+    data.combat <- as.data.frame(data.combat)
+    file_name_prefix <- paste0(file_name_prefix, "mod_")
+  } else if(batch_effect_correction == "combat_with_mod_testsame"){
+    data <- as.data.frame(t(as.matrix(data)))
+    output_labels.modified <- output_labels %>%
+      mutate(Label = ifelse(cohort == "validation", "unk", Label))
+    mod <- model.matrix(~as.factor(output_labels.modified$Label), data = data)
+    data.combat = ComBat(dat=data, batch=output_labels.modified$cohort, mod=mod)
+    data.combat <- as.data.frame(data.combat)    
+    file_name_prefix <- paste0(file_name_prefix, "mod_testsame_")
   }
   data.train <- data.combat[, output_labels.train$Sample]
   data.test <- data.combat[, output_labels.test$Sample]
@@ -232,3 +246,80 @@ create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
                             omics_type = "transcriptomics",
                             norm = "log_cpm",
                             filter_before_common = TRUE)
+
+#################################
+create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+                            classes = c("POSTOPE_TP", "REC_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            batch_effect_correction = "combat_with_mod")
+create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+                            classes = c("PREOPE", "POSTOPE_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            batch_effect_correction = "combat_with_mod")
+create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+                            classes = c("PREOPE", "REC_TP"),
+                            omics_type = "proteomics",
+                            norm = "quantile_train_param",
+                            batch_effect_correction = "combat_with_mod")
+
+create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+                            classes = c("POSTOPE_TP", "REC_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            batch_effect_correction = "combat_with_mod")
+create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+                            classes = c("PREOPE", "POSTOPE_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            batch_effect_correction = "combat_with_mod")
+create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+                            classes = c("PREOPE", "REC_TP"),
+                            omics_type = "transcriptomics",
+                            norm = "log_cpm",
+                            batch_effect_correction = "combat_with_mod")
+
+
+############################################################
+
+#can't run the below ones
+# gives
+# Found2batches
+# Adjusting for2covariate(s) or covariate level(s)
+# Error in ComBat(dat = data, batch = output_labels.modified$cohort, mod = mod) : 
+#   At least one covariate is confounded with batch! Please remove confounded covariates and rerun ComBat
+
+
+
+# create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+#                             classes = c("POSTOPE_TP", "REC_TP"),
+#                             omics_type = "proteomics",
+#                             norm = "quantile_train_param",
+#                             batch_effect_correction = "combat_with_mod_testsame")
+# create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+#                             classes = c("PREOPE", "POSTOPE_TP"),
+#                             omics_type = "proteomics",
+#                             norm = "quantile_train_param",
+#                             batch_effect_correction = "combat_with_mod_testsame")
+# create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+#                             classes = c("PREOPE", "REC_TP"),
+#                             omics_type = "proteomics",
+#                             norm = "quantile_train_param",
+#                             batch_effect_correction = "combat_with_mod_testsame")
+# 
+# create_batch_corrected_data(comparison = "POSTOPE_TPVsREC_TP",
+#                             classes = c("POSTOPE_TP", "REC_TP"),
+#                             omics_type = "transcriptomics",
+#                             norm = "log_cpm",
+#                             batch_effect_correction = "combat_with_mod_testsame")
+# create_batch_corrected_data(comparison = "PREOPEVsPOSTOPE_TP",
+#                             classes = c("PREOPE", "POSTOPE_TP"),
+#                             omics_type = "transcriptomics",
+#                             norm = "log_cpm",
+#                             batch_effect_correction = "combat_with_mod_testsame")
+# create_batch_corrected_data(comparison = "PREOPEVsREC_TP",
+#                             classes = c("PREOPE", "REC_TP"),
+#                             omics_type = "transcriptomics",
+#                             norm = "log_cpm",
+#                             batch_effect_correction = "combat_with_mod_testsame")
