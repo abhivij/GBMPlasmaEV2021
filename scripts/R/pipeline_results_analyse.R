@@ -981,6 +981,27 @@ plot_heatmap(
   dataset_replace_string = "GBM_combined_proteomic_common_combat_"
 )
 
+plot_common_feature_heatmap(c(145),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_pr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_common_combat_POSTOPE_TPVsREC_TP_",
+                            dir_path = "plots/fem_pipeline_combined_pr/common_heatmap/",
+                            heatmap_file_name = "POSTOPE_TPVsREC_TP.png"
+)
+plot_common_feature_heatmap(c(146),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_pr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_common_combat_PREOPEVsPOSTOPE_TP_",
+                            dir_path = "plots/fem_pipeline_combined_pr/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsPOSTOPE_TP.png"
+)
+plot_common_feature_heatmap(c(147),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_pr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_common_combat_PREOPEVsREC_TP_",
+                            dir_path = "plots/fem_pipeline_combined_pr/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsREC_TP.png"
+)
 
 ####################
 
@@ -992,6 +1013,28 @@ plot_heatmap(
   results_dir = "fem_pipeline_results_combined_tr_common_combat",
   dir_path = "plots/fem_pipeline_combined_tr/",
   dataset_replace_string = "GBM_combined_transcriptomic_common_combat_"
+)
+
+plot_common_feature_heatmap(c(121, 122),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_tr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_common_combat_POSTOPE_TPVsREC_TP_",
+                            dir_path = "plots/fem_pipeline_combined_tr/common_heatmap/",
+                            heatmap_file_name = "POSTOPE_TPVsREC_TP.png"
+)
+plot_common_feature_heatmap(c(123, 124),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_tr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_common_combat_PREOPEVsPOSTOPE_TP_",
+                            dir_path = "plots/fem_pipeline_combined_tr/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsPOSTOPE_TP.png"
+)
+plot_common_feature_heatmap(c(125, 126),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_tr_common_combat_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_common_combat_PREOPEVsREC_TP_",
+                            dir_path = "plots/fem_pipeline_combined_tr/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsREC_TP.png"
 )
 
 
