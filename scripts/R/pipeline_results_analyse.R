@@ -6,6 +6,7 @@ source("scripts/R/utils.R")
 source("scripts/R/dataset_pipeline_arguments.R")
 source("scripts/R/dataset_pipeline_arguments_transcriptomic.R")
 source("scripts/R/dataset_pipeline_arguments_proteomic.R")
+library(ggvenn)
 
 
 
@@ -1219,3 +1220,59 @@ plot_common_feature_heatmap(c(140),
                             dir_path = "plots/fem_pipeline_results_tr_val_from_initial_combat/common_heatmap/",
                             heatmap_file_name = "PREOPEVsREC_TP.png"
 )
+
+
+dataset_replace_str_vec <- c('GBM_initial_proteomic_impute50fil_common_quantile_train_param_', 
+                             'GBM_validation_proteomic_common_')
+comparison <- "POSTOPE_TPVsREC_TP"
+omics_type <- "prot"
+file_path <- "plots/venn/"
+
+create_common_venn <- function(dataset_replace_str_vec, comparison, omics_type){
+  best_features <- read.csv("Data/selected_features/best_features_with_add_col.csv")
+  
+  dataset_replace_str_vec <- paste0(dataset_replace_str_vec, comparison)
+  
+  best_features_sub <- best_features %>%
+    filter(is_best == 1, dataset_id %in% dataset_replace_str_vec)
+  
+  biomarkers.initial <- strsplit(best_features_sub[best_features_sub$dataset_id == dataset_replace_str_vec[1], 'biomarkers'], split = "|", fixed = TRUE)[[1]]  
+  biomarkers.val <- strsplit(best_features_sub[best_features_sub$dataset_id == dataset_replace_str_vec[2], 'biomarkers'], split = "|", fixed = TRUE)[[1]]  
+
+  venn_list <- list("initial" = biomarkers.initial,
+                    "validat" = biomarkers.val)
+  file_path <- paste0("plots/venn/", omics_type, "_", comparison, ".png")
+  ggvenn(venn_list,
+         stroke_size = 0.1,
+         set_name_size = 4,
+         text_size = 3, stroke_linetype = "blank",
+         fill_color = c("cyan", "orange"))
+  ggsave(file_path)
+}
+
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_proteomic_impute50fil_common_quantile_train_param_', 
+                                               'GBM_validation_proteomic_common_'),
+                   comparison = "POSTOPE_TPVsREC_TP",
+                   omics_type = "prot")
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_proteomic_impute50fil_common_quantile_train_param_', 
+                                               'GBM_validation_proteomic_common_'),
+                   comparison = "PREOPEVsPOSTOPE_TP",
+                   omics_type = "prot")
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_proteomic_impute50fil_common_quantile_train_param_', 
+                                               'GBM_validation_proteomic_common_'),
+                   comparison = "PREOPEVsREC_TP",
+                   omics_type = "prot")
+
+
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_transcriptomic_common_combat_', 
+                                               'GBM_validation_transcriptomic_common_combat_'),
+                   comparison = "POSTOPE_TPVsREC_TP",
+                   omics_type = "tra")
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_transcriptomic_common_combat_', 
+                                               'GBM_validation_transcriptomic_common_combat_'),
+                   comparison = "PREOPEVsPOSTOPE_TP",
+                   omics_type = "tra")
+create_common_venn(dataset_replace_str_vec = c('GBM_initial_transcriptomic_common_combat_', 
+                                               'GBM_validation_transcriptomic_common_combat_'),
+                   comparison = "PREOPEVsREC_TP",
+                   omics_type = "tra")
