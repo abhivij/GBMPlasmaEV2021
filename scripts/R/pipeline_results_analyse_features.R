@@ -1820,3 +1820,61 @@ create_data_subsets(dparg_id = 63,
                     subset_file_name_substr = "RF_RFE",
                     create_all_common = FALSE, 
                     data_file_path = "Data/RNA/validation_data.combat.PREOPEVsREC_TP.csv")
+
+#create data subsets of validation combat data from best features in initial combat data
+
+create_data_subsets_validation_custom <- function(dataset_replace_str, comparison,
+                                                  data_file_path,
+                                                  output_dir){
+  best_features <- read.csv("Data/selected_features/best_features_with_add_col.csv")
+  
+  best_features_sub <- best_features %>%
+    mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+    filter(is_best == 1, dataset_id == comparison)
+  
+  biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]  
+  
+  print(length(biomarkers))
+  print(best_features_sub$description)
+  
+  data <- read.table(data_file_path, header=TRUE, sep=",", row.names=1, skip=0,
+                     nrows=-1, comment.char="", fill=TRUE, na.strings = "NA")  
+  if(!dir.exists(output_dir)){
+    dir.create(output_dir, recursive = TRUE)
+  }
+  
+  write_subset_file(data, biomarkers, 
+                    subset_file_path = paste0(output_dir, "validation_",
+                                              dataset_replace_str, 
+                                              comparison,
+                                              ".csv"))
+}
+
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                                      comparison = "POSTOPE_TPVsREC_TP", 
+                                      output_dir = "Data/RNA/subset_validation_cohort/",
+                                      data_file_path = "Data/RNA/validation_data.combat.POSTOPE_TPVsREC_TP.csv")
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                                      comparison = "PREOPEVsPOSTOPE_TP", 
+                                      output_dir = "Data/RNA/subset_validation_cohort/",
+                                      data_file_path = "Data/RNA/validation_data.combat.PREOPEVsPOSTOPE_TP.csv")
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_transcriptomic_common_combat_",
+                                      comparison = "PREOPEVsREC_TP", 
+                                      output_dir = "Data/RNA/subset_validation_cohort/",
+                                      data_file_path = "Data/RNA/validation_data.combat.PREOPEVsREC_TP.csv")
+
+
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                                      comparison = "POSTOPE_TPVsREC_TP", 
+                                      output_dir = "Data/Protein/subset_validation_cohort/",
+                                      data_file_path = "Data/Protein/validation_data.combat.POSTOPE_TPVsREC_TP.csv")
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                                      comparison = "PREOPEVsPOSTOPE_TP", 
+                                      output_dir = "Data/Protein/subset_validation_cohort/",
+                                      data_file_path = "Data/Protein/validation_data.combat.PREOPEVsPOSTOPE_TP.csv")
+create_data_subsets_validation_custom(dataset_replace_str = "GBM_initial_proteomic_common_combat_",
+                                      comparison = "PREOPEVsREC_TP", 
+                                      output_dir = "Data/Protein/subset_validation_cohort/",
+                                      data_file_path = "Data/Protein/validation_data.combat.PREOPEVsREC_TP.csv")
+
+
