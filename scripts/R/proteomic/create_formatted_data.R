@@ -184,3 +184,61 @@ colnames(validation_data)[colnames(validation_data) == "SBtobeused22"] = "SB22"
 
 write.csv(validation_data, 
           "Data/Protein/formatted_data/newcohort_common_correctedsamples.csv")
+
+
+
+
+#########################
+#create file with protein names - for all proteins in our study
+library(UniProt.ws)
+
+data <- read.csv("Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv", 
+                 row.names=1)
+validation_data <- read.csv("Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv", 
+                            row.names = 1)
+
+all_proteins_in_study <- union(rownames(data), rownames(validation_data))
+protein_name_df <- data.frame(id = all_proteins_in_study)
+
+up <- UniProt.ws(taxId=9606)
+species(up)
+keytypes(up)
+
+head(columns(up))
+
+result <- select(
+  x = up,
+  keys = c(all_proteins_in_study),
+  columns = c("protein_name", "gene_primary", "organism_id"),
+  keytype = "UniProtKB"
+)
+colnames(result) <- c("from_id", "uniprot_id", "protein_name", "primary_gene_id", "organism_id")
+
+#just to check if evrything is 9606 - i.e. human -ideally should be the case
+result %>% filter(is.na(organism_id) | organism_id != 9606)
+# from  entry protein_name primary_gene_name organism_id
+# 1 E7EML9 E7EML9      deleted              <NA>        <NA>
+
+result %>% filter(from == "E7EML9")
+# from  entry protein_name primary_gene_name organism_id
+# 1 E7EML9 E7EML9      deleted              <NA>        <NA>
+
+#so there is some other duplicate entry
+result %>% group_by(from) %>% summarize(count = n()) %>% filter(count > 1)
+# # A tibble: 1 × 2
+# from   count
+# <chr>  <int>
+#   1 Q6ZMK1     2
+
+result %>% filter(from == "Q6ZMK1")
+# from  entry                                                                       protein_name
+# 1 Q6ZMK1 P0DTL5                                                          Transmembrane protein 276
+# 2 Q6ZMK1 P0DTL6 Zinc finger TRAF-type-containing protein 1 (Cysteine and histidine-rich protein 1)
+# primary_gene_name organism_id
+# 1           TMEM276        9606
+# 2           ZFTRAF1        9606
+
+#not sure what this means - will check if this protein is identified as biomarker
+
+write.csv(result %>% dplyr::select(-c(organism_id)), "Data/Protein/formatted_data/all_protein_names.csv",
+          row.names = FALSE)
