@@ -100,7 +100,7 @@ log_reg_model <- function(data.train, label.train, data.test, label.test,
                                     "Type" = "train",
                                     "cutoff" = best_cut_off)
       
-      result_df.test <- data.frame("TrueLabel" = ifelse(label.test$Label == 0, classes[1], classes[2]),
+      result_df.test <- data.frame("TrueLabel" = label.test$Label,
                                    "Pred_prob" = pred_prob,
                                    "PredictedLabel" = pred,
                                    "Type" = "test",
