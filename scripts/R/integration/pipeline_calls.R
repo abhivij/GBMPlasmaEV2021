@@ -106,3 +106,67 @@ for(o in c("tra", "prot", "both")){
     print(paste(o, sample_type, "done------------------"))
   }
 }
+
+
+
+delegated_ensemble(comparison = "POSTOPE_TPVsREC_TP",
+                   conditions = c("REC_TP", "POSTOPE_TP"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/POSTOPE_TPVsREC_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/POSTOPE_TPVsREC_TP_tra.csv",
+                   alt_type = "tra")
+delegated_ensemble(comparison = "POSTOPE_TPVsREC_TP",
+                   conditions = c("REC_TP", "POSTOPE_TP"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/POSTOPE_TPVsREC_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/POSTOPE_TPVsREC_TP_both.csv",
+                   alt_type = "both")
+delegated_ensemble(comparison = "PREOPEVsPOSTOPE_TP",
+                   conditions = c("POSTOPE_TP", "PREOPE"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsPOSTOPE_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsPOSTOPE_TP_tra.csv",
+                   alt_type = "tra")
+delegated_ensemble(comparison = "PREOPEVsPOSTOPE_TP",
+                   conditions = c("POSTOPE_TP", "PREOPE"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsPOSTOPE_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsPOSTOPE_TP_both.csv",
+                   alt_type = "both")
+delegated_ensemble(comparison = "PREOPEVsREC_TP",
+                   conditions = c("REC_TP", "PREOPE"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsREC_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsREC_TP_tra.csv",
+                   alt_type = "tra")
+delegated_ensemble(comparison = "PREOPEVsREC_TP",
+                   conditions = c("REC_TP", "PREOPE"),
+                   prot_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsREC_TP_prot.csv",
+                   alternate_stacked_result_file_path = "Data/prediction_result/integration/stacked/PREOPEVsREC_TP_both.csv",
+                   alt_type = "both")
+
+
+for(sample_type in c("train", "test")){
+  for(alt_type in c("tra", "both")){
+    compute_metrics.integrated(comparison = "POSTOPE_TPVsREC_TP",
+                               conditions = c("REC_TP", "POSTOPE_TP"),
+                               alt_type = alt_type,
+                               sample_type = sample_type,
+                               result_file_path = paste0("Data/prediction_result/integration/delegate/POSTOPE_TPVsREC_TP",
+                                                         "_", alt_type,
+                                                         ".csv"),
+                               metric_output_file_path = "Data/prediction_result/integration/delegate/metrics.csv")
+    compute_metrics.integrated(comparison = "PREOPEVsPOSTOPE_TP",
+                               conditions = c("POSTOPE_TP", "PREOPE"),
+                               alt_type = alt_type,
+                               sample_type = sample_type,
+                               result_file_path = paste0("Data/prediction_result/integration/delegate/PREOPEVsPOSTOPE_TP",
+                                                         "_", alt_type,
+                                                         ".csv"),
+                               metric_output_file_path = "Data/prediction_result/integration/delegate/metrics.csv")
+    compute_metrics.integrated(comparison = "PREOPEVsREC_TP",
+                               conditions = c("REC_TP", "PREOPE"),
+                               alt_type = alt_type,
+                               sample_type = sample_type,
+                               result_file_path = paste0("Data/prediction_result/integration/delegate/PREOPEVsREC_TP",
+                                                         "_", alt_type,
+                                                         ".csv"),
+                               metric_output_file_path = "Data/prediction_result/integration/delegate/metrics.csv")
+    
+  }
+}

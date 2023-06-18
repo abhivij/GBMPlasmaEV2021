@@ -10,10 +10,10 @@ source("scripts/R/prediction_pipeline/cm_svm.R")
 source("scripts/R/prediction_pipeline/cm_rf.R")
 source("scripts/R/integration/run_all_models.R")
 
-data_file_path_prot <- "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv"
-data_file_path_tra <- "Data/RNA/combined_data.combat.POSTOPE_TPVsREC_TP.csv"
-comparison = "POSTOPE_TPVsREC_TP"
-conditions = c("REC_TP", "POSTOPE_TP")
+# data_file_path_prot <- "Data/Protein/combined_data.combat.POSTOPE_TPVsREC_TP.csv"
+# data_file_path_tra <- "Data/RNA/combined_data.combat.POSTOPE_TPVsREC_TP.csv"
+# comparison = "POSTOPE_TPVsREC_TP"
+# conditions = c("REC_TP", "POSTOPE_TP")
 
 
 base_model_pipeline <- function(comparison, conditions, 
