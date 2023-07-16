@@ -1,0 +1,70 @@
+Sample,Condition,Subgroup,Sex,Age,Clinical History,Treatment
+HB01,Pre-op,Pre-op,Male,64,,
+HB04,Pre-op,Pre-op,Male,52.75,,
+HB10,Pre-op,Pre-op,Male,72.18,,
+HB13,Pre-op,Pre-op,Female,64.79,,
+HB14,Pre-op,Pre-op,Female,64.8,,
+HB17,Pre-op,Pre-op,Female,69.39,,
+HB20,Pre-op,Pre-op,Male,59.3,,
+HB23,Pre-op,Pre-op,Male,39.66,,
+HB26,Pre-op,Pre-op,Male,76.53,,
+HB29,Pre-op,Pre-op,Male,73.74,,
+HB34,Pre-op,Pre-op,Male,41.87,,
+HB48,Pre-op,Pre-op,Male,63.87,,
+SB1,Pre-op,Pre-op,Female,70.86,,
+SB4,Pre-op,Pre-op,Male,76.28,,
+SB8,Pre-op,Pre-op,Male,71.52,,
+SB12,Pre-op,Pre-op,Female,73.63,,
+SB16,Pre-op,Pre-op,Male,71.36,,
+SB20,Pre-op,Pre-op,Male,69.36,,
+SB24,Pre-op,Pre-op,Female,73.87,,
+SB28,Pre-op,Pre-op,Male,47.59,,
+SB32,Pre-op,Pre-op,Male,68.72,,
+SB36,Pre-op,Pre-op,Female,74.26,,
+SB39,Pre-op,Pre-op,Male,49.91,,
+SB42,Pre-op,Pre-op,Female,57.68,,
+SB45,Pre-op,Pre-op,Female,73.26,,
+SB49,Pre-op,Pre-op,Male,68.53,,
+SB52,Pre-op,Pre-op,Male,62.5,,
+MET1,Metastatic,Metastatic Adenocarcinoma,Female,72.62,Gastro-oesophageal adenocarcinoma,
+MET2,Metastatic,Metastatic Adenocarcinoma,Male,57.96,Lung carcinoma,
+MET3,Metastatic,Metastatic Melanoma,Female,82.41,Melanoma,
+MET4,Metastatic,Metastatic Melanoma,Female,69.43,Melanoma,
+MET5,Metastatic,Metastatic Melanoma,Male,60.75,Melanoma,
+MET6,Metastatic,Metastatic Melanoma,Male,65.43,Melanoma,
+MET7,Metastatic,Metastatic Adenocarcinoma,Male,55.99,Lung adenocarcinoma,
+MET8,Metastatic,Metastatic Carcinoma,Male,36.12,Metastatic embryonal carcinoma to the lung,
+MET9,Metastatic,Metastatic Melanoma,Female,80.58,Melanoma,
+MET10,Metastatic,Metastatic Melanoma,Male,51.8,Melanoma,
+MET11,Metastatic,Metastatic Melanoma,Male,66.29,Chest wall melanoma,
+MET12,Metastatic,Metastatic Melanoma,Male,33.07,Melanoma and history of small bowel metastasis,
+MET13,Metastatic,Metastatic Carcinoma,Male,58.04,Parotid tumour,
+MET14,Metastatic,Metastatic Adenocarcinoma,Female,81.42,Lung cancer,
+MET15,Metastatic,Metastatic Carcinoma,Female,56.01,Non small cell lung cancer,
+MET16,Metastatic,Metastatic Carcinoma,Female,65.19,Non small cell lung cancer,
+MET17,Metastatic, Metastatic Adenocarcinoma,Female,59.88,Non small cell lung cancer,
+MET18,Metastatic,Metastatic Melanoma,Male,67.73,Melanoma,
+MET19,Metastatic,Metastatic Carcinoma,Female,73.45,Squamous cell carcinoma,
+MET20,Metastatic,Metastatic Adenocarcinoma,Male,70.45,Prostate cancer,
+MET21,Metastatic,Metastatic Melanoma,Male,33.62,Melanoma and history of small bowel metastasis,
+HC1,Healthy Control,Healthy,Male,70.65,,N/A
+HC2,Healthy Control,High Blood Pressure,Male,55.85,,Treament for blood pressure
+HC4,Healthy Control,Healthy,Male,71.95,,B.C.C/Skini cancer cutaneous melanoma
+HC5,Healthy Control,Healthy,Female,69.19,,"Lyrica, Paucel"
+HC6,Healthy Control,Healthy,Female,68.45,,N/A
+HC7,Healthy Control,Healthy,Female,67.78,,"High blood pressure, crestor"
+HC8,Healthy Control,Healthy,Female,67.43,,Pariet for reflux. Telfast. Melanoma on skin. Low platelets
+HC9,Healthy Control,Healthy,Male,64.59,,Recent  bowel cancer removed +BCC
+HC10,Healthy Control,Healthy,Male,64.36,,"Hemacomtsin (significant medical history). Currenlty taking rampiril, roucqstatin"
+HC11,Healthy Control,Healthy,Female,64.21,,"Valium, seroquill"
+HC12,Healthy Control,Healthy,Male,64.01,,Atrovistatin. Dabigatran Etexilate
+HC13,Healthy Control,Healthy,Male,63.43,,N/A
+HC14,Healthy Control,Healthy ,Female,62.27,,N/A
+HC15,Healthy Control,Healthy,Male,60.1,,N/A
+HC16,Healthy Control,Asthma,Male,52.9,,Symbicant
+HC17,Healthy Control,Healthy,Male,51.9,,N/A
+HC18,Healthy Control,Healthy,Female,41.64,,N/A
+HC19,Healthy Control,Healthy,Male,39.22,,N/A
+HC20,Healthy Control,Healthy,Female,38.97,,N/A
+HC21,Healthy Control,Healthy,Male,35.35,,N/A
+HC22,Healthy Control,Healthy,Female,39.07,,None

@@ -244,4 +244,38 @@ write.table(combined_phenotype,
 # colnames(filtered_samples_output_labels) <- c("Sample", "Label")
 
 
+###############################
 
+#creating combined phenotype file for PREOPE Vs MET Vs HC
+
+phenotype <- read.table("Data/proteomic_phenotype.txt", header=TRUE, sep="\t")
+validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv")
+
+validation_phenotype <- validation_metadata %>%
+  rename("Sample" = "sample_id") %>%
+  relocate(Sample, .before = patient_id) %>%
+  dplyr::select(-c(sample_instance))
+
+validation_phenotype <- insert_comparison_columns(validation_phenotype,
+                                                  comparison_list = list(c("PREOPE", "MET"), 
+                                                                         c("PREOPE", "HC"), 
+                                                                         c("MET", "HC")), 
+                                                  class_column_name = "category_old_name")
+
+
+combined_phenotype <- rbind(phenotype %>% 
+                              dplyr::select(Sample, PREOPEVsMET, PREOPEVsHC, METVsHC) %>%
+                              mutate(data_cohort = "initial"),
+                            validation_phenotype %>% 
+                              dplyr::select(Sample, PREOPEVsMET, PREOPEVsHC, METVsHC) %>%
+                              mutate(data_cohort = "validation")) %>%
+  filter(!(is.na(PREOPEVsMET) & is.na(PREOPEVsHC) & is.na(METVsHC)))
+
+PREOPE_MET_HC_metadata <- read.csv("Data/PREOPE_MET_HC/meta_data.csv")
+
+PREOPE_MET_HC_metadata <- PREOPE_MET_HC_metadata %>%
+  full_join(combined_phenotype)
+
+write.table(PREOPE_MET_HC_metadata, 
+            file = "Data/proteomic_phenotype_PREOPE_MET_HC.txt", 
+            quote = FALSE, sep = "\t", row.names = FALSE)
