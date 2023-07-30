@@ -420,6 +420,19 @@ omics_type = "transcriptomics"
 norm = "log_cpm"
 perform_filter = TRUE
 
+comparison = "METVsHC"
+classes = c("HC", "MET")
+omics_type = "proteomics"
+norm = "quantile_train_param"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = FALSE
+batch_effect_correction = "none"
+plot_dir_path = "plots_comparison_set2/qc/dim_red/"
+best_features_file_path = NA
+dataset_replace_str = NA
+file_name_prefix = 8
+
 create_dim_red_plots_PMH <- function(comparison, classes,
                                      omics_type, norm,
                                      dim_red = "UMAP",
@@ -489,11 +502,20 @@ create_dim_red_plots_PMH <- function(comparison, classes,
   data.cohort1 <- data %>% dplyr::select(output_labels.cohort1$Sample)
   data.cohort2 <- validation_data %>% dplyr::select(output_labels.cohort2$Sample)
   
-  common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
-  data.cohort1 <- data.cohort1[common, ]
-  data.cohort2 <- data.cohort2[common, ]
-  
-  data <- cbind(data.cohort1, data.cohort2)
+  #take common only if both cohorts contain samples
+  if(ncol(data.cohort1) > 0 & ncol(data.cohort2) > 0){
+    common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
+    data.cohort1 <- data.cohort1[common, ]
+    data.cohort2 <- data.cohort2[common, ]
+    data <- cbind(data.cohort1, data.cohort2)    
+  } else if(ncol(data.cohort1) > 0){
+    data <- data.cohort1
+  } else if(ncol(data.cohort2) > 0){
+    data <- data.cohort2
+  } else{
+    print("no samples")
+  }
+
   output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
   
   ################obtain best biomarkers
