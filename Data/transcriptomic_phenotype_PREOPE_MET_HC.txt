@@ -59,7 +59,7 @@ HC10	Healthy Control	Healthy	Male	64.36		Hemacomtsin (significant medical histor
 HC11	Healthy Control	Healthy	Female	64.21		Valium, seroquill	NA	HC	HC	initial
 HC12	Healthy Control	Healthy	Male	64.01		Atrovistatin. Dabigatran Etexilate	NA	HC	HC	initial
 HC13	Healthy Control	Healthy	Male	63.43		N/A	NA	HC	HC	initial
-HC14	Healthy Control	Healthy 	Female	62.27		N/A	NA	HC	HC	initial
+HC14	Healthy Control	Healthy	Female	62.27		N/A	NA	HC	HC	initial
 HC15	Healthy Control	Healthy	Male	60.1		N/A	NA	HC	HC	initial
 HC16	Healthy Control	Asthma	Male	52.9		Symbicant	NA	HC	HC	initial
 HC17	Healthy Control	Healthy	Male	51.9		N/A	NA	HC	HC	initial

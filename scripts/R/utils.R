@@ -398,4 +398,256 @@ create_dim_red_plots <- function(comparison, classes,
 
 
 
+#create dim red for PREOPE MET HC
+
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = TRUE
+batch_effect_correction = "none"
+plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/"
+best_features_file_path = NA
+dataset_replace_str = NA
+
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "proteomics"
+norm = "quantile_train_param"
+perform_filter = FALSE
+
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "transcriptomics"
+norm = "log_cpm"
+perform_filter = TRUE
+
+create_dim_red_plots_PMH <- function(comparison, classes,
+                                     omics_type, norm,
+                                     dim_red = "UMAP",
+                                     shownames = FALSE,
+                                     perform_filter = TRUE,
+                                     batch_effect_correction = "none",
+                                     plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/",
+                                     file_name_prefix = "",
+                                     best_features_file_path = NA,
+                                     dataset_replace_str = NA){
+  if(omics_type == "proteomics"){
+    data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
+    validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv" 
+    phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC.txt"
+  } else if(omics_type == "transcriptomics"){
+    data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
+    validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"      
+    phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
+    
+    # validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
+    #   mutate(sample_category = factor(sample_category)) %>%
+    #   mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
+    #                                          "POST-OP" = "POSTOPE_TP",
+    #                                          "RECURRENCE" = "REC_TP"))
+  }
+  
+  data <- read.csv(data_file_path, row.names = 1)
+  validation_data <- read.csv(validation_data_file_path, row.names = 1)
+  
+  phenotype <- read.table(phenotype_file_path, header=TRUE, sep="\t")
+  
+  if(omics_type == "proteomics"){
+    colnames(validation_data)[colnames(validation_data) == "SB12_01"] = "SB12"
+    #use SB22.02
+    colnames(validation_data)[colnames(validation_data) == "SB22.02"] = "SBtobeused22"
+    colnames(validation_data)[colnames(validation_data) == "SB22"] = "SB22_dont_include"
+    colnames(validation_data)[colnames(validation_data) == "SBtobeused22"] = "SB22"
+
+    #SB7 sample not required for this analysis
+    # so no need to filter out
+    # validation_metadata <- validation_metadata %>%
+    #   filter(Sample != "SB7")    
+    
+  } else if(omics_type == "transcriptomics"){
+    colnames(validation_data) <- paste0("S", colnames(validation_data))
+  }
+  
+  title <- paste0(dim_red, " plot of ", omics_type, " ",
+                  paste(rev(classes), collapse = ", "), " samples ", 
+                  norm, " data")
+  
+  title <- paste0(title, " BEC-", batch_effect_correction)
+  
+  output_labels.cohort1 <- phenotype %>%
+    rename("Label" = comparison) %>%
+    filter(Label %in% classes) %>%
+    dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
+    filter(data_cohort == "initial")
+  output_labels.cohort2 <- phenotype %>%
+    rename("Label" = comparison) %>%
+    filter(Label %in% classes) %>%
+    dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
+    filter(data_cohort == "validation")
+  
+  #currently data format : (transcripts x samples)
+  
+  data.cohort1 <- data %>% dplyr::select(output_labels.cohort1$Sample)
+  data.cohort2 <- validation_data %>% dplyr::select(output_labels.cohort2$Sample)
+  
+  common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
+  data.cohort1 <- data.cohort1[common, ]
+  data.cohort2 <- data.cohort2[common, ]
+  
+  data <- cbind(data.cohort1, data.cohort2)
+  output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
+  
+  ################obtain best biomarkers
+  
+  #code below to be modified later once best biomarkers are identified
+  if(!is.na(best_features_file_path) & !is.na(dataset_replace_str)){
+    
+    #note : performing t(), selecting based on columns, and then again t()
+    #       is done instead of just slecting based on rows, so as to keep the code same
+    #       as in pipeline_validation_data.R
+    
+    data.cohort1 <- as.data.frame(t(as.matrix(data.cohort1)))
+    data.cohort2 <- as.data.frame(t(as.matrix(data.cohort2)))
+    
+    best_features <- read.csv(best_features_file_path)  
+    best_features_sub <- best_features %>%
+      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+      filter(is_best == 1, dataset_id == comparison)
+    biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]  
+    
+    data.cohort1 <- data.frame(data.cohort1)[, biomarkers]  #data.frame() replaces - in colnames to .
+    colnames(data.cohort2) <- gsub("-", ".", colnames(data.cohort2))
+    sum(biomarkers %in% colnames(data.cohort2))
+    
+    available_biomarkers <- c(biomarkers[biomarkers %in% colnames(data.cohort2)])
+    print(available_biomarkers)
+    non_available_biomarkers <- biomarkers[!biomarkers %in% colnames(data.cohort2)] 
+    print(non_available_biomarkers)
+    
+    print(length(available_biomarkers))
+    print(length(non_available_biomarkers))
+    
+    data.cohort2 <- data.cohort2 %>%
+      select(available_biomarkers)
+    for(nab in non_available_biomarkers){
+      data.cohort2[[nab]] <- 0
+    }    
+    data.cohort1 <- as.data.frame(t(as.matrix(data.cohort1)))
+    data.cohort2 <- as.data.frame(t(as.matrix(data.cohort2)))
+  }
+  ################obtain best biomarkers end
+  
+  if(perform_filter){
+    keep <- edgeR::filterByExpr(data, group = output_labels$Label)
+    data_left_out <- data[!keep, ]
+    data <- data[keep, ]
+  }
+  
+  if(norm == "quantile_train_param"){
+    #adapted from https://davetang.org/muse/2014/07/07/quantile-normalisation-in-r/
+    data.rank <- apply(data, 2, rank, ties.method="average")
+    data.sorted <- data.frame(apply(data, 2, sort))
+    data.mean <- apply(data.sorted, 1, mean)
+    index_to_mean <- function(index, data_mean){
+      #index can be int or int+0.5
+      #if int+0.5, take average of the numbers in those positions
+      int.result <- data_mean[index]
+      index.int <- floor(index)
+      #some of the values in point5.result might be NA
+      #but they won't be chosen
+      point5.result <- (data_mean[index.int] + data_mean[index.int+1])/2
+      point5.indices <- index%%1 != 0
+      result <- int.result
+      result[point5.indices] <- point5.result[point5.indices]
+      return (result)
+    }
+    data.norm <- apply(data.rank, 2, index_to_mean, data_mean = data.mean)
+    rownames(data.norm) <- rownames(data)
+    data <- data.norm
+    
+  } else if(norm == "log_cpm"){
+    #calculating norm log cpm
+    data <- edgeR::cpm(data, log=TRUE)
+  }
+  
+  data <- as.data.frame(t(as.matrix(data)))
+  
+  output_labels <- output_labels %>%
+    mutate(Label = factor(Label), data_cohort = factor(data_cohort))
+  
+  group_counts <- output_labels %>%
+    dplyr::mutate(Label = paste(data_cohort, Label, sep = "_")) %>%
+    group_by(Label) %>%
+    summarise(n = n())
+  
+  group_counts_text <- paste(apply(group_counts, MARGIN = 1, FUN = function(x){paste(x[1], x[2], sep = ":")}),
+                             collapse = "  ")
+  
+  all.equal(rownames(data), output_labels$Sample)
+  
+  if(batch_effect_correction == "combat"){
+    data <- as.data.frame(t(as.matrix(data)))
+    data.combat = ComBat(dat=data, batch=output_labels$data_cohort)
+    data.combat <- as.data.frame(t(as.matrix(data.combat)))
+    data <- data.combat
+  } else if(batch_effect_correction == "combat_ref"){
+    data <- as.data.frame(t(as.matrix(data)))
+    data.combat = ComBat(dat=data, batch=output_labels$cohort, ref.batch = 'initial')
+    data.combat <- as.data.frame(t(as.matrix(data.combat)))
+    
+    data <- as.data.frame(t(as.matrix(data)))
+    data.cohort1 <- data[output_labels.cohort1$Sample, ]
+    data.cohort1.combat <- data.combat[output_labels.cohort1$Sample, ]
+    print(all.equal(data.cohort1, data.cohort1.combat))
+    # TRUE
+    # 
+    # data.cohort2 <- data[output_labels.cohort2$Sample, ]
+    # data.cohort2.combat <- data.combat[output_labels.cohort2$Sample, ]
+    # print(all.equal(data.cohort2, data.cohort2.combat))
+    # FALSE
+    data <- data.combat
+  }
+  
+  if(shownames){
+    text <- rownames(data)
+  } else{
+    text <- ""
+  }
+  set.seed(1)
+  if(dim_red == "PCA"){
+    result <- prcomp(data)
+    dim_red_df <- data.frame(x = result$x[,1], y = result$x[,2])    
+    xlab <- "PCA 1"
+    ylab <- "PCA 2"  
+  } else if(dim_red == "UMAP"){
+    result <- umap(data)
+    dim_red_df <- data.frame(x = result$layout[,1], y = result$layout[,2])  
+    xlab <- "UMAP 1"
+    ylab <- "UMAP 2"
+  }
+  
+  ggplot2::ggplot(dim_red_df, ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_point(ggplot2::aes(shape = output_labels$Label,
+                                     fill = output_labels$Subgroup,
+                                     colour = output_labels$data_cohort), size = 3, stroke = 1) +
+    geom_text_repel(aes(label = text), size = 3, colour = "grey") +
+    ggplot2::labs(title = title) +
+    ggplot2::xlab(xlab) +
+    ggplot2::ylab(ylab) +
+    ggplot2::scale_shape_manual(name = "Label (Point Shape)", values = c(21, 22)) +
+    ggplot2::scale_colour_manual(name = "Data Cohort (Point Border)", values = c("black", "grey")) +
+    ggplot2::guides(fill = guide_legend(override.aes = list(shape = 21, colour = NA))) +
+    ggplot2::guides(colour = guide_legend(override.aes = list(shape = 1))) +
+    labs(caption = paste(paste("Data dimension :", paste(dim(data), collapse = "x")), "\n",
+                         group_counts_text),
+         fill = "Subgroup (Point Fill)")
+  
+  if(!dir.exists(plot_dir_path)){
+    dir.create(plot_dir_path, recursive = TRUE)
+  }
+  file_name <- paste(file_name_prefix, paste0(gsub(title, pattern = " |,", replacement = "-"), ".jpg"),
+                     sep = "_")
+  file_path <- paste(plot_dir_path, file_name, sep = "/")
+  ggplot2::ggsave(file_path, units = "cm", width = 30)
+}
+
 
