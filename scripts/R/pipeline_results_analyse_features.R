@@ -78,7 +78,8 @@ explore_common_features <- function(dparg_id, best_fsm_vec,
   png(filename = paste(dir_path, file_name, sep = "/"),
       units = "cm", width = 30, height = 15, res = 1200)
   print({
-    upset(fromList(selected_features), set_size.show = TRUE,  
+    upset(fromList(selected_features), set_size.show = TRUE, 
+          nsets = 10,
           set_size.scale_max = max_size + max_size/10)  
   })
   grid.text(paste(dataset_id, min_iter_feature_presence),
@@ -2133,3 +2134,215 @@ create_data_subsets(dparg_id = 117,
                     subset_file_name_substr = "mrmr30",
                     create_all_common = FALSE, 
                     data_file_path = "Data/RNA/combined_data.combat.mod_PREOPEVsREC_TP.csv")
+
+
+#####################################
+#proteomic set2 comparisons combined combat
+
+explore_common_features(dparg_id = 165,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("RF_RFE", "ranger_pos_impu_cor", "mrmr_perc50",
+                                         "ga_rf", "mrmr30", "mrmr50", "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+
+explore_common_features(dparg_id = 165,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("RF_RFE", "ranger_pos_impu_cor", "mrmr_perc50",
+                                         "ga_rf", "mrmr30", "mrmr50", "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 27,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+
+
+explore_common_features(dparg_id = 169,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("wilcoxontest", "t-test", "mrmr_perc50",
+                                         "ranger_pos_impu_cor", "RF_RFE", "ga_rf",
+                                         "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 169,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("wilcoxontest", "t-test", "mrmr_perc50",
+                                         "ranger_pos_impu_cor", "RF_RFE", "ga_rf",
+                                         "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 29,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 169,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("wilcoxontest", "t-test", "mrmr_perc50",
+                                         "ranger_pos_impu_cor", "RF_RFE", "ga_rf",
+                                         "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 30,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 169,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("wilcoxontest", "t-test", "mrmr_perc50",
+                                         "ranger_pos_impu_cor", "RF_RFE", "ga_rf",
+                                         "mrmr100", "mrmr75"),
+                        min_iter_feature_presence = 27,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+
+
+
+explore_common_features(dparg_id = 173,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr100", "ranger_pos_impu_cor", 
+                                         "mrmr75", "mrmr50", "mrmr30", "t-test",
+                                         "wilcoxontest", "mrmr_perc50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 173,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr100", "ranger_pos_impu_cor", 
+                                         "mrmr75", "mrmr50", "mrmr30", "t-test",
+                                         "wilcoxontest", "mrmr_perc50"),
+                        min_iter_feature_presence = 29,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 173,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                        best_fsm_vec = c("mrmr100", "ranger_pos_impu_cor", 
+                                         "mrmr75", "mrmr50", "mrmr30", "t-test",
+                                         "wilcoxontest", "mrmr_perc50"),
+                        min_iter_feature_presence = 30,
+                        results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_features_upset")
+
+
+create_data_subsets(dparg_id = 165,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("RF_RFE")),
+                    subset_file_name_substr = "RF_RFE",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsMET.csv")
+create_data_subsets(dparg_id = 165,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("ranger_pos_impu_cor")),
+                    subset_file_name_substr = "ranger_pos_impu_cor",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsMET.csv")
+create_data_subsets(dparg_id = 165,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("ranger_pos_impu_cor")),
+                    subset_file_name_substr = "ranger_pos_impu_cor",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsMET.csv")
+create_data_subsets(dparg_id = 165,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsMET.csv")
+create_data_subsets(dparg_id = 165,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("mrmr75")),
+                    subset_file_name_substr = "mrmr75",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsMET.csv")
+
+
+
+create_data_subsets(dparg_id = 169,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 30,
+                    subset_creation_criteria <- list("i"= c("wilcoxontest")),
+                    subset_file_name_substr = "wilcoxontest",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsHC.csv")
+create_data_subsets(dparg_id = 169,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 30,
+                    subset_creation_criteria <- list("i"= c("t-test")),
+                    subset_file_name_substr = "t-test",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsHC.csv")
+create_data_subsets(dparg_id = 169,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 30,
+                    subset_creation_criteria <- list("i"= c("wilcoxontest", "t-test",
+                                                            "mrmr_perc50")),
+                    subset_file_name_substr = "w_t_mp50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsHC.csv")
+create_data_subsets(dparg_id = 169,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("ranger_pos_impu_cor")),
+                    subset_file_name_substr = "ranger_pos_impu_cor",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsHC.csv")
+create_data_subsets(dparg_id = 169,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 27,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/combined_data.combat.PREOPEVsHC.csv")
+
+
+create_data_subsets(dparg_id = 173,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 28,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv")
+create_data_subsets(dparg_id = 173,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 29,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv")
+create_data_subsets(dparg_id = 173,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 30,
+                    subset_creation_criteria <- list("i"= c("mrmr100")),
+                    subset_file_name_substr = "mrmr100",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv")
+create_data_subsets(dparg_id = 173,
+                    dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                    min_iter_feature_presence = 30,
+                    subset_creation_criteria <- list("i"= c("t-test", "wilcoxontest", 
+                                                            "mrmr_perc50")),
+                    subset_file_name_substr = "t_w_mp50",
+                    create_all_common = FALSE, 
+                    data_file_path = "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv")
+#####################################
+#transcriptomic set2 comparisons combined combat
+
+explore_common_features(dparg_id = 153,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("mrmr100", "ga_rf", "mrmr75",
+                                         "RF_RFE", "ranger_pos_impu_cor"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 157,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("wilcoxontest", "t-test", "mrmr30", 
+                                         "ranger_pos_impu_cor", "mrmr50"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2/common_features_upset")
+explore_common_features(dparg_id = 161,
+                        dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                        best_fsm_vec = c("mrmr30", "mrmr_perc50", "mrmr50",
+                                         "wilcoxontest", "t-test"),
+                        min_iter_feature_presence = 28,
+                        results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2",
+                        dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2/common_features_upset")
