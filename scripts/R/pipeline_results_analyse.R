@@ -1435,21 +1435,21 @@ plot_heatmap(
   dataset_replace_string = "GBM_combined_proteomic_combat_compset2_"
 )
 
-plot_common_feature_heatmap(c(177, 178),
+plot_common_feature_heatmap(c(177:181),
                             dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
                             results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
                             dataset_replace_string = "GBM_combined_proteomic_combat_compset2_PREOPEVsMET_",
                             dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_heatmap/",
                             heatmap_file_name = "PREOPEVsMET.png"
 )
-plot_common_feature_heatmap(c(179, 180),
+plot_common_feature_heatmap(c(182:186),
                             dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
                             results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
                             dataset_replace_string = "GBM_combined_proteomic_combat_compset2_PREOPEVsHC_",
                             dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_heatmap/",
                             heatmap_file_name = "PREOPEVsHC.png"
 )
-plot_common_feature_heatmap(c(181, 182),
+plot_common_feature_heatmap(c(187:190),
                             dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
                             results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
                             dataset_replace_string = "GBM_combined_proteomic_combat_compset2_METVsHC_",
@@ -1457,6 +1457,38 @@ plot_common_feature_heatmap(c(181, 182),
                             heatmap_file_name = "METVsHC.png"
 )
 
+#MET Vs HC t_w_mp50_30 has AUC 1, but 50 proteins
+#          mrmr_100_28 has AUC 0.985, but 9 proteins
+#compare overlap
+best_features <- read.csv("Data/selected_features/best_features.csv") %>%
+  filter(dataset_id == "GBM_combined_proteomic_combat_compset2_METVsHC") %>%
+  mutate(name = paste0(description, "_", min_iter_feature_presence)) %>%
+  column_to_rownames("name") %>%
+  dplyr::select(c(biomarkers))
+t_w_mp50_30 <- strsplit(best_features["t_w_mp50_30", "biomarkers"], split = "|", fixed = TRUE)[[1]]
+mrmr100_28 <- strsplit(best_features["mrmr100_28", "biomarkers"], split = "|", fixed = TRUE)[[1]]
+
+ggvenn(list("t_w_mp50_30" = t_w_mp50_30,
+            "mrmr100_28" = mrmr100_28),
+       stroke_size = 0.1,
+       set_name_size = 4,
+       text_size = 3, stroke_linetype = "blank",
+       fill_color = c("cyan", "orange"))
+ggsave("plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2/common_heatmap/METVsHC_best_feature_overlap.png")
+
+#mrmr100_28 features are all a subset of t_w_mp50_30
+#to not select 50 proteins as biomarkers, going with mrmr100_28 - 9 proteins, as the best biomarker set
+
+#some entries not found in best_features.csv
+best_features <- read.csv("Data/selected_features/best_features.csv") 
+best_features_with_add_col <- read.csv("Data/selected_features/best_features_with_add_col.csv")
+best_features_with_add_col[!best_features_with_add_col$dataset_id %in% best_features$dataset_id, "dataset_id"] 
+
+# [1] "GBM_tr_initial_PREOPEVsPOSTOPE_TP" "GBM_tr_initial_PREOPEVsPOSTOPE_TP" "GBM_tr_initial_POSTOPE_TPVsREC_TP"
+# [4] "GBM_tr_initial_POSTOPE_TPVsREC_TP" "GBM_tr_initial_PREOPEVsREC_TP"     "GBM_tr_initial_PREOPEVsREC_TP"
+
+#not sure why these are missing, but results from these runs i.e. just with initial cohort, is not being used.
+# so ignoring them
 
 ####################
 
