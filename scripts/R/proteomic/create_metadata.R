@@ -271,11 +271,16 @@ combined_phenotype <- rbind(phenotype %>%
                               mutate(data_cohort = "validation")) %>%
   filter(!(is.na(PREOPEVsMET) & is.na(PREOPEVsHC) & is.na(METVsHC)))
 
-PREOPE_MET_HC_metadata <- read.csv("Data/PREOPE_MET_HC/meta_data.csv")
+PREOPE_MET_HC_metadata <- read.csv("Data/PREOPE_MET_HC/meta_data_updated.csv")
 
 PREOPE_MET_HC_metadata <- PREOPE_MET_HC_metadata %>%
-  full_join(combined_phenotype)
+  full_join(combined_phenotype) %>%
+  mutate(Subgroup = gsub(" ", "_", Subgroup, fixed = TRUE))
 
-write.table(PREOPE_MET_HC_metadata, 
+PREOPE_MET_HC_phenotype <- insert_comparison_columns(PREOPE_MET_HC_metadata,
+                                                     comparison_list = list(c("Melanoma_met", "Other")), 
+                                                     class_column_name = "Subgroup")
+
+write.table(PREOPE_MET_HC_phenotype, 
             file = "Data/proteomic_phenotype_PREOPE_MET_HC.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
