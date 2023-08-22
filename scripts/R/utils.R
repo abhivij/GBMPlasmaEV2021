@@ -410,28 +410,36 @@ dataset_replace_str = NA
 
 comparison = "PREOPEVsMET"
 classes = c("MET", "PREOPE")
-omics_type = "proteomics"
-norm = "quantile_train_param"
-perform_filter = FALSE
+omics_type = "transcriptomics"
+norm = "log_cpm"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = TRUE
+batch_effect_correction = "combat"
+plot_dir_path = "plots_comparison_set2/qc/dim_red/"
+best_features_file_path = NA
+dataset_replace_str = NA
+file_name_prefix = 11
+
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_"
+
+boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
+
 
 comparison = "PREOPEVsMET"
 classes = c("MET", "PREOPE")
-omics_type = "transcriptomics"
-norm = "log_cpm"
-perform_filter = TRUE
-
-comparison = "METVsHC"
-classes = c("HC", "MET")
 omics_type = "proteomics"
 norm = "quantile_train_param"
 dim_red = "UMAP"
 shownames = FALSE
 perform_filter = FALSE
-batch_effect_correction = "none"
-plot_dir_path = "plots_comparison_set2/qc/dim_red/"
-best_features_file_path = NA
-dataset_replace_str = NA
-file_name_prefix = 8
+batch_effect_correction = "combat"
+plot_dir_path = "plots_comparison_set2/qc/dim_red_best/"
+file_name_prefix = 1
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+dataset_replace_str = "GBM_combined_proteomic_combat_compset2_"
+boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
 
 create_dim_red_plots_PMH <- function(comparison, classes,
                                      omics_type, norm,
@@ -440,6 +448,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
                                      perform_filter = TRUE,
                                      batch_effect_correction = "none",
                                      plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/",
+                                     boxplot_dir_path = "plots_PREOPE_MET_HC/qc/boxplot/",
                                      file_name_prefix = "",
                                      best_features_file_path = NA,
                                      dataset_replace_str = NA){
@@ -518,46 +527,6 @@ create_dim_red_plots_PMH <- function(comparison, classes,
 
   output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
   
-  ################obtain best biomarkers
-  
-  #code below to be modified later once best biomarkers are identified
-  if(!is.na(best_features_file_path) & !is.na(dataset_replace_str)){
-    
-    #note : performing t(), selecting based on columns, and then again t()
-    #       is done instead of just slecting based on rows, so as to keep the code same
-    #       as in pipeline_validation_data.R
-    
-    data.cohort1 <- as.data.frame(t(as.matrix(data.cohort1)))
-    data.cohort2 <- as.data.frame(t(as.matrix(data.cohort2)))
-    
-    best_features <- read.csv(best_features_file_path)  
-    best_features_sub <- best_features %>%
-      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
-      filter(is_best == 1, dataset_id == comparison)
-    biomarkers <- strsplit(best_features_sub$biomarkers, split = "|", fixed = TRUE)[[1]]  
-    
-    data.cohort1 <- data.frame(data.cohort1)[, biomarkers]  #data.frame() replaces - in colnames to .
-    colnames(data.cohort2) <- gsub("-", ".", colnames(data.cohort2))
-    sum(biomarkers %in% colnames(data.cohort2))
-    
-    available_biomarkers <- c(biomarkers[biomarkers %in% colnames(data.cohort2)])
-    print(available_biomarkers)
-    non_available_biomarkers <- biomarkers[!biomarkers %in% colnames(data.cohort2)] 
-    print(non_available_biomarkers)
-    
-    print(length(available_biomarkers))
-    print(length(non_available_biomarkers))
-    
-    data.cohort2 <- data.cohort2 %>%
-      select(available_biomarkers)
-    for(nab in non_available_biomarkers){
-      data.cohort2[[nab]] <- 0
-    }    
-    data.cohort1 <- as.data.frame(t(as.matrix(data.cohort1)))
-    data.cohort2 <- as.data.frame(t(as.matrix(data.cohort2)))
-  }
-  ################obtain best biomarkers end
-  
   if(perform_filter){
     keep <- edgeR::filterByExpr(data, group = output_labels$Label)
     data_left_out <- data[!keep, ]
@@ -628,6 +597,100 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     # FALSE
     data <- data.combat
   }
+  
+  
+  ################obtain best biomarkers
+  
+  if(!is.na(best_features_file_path) & !is.na(dataset_replace_str)){
+
+    best_features <- read.csv(best_features_file_path)  
+    best_features_sub <- best_features %>%
+      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+      filter(is_best > 0, dataset_id == comparison)
+    
+    if(!dir.exists(boxplot_dir_path)){
+      dir.create(boxplot_dir_path, recursive = TRUE)
+    }
+    all_protein_names <- read.csv("Data/Protein/formatted_data/all_protein_names.csv")
+    
+    #plot biomarker boxplot for the multiple biomarker sets identified
+    for(i in c(1:nrow(best_features_sub))){
+      # i <- 1
+      biomarkers <- strsplit(best_features_sub[i, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
+      data_sub <- data[, biomarkers]
+      
+      #plot biomarker boxplot
+      
+      #args - data, biomarkers, classes, output_labels, omics_type
+      
+      data_to_plot <- data_sub %>%
+        rownames_to_column(var = "Sample") %>%
+        pivot_longer(cols = !Sample, names_to = "biomarker", values_to = "norm_expr") %>%
+        inner_join(output_labels %>%
+                     dplyr::select(c(Sample, Label)))
+    
+      if(omics_type == "transcriptomics"){
+        x_lab <- "transcripts"
+        y_lab <- "Log CPM expression"
+      } else{
+        x_lab <- "proteins"
+        y_lab <- "Quantile normalized expression"
+        
+        data_to_plot <- data_to_plot %>%
+          left_join(all_protein_names %>% dplyr::select(c(from_id, primary_gene_id)), 
+                    by = c("biomarker" = "from_id")) %>%
+          dplyr::select(-c(biomarker)) %>%
+          dplyr::rename(c("biomarker" = "primary_gene_id"))
+      }
+      x_lab <- paste0(x_lab, "(", length(biomarkers), ")")
+      
+      biomarker_agg <- data_to_plot %>%
+        group_by(biomarker) %>%
+        summarize(med_expr = median(norm_expr)) %>%
+        arrange(desc(med_expr))
+      
+      data_to_plot <- data_to_plot %>%
+        mutate(Label = factor(Label, levels = rev(classes)),
+               biomarker = factor(biomarker, biomarker_agg$biomarker)) 
+      
+      ggplot(data_to_plot, aes(x = biomarker, 
+                               y = norm_expr,
+                               fill = Label)) +
+        geom_boxplot(size = 0.2, alpha = 0.5) +
+        ggtitle(paste(sub("Vs", " Vs ", comparison), omics_type)) +
+        xlab(x_lab) +
+        ylab(y_lab) +
+        guides(fill = guide_legend(title = "Condition")) +
+        theme(axis.text.x = element_text(size=rel(1.2), angle = 90),
+              axis.text.y = element_text(size=rel(1.2)),
+              axis.title.x = element_text(size=rel(1.3)),
+              axis.title.y = element_text(size=rel(1.3)),
+              plot.title  = element_text(size=rel(1.5)))  
+      
+      file_name <- paste(comparison, omics_type, i, ".jpg",
+                         sep = "_")
+      file_path <- paste(boxplot_dir_path, file_name, sep = "/")
+      ggplot2::ggsave(file_path, units = "cm", width = 30)
+    }
+    
+    
+    #plot dim red plot just for the best biomarker set chosen
+    best_features_sub <- best_features %>%
+      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+      filter(is_best == 1, dataset_id == comparison)
+    biomarkers <- strsplit(best_features_sub[1, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
+    data <- data[, biomarkers]
+    
+    title <- paste(title, "best biomarkers")
+    
+    # 
+    # data.cohort1 <- data.frame(data.cohort1)[, biomarkers]  #data.frame() replaces - in colnames to .
+    # colnames(data.cohort2) <- gsub("-", ".", colnames(data.cohort2))
+
+  }
+  ################obtain best biomarkers end
+  
+  
   
   if(shownames){
     text <- rownames(data)

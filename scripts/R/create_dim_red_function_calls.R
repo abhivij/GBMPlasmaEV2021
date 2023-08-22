@@ -173,3 +173,85 @@ create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
                          file_name_prefix = 16)
 
 
+create_dim_red_plots_PMH(comparison = "Melanoma_metVsOther", classes = c("Other", "Melanoma_met"),
+                         omics_type = "proteomics", norm = "none",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "none",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red/",
+                         best_features_file_path = NA,
+                         dataset_replace_str = NA,
+                         file_name_prefix = 17)
+create_dim_red_plots_PMH(comparison = "Melanoma_metVsOther", classes = c("Other", "Melanoma_met"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "none",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red/",
+                         best_features_file_path = NA,
+                         dataset_replace_str = NA,
+                         file_name_prefix = 18)
+
+
+create_dim_red_plots_PMH(comparison = "Melanoma_metVsOther", classes = c("Other", "Melanoma_met"),
+                         omics_type = "transcriptomics", norm = "none",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "none",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red/",
+                         best_features_file_path = NA,
+                         dataset_replace_str = NA,
+                         file_name_prefix = 19)
+create_dim_red_plots_PMH(comparison = "Melanoma_metVsOther", classes = c("Other", "Melanoma_met"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "none",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red/",
+                         best_features_file_path = NA,
+                         dataset_replace_str = NA,
+                         file_name_prefix = 20)
+
+
+
+
+#best biomarker plots
+create_dim_red_plots_PMH(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 1,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+create_dim_red_plots_PMH(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 2,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 3,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
