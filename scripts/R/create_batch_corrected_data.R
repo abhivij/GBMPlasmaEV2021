@@ -426,11 +426,20 @@ create_batch_corrected_data_PMH <- function(comparison, classes, omics_type,
   data.cohort1 <- data %>% dplyr::select(output_labels.cohort1$Sample)
   data.cohort2 <- validation_data %>% dplyr::select(output_labels.cohort2$Sample)
   
-  common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
-  data.cohort1 <- data.cohort1[common, ]
-  data.cohort2 <- data.cohort2[common, ]
+  #take common only if both cohorts contain samples
+  if(ncol(data.cohort1) > 0 & ncol(data.cohort2) > 0){
+    common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
+    data.cohort1 <- data.cohort1[common, ]
+    data.cohort2 <- data.cohort2[common, ]
+    data <- cbind(data.cohort1, data.cohort2)    
+  } else if(ncol(data.cohort1) > 0){
+    data <- data.cohort1
+  } else if(ncol(data.cohort2) > 0){
+    data <- data.cohort2
+  } else{
+    print("no samples")
+  }
   
-  data <- cbind(data.cohort1, data.cohort2)
   output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
 
   if(perform_filter){
@@ -472,20 +481,23 @@ create_batch_corrected_data_PMH <- function(comparison, classes, omics_type,
   
   if(batch_effect_correction == "combat"){
     data <- as.data.frame(t(as.matrix(data)))
-    data.combat = ComBat(dat=data, batch=output_labels$data_cohort)
-    data.combat <- as.data.frame(data.combat)
+    data.bec = ComBat(dat=data, batch=output_labels$data_cohort)
+    data.bec <- as.data.frame(data.bec)
   } else if(batch_effect_correction == "combat_with_mod"){
     data <- as.data.frame(t(as.matrix(data)))
     mod <- model.matrix(~as.factor(output_labels$Label), data = data)
-    data.combat = ComBat(dat=data, batch=output_labels$data_cohort, mod=mod)
-    data.combat <- as.data.frame(data.combat)
+    data.bec = ComBat(dat=data, batch=output_labels$data_cohort, mod=mod)
+    data.bec <- as.data.frame(data.bec)
     file_name_prefix <- paste0(file_name_prefix, "mod_")
+  } else{
+    data.bec <- as.data.frame(t(as.matrix(data)))
   }
   
-  print(dim(data.combat))
+  print(dim(data.bec))
   
-  write.csv(data.combat, file = paste0(output_dir_path, "/combined_data.combat.", 
-                                       comparison, ".csv"))
+  write.csv(data.bec, file = paste0(output_dir_path, "/combined_data.", 
+                                    batch_effect_correction, ".", 
+                                    comparison, ".csv"))
 }
 
 create_batch_corrected_data_PMH(comparison = "PREOPEVsMET",
@@ -500,6 +512,13 @@ create_batch_corrected_data_PMH(comparison = "PREOPEVsHC",
                                 norm = "quantile_train_param",
                                 perform_filter = FALSE,
                                 batch_effect_correction = "combat")
+#running the below to create normalized data file for Agota/Susannah
+create_batch_corrected_data_PMH(comparison = "METVsHC",
+                                classes = c("HC", "MET"),
+                                omics_type = "proteomics",
+                                norm = "quantile_train_param",
+                                perform_filter = FALSE,
+                                batch_effect_correction = "")
 
 create_batch_corrected_data_PMH(comparison = "PREOPEVsMET",
                                 classes = c("MET", "PREOPE"),
@@ -513,3 +532,10 @@ create_batch_corrected_data_PMH(comparison = "PREOPEVsHC",
                                 norm = "log_cpm",
                                 perform_filter = TRUE,
                                 batch_effect_correction = "combat")
+#running the below to create normalized data file for Agota/Susannah
+create_batch_corrected_data_PMH(comparison = "METVsHC",
+                                classes = c("HC", "MET"),
+                                omics_type = "transcriptomics",
+                                norm = "log_cpm",
+                                perform_filter = TRUE,
+                                batch_effect_correction = "")
