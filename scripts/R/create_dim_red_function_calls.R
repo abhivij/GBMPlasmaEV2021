@@ -1,4 +1,4 @@
-#source('utils.R')
+source('scripts/R/utils.R')
 #to do - remove unnecessary calls in utils.R and make this 'source' work
 #for now, manually execute the function definition before executing the function calls below
 
@@ -249,9 +249,47 @@ create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
                          dim_red = "UMAP",
                          shownames = FALSE,
                          perform_filter = FALSE,
-                         batch_effect_correction = "combat",
+                         batch_effect_correction = "none",
                          plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
                          file_name_prefix = 3,
                          best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                          dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+
+
+create_dim_red_plots_PMH(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 4,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+create_dim_red_plots_PMH(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 5,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "none",
+                         plot_dir_path = "plots_comparison_set2/qc/dim_red_best/",
+                         file_name_prefix = 6,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
                          boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")

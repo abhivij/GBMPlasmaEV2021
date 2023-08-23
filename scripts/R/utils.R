@@ -71,12 +71,12 @@ insert_comparison_columns <- function(phenotype_info, comparison_list, class_col
 #              "mrmr75", "mrmr100",
 #              "RF_RFE", "ga_rf")
 
-fsm_vector <- c("all", 
+fsm_vector <- c("all",
                 "t-test", "wilcoxontest",
                 "ranger_impu_cor",
                 "ranger_pos_impu_cor",
                 "mrmr10", "mrmr20",
-                "mrmr30", "mrmr50", 
+                "mrmr30", "mrmr50",
                 "mrmr75", "mrmr100",
                 "mrmr_perc50",
                 "RF_RFE",
@@ -118,25 +118,25 @@ process_and_format_protein_data <- function(input_file_path, output_file_path,
 }
 
 
-show_imputed_based_on_initial = FALSE
-shownames = FALSE
-perform_filter = TRUE
-batch_effect_correction = "none"
-plot_dir_path = "plots/qc/dim_red/"
-best_features_file_path = NA
-dataset_replace_str = NA
-
-comparison = "POSTOPE_TPVsREC_TP"
-omics_type = "transcriptomics"
-classes = c("POSTOPE_TP", "REC_TP")
-data_to_show = "both"
-show_only_common = TRUE
-show_imputed_based_on_initial = FALSE
-perform_filter = FALSE
-dim_red = "UMAP"
-norm = "log_cpm"
-batch_effect_correction = "combat"
-plot_dir_path = "plots/qc/dim_red/tr_combat/"
+# show_imputed_based_on_initial = FALSE
+# shownames = FALSE
+# perform_filter = TRUE
+# batch_effect_correction = "none"
+# plot_dir_path = "plots/qc/dim_red/"
+# best_features_file_path = NA
+# dataset_replace_str = NA
+# 
+# comparison = "POSTOPE_TPVsREC_TP"
+# omics_type = "transcriptomics"
+# classes = c("POSTOPE_TP", "REC_TP")
+# data_to_show = "both"
+# show_only_common = TRUE
+# show_imputed_based_on_initial = FALSE
+# perform_filter = FALSE
+# dim_red = "UMAP"
+# norm = "log_cpm"
+# batch_effect_correction = "combat"
+# plot_dir_path = "plots/qc/dim_red/tr_combat/"
 
 create_dim_red_plots <- function(comparison, classes,
                                  omics_type = "proteomics",
@@ -400,46 +400,46 @@ create_dim_red_plots <- function(comparison, classes,
 
 #create dim red for PREOPE MET HC
 
-dim_red = "UMAP"
-shownames = FALSE
-perform_filter = TRUE
-batch_effect_correction = "none"
-plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/"
-best_features_file_path = NA
-dataset_replace_str = NA
-
-comparison = "PREOPEVsMET"
-classes = c("MET", "PREOPE")
-omics_type = "transcriptomics"
-norm = "log_cpm"
-dim_red = "UMAP"
-shownames = FALSE
-perform_filter = TRUE
-batch_effect_correction = "combat"
-plot_dir_path = "plots_comparison_set2/qc/dim_red/"
-best_features_file_path = NA
-dataset_replace_str = NA
-file_name_prefix = 11
-
-best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_"
-
-boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
-
-
-comparison = "PREOPEVsMET"
-classes = c("MET", "PREOPE")
-omics_type = "proteomics"
-norm = "quantile_train_param"
-dim_red = "UMAP"
-shownames = FALSE
-perform_filter = FALSE
-batch_effect_correction = "combat"
-plot_dir_path = "plots_comparison_set2/qc/dim_red_best/"
-file_name_prefix = 1
-best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_str = "GBM_combined_proteomic_combat_compset2_"
-boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
+# dim_red = "UMAP"
+# shownames = FALSE
+# perform_filter = TRUE
+# batch_effect_correction = "none"
+# plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/"
+# best_features_file_path = NA
+# dataset_replace_str = NA
+# 
+# comparison = "PREOPEVsMET"
+# classes = c("MET", "PREOPE")
+# omics_type = "transcriptomics"
+# norm = "log_cpm"
+# dim_red = "UMAP"
+# shownames = FALSE
+# perform_filter = TRUE
+# batch_effect_correction = "combat"
+# plot_dir_path = "plots_comparison_set2/qc/dim_red/"
+# best_features_file_path = NA
+# dataset_replace_str = NA
+# file_name_prefix = 11
+# 
+# best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_"
+# 
+# boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
+# 
+# 
+# comparison = "METVsHC"
+# classes = c("HC", "MET")
+# omics_type = "proteomics"
+# norm = "quantile_train_param"
+# dim_red = "UMAP"
+# shownames = FALSE
+# perform_filter = FALSE
+# batch_effect_correction = "combat"
+# plot_dir_path = "plots_comparison_set2/qc/dim_red_best/"
+# file_name_prefix = 3
+# best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_str = "GBM_combined_proteomic_combat_compset2_"
+# boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
 
 create_dim_red_plots_PMH <- function(comparison, classes,
                                      omics_type, norm,
@@ -619,6 +619,8 @@ create_dim_red_plots_PMH <- function(comparison, classes,
       biomarkers <- strsplit(best_features_sub[i, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
       data_sub <- data[, biomarkers]
       
+      best_str <- ifelse(best_features_sub[i, "is_best"] == 1, "best", "")
+      
       #plot biomarker boxplot
       
       #args - data, biomarkers, classes, output_labels, omics_type
@@ -657,7 +659,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
                                y = norm_expr,
                                fill = Label)) +
         geom_boxplot(size = 0.2, alpha = 0.5) +
-        ggtitle(paste(sub("Vs", " Vs ", comparison), omics_type)) +
+        ggtitle(paste(sub("Vs", " Vs ", comparison), best_str, x_lab)) +
         xlab(x_lab) +
         ylab(y_lab) +
         guides(fill = guide_legend(title = "Condition")) +
@@ -667,7 +669,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
               axis.title.y = element_text(size=rel(1.3)),
               plot.title  = element_text(size=rel(1.5)))  
       
-      file_name <- paste(comparison, omics_type, i, ".jpg",
+      file_name <- paste(file_name_prefix, comparison, omics_type, best_str, i, ".jpg",
                          sep = "_")
       file_path <- paste(boxplot_dir_path, file_name, sep = "/")
       ggplot2::ggsave(file_path, units = "cm", width = 30)
