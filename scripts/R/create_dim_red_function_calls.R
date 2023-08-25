@@ -293,3 +293,63 @@ create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
                          best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                          dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
                          boxplot_dir_path = "plots_comparison_set2/qc/boxplot/")
+
+
+
+
+#following are for testing MET Vs HC biomarker sets on other groups - just to check the expression levels
+
+#below failed to create other biomarker expression since not found in that cohort
+create_dim_red_plots_PMH(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2_test_/qc/dim_red_best/",
+                         file_name_prefix = 1,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col_incorrect_rows_added_for_test.csv",
+                         dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2_test_/qc/boxplot/")
+
+#below failed to create other biomarker expression since not found in that cohort
+create_dim_red_plots_PMH(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
+                         omics_type = "proteomics", norm = "quantile_train_param",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = FALSE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2_test_/qc/dim_red_best/",
+                         file_name_prefix = 2,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col_incorrect_rows_added_for_test.csv",
+                         dataset_replace_str = "GBM_combined_proteomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2_test_/qc/boxplot/")
+
+#below failed to create other biomarker expression since not found in that cohort
+create_dim_red_plots_PMH(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2_test_/qc/dim_red_best/",
+                         file_name_prefix = 4,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col_incorrect_rows_added_for_test.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2_test_/qc/boxplot/")
+
+#only this function call actually created other biomarker expression plot
+create_dim_red_plots_PMH(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2_test_/qc/dim_red_best/",
+                         file_name_prefix = 5,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col_incorrect_rows_added_for_test.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_",
+                         boxplot_dir_path = "plots_comparison_set2_test_/qc/boxplot/")
+
+# END of
+#   following are for testing MET Vs HC biomarker sets on other groups - just to check the expression levels
