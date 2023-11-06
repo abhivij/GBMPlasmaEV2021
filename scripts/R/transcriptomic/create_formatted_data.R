@@ -1,6 +1,10 @@
 library(tidyverse)
 library(readxl)
 
+library(ComplexHeatmap)
+library(viridis)
+library(RColorBrewer)
+
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
@@ -294,3 +298,440 @@ write.csv(data.common, "Data/RNA/umi_counts_initial_cohort_common_tr.csv")
 write.csv(validation_data.common, "Data/RNA/umi_counts_validation_cohort_common_tr.csv")
 # data.common <- read.csv("Data/RNA/umi_counts_initial_cohort_common_tr.csv",
 #                         row.names = 1)
+
+
+
+###############################################
+#176 samples quantified result from RNA Seq Portal
+
+data <- read_excel("Data/RNA_all/sRNAmatrix.xlsx")
+sum(is.na(data$Name))
+
+which(is.na(data$Name))
+
+data[2856, ]
+
+data <- data %>%
+  filter(!is.na(Name)) %>%
+  mutate(across(!contains("Name"), as.numeric))
+dim(data)
+# [1] 6203  177
+
+data_grouped <- data %>% 
+  group_by(Name) %>%
+  summarize(n = n()) %>%
+  filter(n > 1)
+#0
+
+length(unique(data$Name))
+#[1] 6203
+
+
+data <- data %>%
+  column_to_rownames("Name")
+
+min(data)
+#0
+#no -ve numbers
+
+rsum <- rowSums(data)
+
+data <- data %>%
+  filter(rsum != 0)
+dim(data)
+# [1] 4804  176
+
+
+meta_data <- read.csv("Data/transcriptomic_metadata_2023_176samples.csv") %>%
+  filter(Condition != "OUT")
+
+data <- data[, meta_data$Sample]
+colnames(data) <- meta_data$orig_sample_name
+dim(data)
+# [1] 4804  165
+
+rsum <- rowSums(data)
+
+data <- data %>%
+  filter(rsum != 0)
+dim(data)
+# [1] 4760  165
+
+write.csv(data, "Data/RNA_all/umi_counts.csv")
+
+
+#perform some qc to check :
+#for each of the transcripts, perc of zeroes of that transcript across all samples
+zero_entries <- as.data.frame(data == 0)
+perc_zero <- data.frame(perc = 100 * rowSums(zero_entries) / ncol(zero_entries))
+
+summary(perc_zero$perc)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.00   95.15   98.79   88.99   99.39   99.39
+
+
+ggplot(perc_zero, aes(x = "", y = perc)) +
+  geom_boxplot() +
+  labs(x = "",
+       y = "% of zeroes across all samples",
+       title = "Boxplot of % of zeroes in each transcript across all samples")
+ggsave("plots_RNA_all/qc/perc_zero_boxplot.png")
+
+
+ggplot(perc_zero, aes(x = perc)) +
+  geom_histogram(binwidth = 1) +
+  labs(x = "% of zeroes across all samples",
+       y = "number of transcripts",
+       title = "Frequency of % of zeroes in each transcript across all samples",
+       caption = paste("Total number of transcripts =", nrow(perc_zero))) +
+  scale_x_continuous(breaks = seq(0, 100, by = 5)) +
+  scale_y_continuous(n.breaks = 10)
+ggsave("plots_RNA_all/qc/perc_zero_barplot.png")
+
+
+ggplot(perc_zero, aes(x = perc)) +
+  stat_ecdf(geom = "step") +
+  labs(x = "% of zeroes across all samples",
+       y = "Cumulative proportion of transcripts",
+       title = "Cumulative distribution of % of zeroes in each transcript across all samples",
+       caption = paste("Total number of transcripts =", nrow(perc_zero))) +
+  scale_x_continuous(breaks = seq(0, 100, by = 5)) +
+  scale_y_continuous(n.breaks = 10)
+ggsave("plots_RNA_all/qc/perc_zero_cumulative.png")
+
+
+#from the cumulative dist plot, about 0.15 transcripts have < 85% zeros across all samples
+#verifying
+sum(perc_zero$perc < 85) / nrow(perc_zero) 
+# [1] 0.1569328
+
+sum(perc_zero$perc < 90) / nrow(perc_zero) 
+# [1] 0.1817227
+
+sum(perc_zero$perc < 95) / nrow(perc_zero) 
+# [1] 0.2378151
+
+#median
+sum(perc_zero$perc < 98.79) / nrow(perc_zero)
+# [1] 0.555042
+
+#3rd quartile
+sum(perc_zero$perc < 99.39) / nrow(perc_zero)
+# [1] 0.555042
+
+sum(perc_zero$perc < 99.394) / nrow(perc_zero)
+
+filt_data <- data[perc_zero$perc < 85, ]
+nrow(filt_data)
+#747
+
+filt_data <- data[perc_zero$perc < 90, ]
+nrow(filt_data)
+#865
+
+filt_data <- data[perc_zero$perc < 95, ]
+nrow(filt_data)
+#1132
+
+#using median
+filt_data <- data[perc_zero$perc < 98.79, ]
+nrow(filt_data)
+#2642
+
+#using 3rd quartile
+filt_data <- data[perc_zero$perc < 99.39, ]
+nrow(filt_data)
+#2642
+
+
+#use which of the above ?
+# maybe compare using expression heatmap
+
+meta_data <- meta_data %>%
+  dplyr::select(-c(Sample)) %>%
+  mutate(Condition = factor(Condition),
+         Cohort = factor(Cohort),
+         Subgroup = factor(Subgroup))
+
+# expr_data <- data
+create_expression_heatmap <- function(expr_data, meta_data, file_name, 
+                                      main_title = "", plot_dir_path = "plots_RNA_all/qc/heatmap/"){
+  expr_data <- expr_data[, meta_data$orig_sample_name]
+  all.equal(meta_data$orig_sample_name, colnames(expr_data))
+  
+  data_to_plot <- as.matrix(log2(expr_data + 2^-10))
+  
+  annotation_col_list <- list("Cohort" = c("cohort1" = "coral",
+                                           "cohort2" = "cyan"))
+  annotation_col_list[["Condition"]] <- brewer.pal(n = length(levels(meta_data$Condition)), name = "Dark2") 
+  names(annotation_col_list[["Condition"]]) <- levels(meta_data$Condition)
+  
+  annotation_col_list[["Subgroup"]] <- brewer.pal(n = length(levels(meta_data$Subgroup)), name = "Paired") 
+  names(annotation_col_list[["Subgroup"]]) <- levels(meta_data$Subgroup)
+  
+  ht <- Heatmap(data_to_plot, name = "Log2\nTranscriptomics\nexpression",
+                col = viridis(n = 10, option = "magma"),
+                show_column_names = FALSE,
+                show_column_dend = FALSE,
+                show_row_names = FALSE,
+                show_row_dend = FALSE,
+                row_title = paste0("Transcripts (", nrow(data_to_plot), ")"),
+                column_title = paste0("Samples (", ncol(data_to_plot), ")"),
+                bottom_annotation = HeatmapAnnotation(
+                  "Condition" = meta_data$Condition,
+                  "Subgroup" = meta_data$Subgroup,
+                  "Cohort" = meta_data$Cohort,
+                  col = annotation_col_list
+                ))
+  if(!dir.exists(plot_dir_path)){
+    dir.create(plot_dir_path, recursive = TRUE)
+  }
+  file_path <- paste0(plot_dir_path, file_name)
+  png(file_path, units = "cm", width = 20, height = 25, res = 1200)  
+  draw(ht, column_title = main_title, column_title_gp = gpar(fontsize = 15))    
+  dev.off()
+}
+
+
+create_expression_heatmap(data, meta_data, "1_zero_filtered.png")
+
+filt_data <- data[perc_zero$perc < 98.79, ]
+nrow(filt_data)
+create_expression_heatmap(filt_data, meta_data, "2_median_filtered.png")
+
+filt_data <- data[perc_zero$perc < 95, ]
+create_expression_heatmap(filt_data, meta_data, "3_95_filtered.png")
+
+filt_data <- data[perc_zero$perc < 90, ]
+create_expression_heatmap(filt_data, meta_data, "4_90_filtered.png")
+
+filt_data <- data[perc_zero$perc < 85, ]
+create_expression_heatmap(filt_data, meta_data, "5_85_filtered.png")
+
+
+
+###################
+#filtering just PREOPE, MET, HC samples
+
+data <- read_excel("Data/RNA_all/sRNAmatrix.xlsx")
+sum(is.na(data$Name))
+
+which(is.na(data$Name))
+
+data[2856, ]
+
+data <- data %>%
+  filter(!is.na(Name)) %>%
+  mutate(across(!contains("Name"), as.numeric)) %>%
+  column_to_rownames("Name")
+dim(data)
+# [1] 6203  176
+
+min(data)
+#0
+#no -ve numbers
+
+meta_data <- read.csv("Data/transcriptomic_metadata_2023_176samples.csv") %>%
+  filter(Condition %in% c('PREOPE', 'MET', 'HC'))
+
+data <- data[, meta_data$Sample]
+colnames(data) <- meta_data$orig_sample_name
+dim(data)
+#[1] 6203   67
+
+rsum <- rowSums(data)
+
+data <- data %>%
+  filter(rsum != 0)
+dim(data)
+#[1] 3087   67
+
+write.csv(data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC.csv")
+
+
+#perform some qc to check :
+#for each of the transcripts, perc of zeroes of that transcript across all samples
+zero_entries <- as.data.frame(data == 0)
+perc_zero <- data.frame(perc = 100 * rowSums(zero_entries) / ncol(zero_entries))
+
+summary(perc_zero$perc)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.00   86.57   97.01   82.37   98.51   98.51
+
+
+ggplot(perc_zero, aes(x = "", y = perc)) +
+  geom_boxplot() +
+  labs(x = "",
+       y = "% of zeroes across all samples",
+       title = "Boxplot of % of zeroes in each transcript across all samples")
+ggsave("plots_RNA_all/PREOPE_MET_HC/qc/perc_zero_boxplot.png")
+
+
+ggplot(perc_zero, aes(x = perc)) +
+  geom_histogram(binwidth = 1) +
+  labs(x = "% of zeroes across all samples",
+       y = "number of transcripts",
+       title = "Frequency of % of zeroes in each transcript across all samples",
+       caption = paste("Total number of transcripts =", nrow(perc_zero))) +
+  scale_x_continuous(breaks = seq(0, 100, by = 5)) +
+  scale_y_continuous(n.breaks = 10)
+ggsave("plots_RNA_all/PREOPE_MET_HC/qc/perc_zero_barplot.png")
+
+
+ggplot(perc_zero, aes(x = perc)) +
+  stat_ecdf(geom = "step") +
+  labs(x = "% of zeroes across all samples",
+       y = "Cumulative proportion of transcripts",
+       title = "Cumulative distribution of % of zeroes in each transcript across all samples",
+       caption = paste("Total number of transcripts =", nrow(perc_zero))) +
+  scale_x_continuous(breaks = seq(0, 100, by = 5)) +
+  scale_y_continuous(n.breaks = 10)
+ggsave("plots_RNA_all/PREOPE_MET_HC/qc/perc_zero_cumulative.png")
+
+
+#from the cumulative dist plot, about 0.3 transcripts have < 90% zeros across all samples
+#verifying
+sum(perc_zero$perc < 90) / nrow(perc_zero) 
+# [1] 0.2938128
+
+sum(perc_zero$perc < 95) / nrow(perc_zero) 
+# [1] 0.3751215
+
+#median
+sum(perc_zero$perc < 97.01) / nrow(perc_zero)
+# [1] 0.4331066
+
+#3rd quartile
+sum(perc_zero$perc < 98.51) / nrow(perc_zero)
+# [1] 1
+
+sum(perc_zero$perc < 98.5074) / nrow(perc_zero)
+# [1] 0.5484289
+
+sum(perc_zero$perc == 0) / nrow(perc_zero)
+# [1] 0.04275996
+
+
+filt_data <- data[perc_zero$perc == 0, ]
+nrow(filt_data)
+# [1] 132
+
+filt_data <- data[perc_zero$perc < 90, ]
+nrow(filt_data)
+#907
+
+filt_data <- data[perc_zero$perc < 95, ]
+nrow(filt_data)
+#1158
+
+#using median
+filt_data <- data[perc_zero$perc < 97.01, ]
+nrow(filt_data)
+#1337
+
+#using value just before 3rd quartile where cumulative prop is < 1
+filt_data <- data[perc_zero$perc < 98.5074, ]
+nrow(filt_data)
+#1693
+
+#using 3rd quartile
+filt_data <- data[perc_zero$perc < 98.51, ]
+nrow(filt_data)
+#3087
+
+
+#use which of the above ?
+# maybe compare using expression heatmap
+
+meta_data <- meta_data %>%
+  dplyr::select(-c(Sample)) %>%
+  mutate(Condition = factor(Condition),
+         Cohort = factor(Cohort),
+         Subgroup = factor(Subgroup))
+
+
+
+
+create_expression_heatmap(data, meta_data, "1_zero_filtered.png", 
+                          main_title = "Transcripts non-zero in atleast 1 sample", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+filt_data <- data[perc_zero$perc < 98.5074, ]
+nrow(filt_data)
+create_expression_heatmap(filt_data, meta_data, "2_filtered.png", 
+                          main_title = "Transcripts non-zero in less than 98.5074% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 97.01, ]
+nrow(filt_data)
+create_expression_heatmap(filt_data, meta_data, "3_filtered_median.png", 
+                          main_title = "Transcripts non-zero in less than\n97.01% samples (median 0%)", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 95, ]
+nrow(filt_data)
+
+non_zero <- filt_data != 0
+sum(non_zero) / (nrow(non_zero) * ncol(non_zero))
+# [1] 0.4358389
+
+create_expression_heatmap(filt_data, meta_data, "4_filtered_95perc.png", 
+                          main_title = "Transcripts non-zero in less than\n95% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 90, ]
+nrow(filt_data)
+
+non_zero <- filt_data != 0
+sum(non_zero) / (nrow(non_zero) * ncol(non_zero))
+# [1] 0.5367704
+
+create_expression_heatmap(filt_data, meta_data, "5_filtered_90perc.png", 
+                          main_title = "Transcripts non-zero in less than\n90% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 85, ]
+nrow(filt_data)
+
+non_zero <- filt_data != 0
+sum(non_zero) / (nrow(non_zero) * ncol(non_zero))
+# [1] 0.6327669
+
+create_expression_heatmap(filt_data, meta_data, "6_filtered_85perc.png", 
+                          main_title = "Transcripts non-zero in less than\n85% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 80, ]
+nrow(filt_data)
+
+non_zero <- filt_data != 0
+sum(non_zero) / (nrow(non_zero) * ncol(non_zero))
+# [1] 0.6768023
+
+create_expression_heatmap(filt_data, meta_data, "7_filtered_80perc.png", 
+                          main_title = "Transcripts non-zero in less than\n80% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc < 75, ]
+nrow(filt_data)
+
+non_zero <- filt_data != 0
+sum(non_zero) / (nrow(non_zero) * ncol(non_zero))
+# [1] 0.7180197
+
+create_expression_heatmap(filt_data, meta_data, "8_filtered_75perc.png", 
+                          main_title = "Transcripts non-zero in less than\n75% samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+filt_data <- data[perc_zero$perc ==0, ]
+nrow(filt_data)
+create_expression_heatmap(filt_data, meta_data, "9_filtered_0perc.png", 
+                          main_title = "Transcripts non-zero in all samples", 
+                          plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")

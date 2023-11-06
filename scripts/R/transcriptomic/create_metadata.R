@@ -354,3 +354,56 @@ PREOPE_MET_HC_phenotype <- insert_comparison_columns(PREOPE_MET_HC_metadata,
 write.table(PREOPE_MET_HC_phenotype, 
             file = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
+
+
+##################
+#create combined meta_data file 121+55 = 176 samples for qiagen experiment and quantification
+phenotype <- read.table("Data/transcriptomic_phenotype.txt", header=TRUE, sep="\t")
+validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv")
+
+PREOPE_MET_HC_metadata <- read.csv("Data/PREOPE_MET_HC/meta_data_updated.csv")
+
+meta_data.cohort1 <- phenotype[, c(1, 4)]
+colnames(meta_data.cohort1) <- c("Sample", "Condition")
+meta_data.cohort1["Cohort"] <- "cohort1"
+meta_data.cohort1 <- meta_data.cohort1 %>%
+  dplyr::mutate(Condition = sub("_T|_P", "_TP", Condition))
+
+meta_data.cohort2 <- validation_metadata %>%
+  dplyr::select(c(sample_id, category_old_name))
+colnames(meta_data.cohort2) <- c("Sample", "Condition")
+meta_data.cohort2["Cohort"] <- "cohort2"
+
+
+meta_data.combined <- rbind(meta_data.cohort1, meta_data.cohort2)
+meta_data.combined <- meta_data.combined %>%
+  full_join(PREOPE_MET_HC_metadata %>% dplyr::select(c(Sample, Subgroup)))
+
+# tail(meta_data.combined)
+# Sample  Condition  Cohort Subgroup
+# 174   SB53 POSTOPE_TP cohort2     <NA>
+# 175   SB54        UNK cohort2     <NA>
+# 176   SB55        UNK cohort2     <NA>
+# 177   HB01       <NA>    <NA>   Pre-op
+# 178   HB04       <NA>    <NA>   Pre-op
+# 179   HB48       <NA>    <NA>   Pre-op
+
+#HB48 sample isn't available for transcriptomics
+#HB01, HB04 are just same samples as HB1, HB4 listed initially
+#all these 3 can be filtered out
+
+meta_data.combined <- meta_data.combined[c(1:176), ] 
+meta_data.combined <- meta_data.combined %>%
+  mutate(Subgroup = ifelse(Subgroup == "Pre-op", NA, Subgroup)) %>%
+  relocate(Cohort, .before = Condition)
+
+summary(factor(meta_data.combined$Condition))
+# HC        MET        OUT POSTOPE_TP     PREOPE     PREREC     REC_TP        UNK 
+# 21         21         11         46         25          7         28         17
+qiagen_sample_names <- read.csv("Data/qiagen_sample_name_2023_176_samples.csv") %>%
+  separate(Qiagen_sample_name, into = c("Sample", NA), sep = "_", remove = FALSE)
+
+meta_data.combined <- meta_data.combined %>%
+  inner_join(qiagen_sample_names)
+colnames(meta_data.combined)[c(1, 5)] <- c("orig_sample_name", "Sample")
+write.csv(meta_data.combined, "Data/transcriptomic_metadata_2023_176samples.csv", row.names = FALSE)
