@@ -735,3 +735,12 @@ nrow(filt_data)
 create_expression_heatmap(filt_data, meta_data, "9_filtered_0perc.png", 
                           main_title = "Transcripts non-zero in all samples", 
                           plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/heatmap/")
+
+
+#going with <90, since thats the first to hit > 50% total non-zeros, 
+#and also about 0.3 of transcripts have <90 across all samples
+
+filt_data <- data[perc_zero$perc < 90, ]
+nrow(filt_data)
+
+write.csv(data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv")
