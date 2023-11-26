@@ -743,4 +743,7 @@ create_expression_heatmap(filt_data, meta_data, "9_filtered_0perc.png",
 filt_data <- data[perc_zero$perc < 90, ]
 nrow(filt_data)
 
-write.csv(data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv")
+write.csv(filt_data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv")
+
+
+

@@ -14,42 +14,42 @@ perform_filter = TRUE
 batch_effect_correction = "combat"
 plot_dir_path = "plots_comparison_set2/qc/expression_feature_level"
 
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "none",
                         perform_filter = TRUE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "log_cpm",
                         perform_filter = TRUE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "log_cpm",
                         perform_filter = TRUE,
                         batch_effect_correction = "combat",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "none",
                         perform_filter = TRUE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "log_cpm",
                         perform_filter = TRUE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "transcriptomics",
                         norm = "log_cpm",
@@ -58,42 +58,42 @@ create_per_feature_plot(comparison = "PREOPEVsMET",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
 
 
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "none",
                         perform_filter = FALSE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "quantile",
                         perform_filter = FALSE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsHC",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
                         classes = c("HC", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "quantile",
                         perform_filter = FALSE,
                         batch_effect_correction = "combat",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "none",
                         perform_filter = FALSE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "quantile",
                         perform_filter = FALSE,
                         batch_effect_correction = "none",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
-create_per_feature_plot(comparison = "PREOPEVsMET",
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
                         classes = c("MET", "PREOPE"),
                         omics_type = "proteomics",
                         norm = "quantile",
@@ -102,20 +102,148 @@ create_per_feature_plot(comparison = "PREOPEVsMET",
                         plot_dir_path = "plots_comparison_set2/qc/expression_feature_level")
 
 
-create_per_feature_plot <- function(comparison, classes,
-                                    omics_type, norm,
-                                    perform_filter = FALSE,
-                                    batch_effect_correction = "none",
-                                    plot_dir_path){
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "transcriptomics"
+norm = "log_cpm"
+perform_filter = TRUE
+batch_effect_correction = "none"
+plot_dir_path = "plots_RNA_all/qc/expression_feature_level/"
+data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
+file_name_prefix = 1
+
+
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                        classes = c("MET", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "none",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                        classes = c("MET", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "log_cpm",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                        classes = c("MET", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "log_cpm",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "combat",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+
+
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                        classes = c("HC", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "none",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                        classes = c("HC", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "log_cpm",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                        classes = c("HC", "PREOPE"),
+                        omics_type = "transcriptomics",
+                        norm = "log_cpm",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "combat",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+
+
+create_per_feature_or_sample_plot(comparison = "METVsHC",
+                        classes = c("HC", "MET"),
+                        omics_type = "transcriptomics",
+                        norm = "none",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+create_per_feature_or_sample_plot(comparison = "METVsHC",
+                        classes = c("HC", "MET"),
+                        omics_type = "transcriptomics",
+                        norm = "log_cpm",
+                        perform_filter = TRUE,
+                        batch_effect_correction = "none",
+                        plot_dir_path = "plots_RNA_all/qc/expression_feature_level/",
+                        data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                        phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt")
+
+
+
+comparison = "PREOPEVsHC"
+classes = c("HC", "PREOPE")
+omics_type = "transcriptomics"
+norm = "log_cpm"
+perform_filter = TRUE
+batch_effect_correction = "combat"
+plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level"
+data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
+plot_type = "per_sample"
+
+create_per_feature_or_sample_plot <- function(comparison, classes,
+                                              omics_type, norm,
+                                              perform_filter = FALSE,
+                                              batch_effect_correction = "none",
+                                              plot_type = "per_feature",
+                                              plot_dir_path,
+                                              data_file_path = NA,
+                                              validation_data_file_path = NA,
+                                              phenotype_file_path = NA){
   if(omics_type == "proteomics"){
-    data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
-    validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv" 
-    phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC.txt"
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
+    }
+    if(is.na(validation_data_file_path)){
+      validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv"
+    }
+    if(is.na(phenotype_file_path)){
+      phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC.txt"  
+    }
   } else if(omics_type == "transcriptomics"){
-    data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
-    validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"      
-    phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
     
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
+    }
+    if(is.na(validation_data_file_path)){
+      validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"
+    }
+    if(is.na(phenotype_file_path)){
+      phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"  
+    }
     # validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
     #   mutate(sample_category = factor(sample_category)) %>%
     #   mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
@@ -140,7 +268,7 @@ create_per_feature_plot <- function(comparison, classes,
     # validation_metadata <- validation_metadata %>%
     #   filter(Sample != "SB7")    
     
-  } else if(omics_type == "transcriptomics"){
+  } else if(omics_type == "transcriptomics" & data_file_path != validation_data_file_path){
     colnames(validation_data) <- paste0("S", colnames(validation_data))
   }
   
@@ -209,6 +337,9 @@ create_per_feature_plot <- function(comparison, classes,
   } else if(norm == "log_cpm"){
     #calculating norm log cpm
     data <- edgeR::cpm(data, log=TRUE)
+  } else if(norm == "none"){
+    print("just log")
+    data <- log2(data + 2^-10)
   }
   
   data <- as.data.frame(t(as.matrix(data)))
@@ -233,74 +364,108 @@ create_per_feature_plot <- function(comparison, classes,
     data <- data.combat
   }
   
-  data_to_plot <- data %>%
-    rownames_to_column(var = "Sample") %>%
-    pivot_longer(cols = !Sample, names_to = "features", values_to = "expr") %>%
-    inner_join(output_labels %>%
-                 mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
-                 dplyr::select(c(Sample, Label))
-    )
-  
-  data_to_plot <- data_to_plot %>%
-    group_by(features, Label) %>%
-    summarize(med_expr = median(expr), 
-              q25up = quantile(expr, probs = 0.75), 
-              q25down = quantile(expr, probs = 0.25)) %>%
-    ungroup()
-  
-  median_expr_data <- data_to_plot %>%
-    group_by(features) %>%
-    summarize(med_med_expr = median(med_expr)) %>%
-    arrange(desc(med_med_expr))
-  
-  data_to_plot <- data_to_plot %>%
-    pivot_longer(cols = c(med_expr, q25up, q25down), names_to = "expr_type", values_to = "expr") %>%
-    mutate(features = factor(features, levels = median_expr_data$features))
-  
-  data_to_plot <- data_to_plot %>%
-    dplyr::filter(expr_type == "med_expr")
-  
-  y_lab <- "Expression"
-  if(omics_type == "transcriptomics"){
-    x_lab <- "transcripts"
-  } else{
-    x_lab <- "proteins"
+  if(plot_type == "per_feature"){
     
+    data_to_plot <- data %>%
+      rownames_to_column(var = "Sample") %>%
+      pivot_longer(cols = !Sample, names_to = "features", values_to = "expr") %>%
+      inner_join(output_labels %>%
+                   mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
+                   dplyr::select(c(Sample, Label))
+      )
+    
+    data_to_plot <- data_to_plot %>%
+      group_by(features, Label) %>%
+      summarize(med_expr = median(expr), 
+                q25up = quantile(expr, probs = 0.75), 
+                q25down = quantile(expr, probs = 0.25)) %>%
+      ungroup()
+    
+    median_expr_data <- data_to_plot %>%
+      group_by(features) %>%
+      summarize(med_med_expr = median(med_expr)) %>%
+      arrange(desc(med_med_expr))
+    
+    data_to_plot <- data_to_plot %>%
+      pivot_longer(cols = c(med_expr, q25up, q25down), names_to = "expr_type", values_to = "expr") %>%
+      mutate(features = factor(features, levels = median_expr_data$features))
+    
+    data_to_plot <- data_to_plot %>%
+      dplyr::filter(expr_type == "med_expr")
+    
+    y_lab <- "Expression"
+    if(omics_type == "transcriptomics"){
+      x_lab <- "transcripts"
+    } else{
+      x_lab <- "proteins"
+      
+      # data_to_plot <- data_to_plot %>%
+      #   left_join(all_protein_names %>% dplyr::select(c(from_id, primary_gene_id)), 
+      #             by = c("biomarker" = "from_id")) %>%
+      #   dplyr::select(-c(biomarker)) %>%
+      #   dplyr::rename(c("biomarker" = "primary_gene_id"))
+    }
+    x_lab <- paste0(x_lab, "(", length(median_expr_data$features), ")")
+    
+    # biomarker_agg <- data_to_plot %>%
+    #   group_by(biomarker) %>%
+    #   summarize(med_expr = median(norm_expr)) %>%
+    #   arrange(desc(med_expr))
+    # 
+    # # data_to_plot <- data_to_plot %>%
+    # #   mutate(Label = factor(Label, levels = rev(classes)),
+    # #          biomarker = factor(biomarker, biomarker_agg$biomarker)) 
     # data_to_plot <- data_to_plot %>%
-    #   left_join(all_protein_names %>% dplyr::select(c(from_id, primary_gene_id)), 
-    #             by = c("biomarker" = "from_id")) %>%
-    #   dplyr::select(-c(biomarker)) %>%
-    #   dplyr::rename(c("biomarker" = "primary_gene_id"))
+    #   mutate(biomarker = factor(biomarker, biomarker_agg$biomarker))
+    # # print("here")
+    
+    # ggplot(data_to_plot) +
+    #   geom_point(aes(x = features, y = expr, fill = Label, shape = expr_type), stroke = 0.1) +
+    #   theme(axis.text.x = element_blank()) +
+    #   scale_shape_manual(name = "Expression type", values = c(21, 24, 25)) +
+    #   guides(fill = guide_legend(override.aes = list(shape = 21, colour = NA))) +
+    #   ggtitle(paste(sub("Vs", " Vs ", comparison), x_lab)) +
+    #   xlab(x_lab) +
+    #   ylab(y_lab)
+    
+    ggplot(data_to_plot) +
+      geom_point(aes(x = features, y = expr, color = Label)) +
+      theme(axis.text.x = element_blank()) +
+      ggtitle(paste(sub("Vs", " Vs ", comparison), x_lab, title)) +
+      xlab(x_lab) +
+      ylab(y_lab)    
+  }  else if(plot_type == "per_sample"){
+    
+    data_to_plot <- data %>%
+      rownames_to_column(var = "Sample") %>%
+      pivot_longer(cols = !Sample, names_to = "features", values_to = "expr") %>%
+      inner_join(output_labels %>%
+                   mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
+                   dplyr::select(c(Sample, Label))
+      )
+    data_to_plot <- data_to_plot %>%
+      mutate(Label = factor(Label))
+    
+    median_expr_data <- data_to_plot %>%
+      group_by(Sample, Label) %>%
+      summarize(med_expr = median(expr)) %>%
+      arrange(Label, desc(med_expr))
+    
+    data_to_plot <- data_to_plot %>%
+      mutate(Sample = factor(Sample, levels = median_expr_data$Sample))
+    
+    y_lab <- "Expression"
+    x_lab <- "Sample"
+    # x_lab <- paste0(x_lab, "(", length(data_to_plot$Sample), ")")
+    
+    ggplot(data_to_plot) +
+      geom_boxplot(aes(x = Sample, y = expr, color = Label)) +
+      theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.99)) +
+      ggtitle(paste(sub("Vs", " Vs ", comparison), x_lab, title)) +
+      xlab("Sample") +
+      ylab(y_lab)    
   }
-  x_lab <- paste0(x_lab, "(", length(median_expr_data$features), ")")
-  
-  # biomarker_agg <- data_to_plot %>%
-  #   group_by(biomarker) %>%
-  #   summarize(med_expr = median(norm_expr)) %>%
-  #   arrange(desc(med_expr))
-  # 
-  # # data_to_plot <- data_to_plot %>%
-  # #   mutate(Label = factor(Label, levels = rev(classes)),
-  # #          biomarker = factor(biomarker, biomarker_agg$biomarker)) 
-  # data_to_plot <- data_to_plot %>%
-  #   mutate(biomarker = factor(biomarker, biomarker_agg$biomarker))
-  # # print("here")
-  
-  # ggplot(data_to_plot) +
-  #   geom_point(aes(x = features, y = expr, fill = Label, shape = expr_type), stroke = 0.1) +
-  #   theme(axis.text.x = element_blank()) +
-  #   scale_shape_manual(name = "Expression type", values = c(21, 24, 25)) +
-  #   guides(fill = guide_legend(override.aes = list(shape = 21, colour = NA))) +
-  #   ggtitle(paste(sub("Vs", " Vs ", comparison), x_lab)) +
-  #   xlab(x_lab) +
-  #   ylab(y_lab)
-  
-  ggplot(data_to_plot) +
-    geom_point(aes(x = features, y = expr, color = Label)) +
-    theme(axis.text.x = element_blank()) +
-    ggtitle(paste(sub("Vs", " Vs ", comparison), x_lab, title)) +
-    xlab(x_lab) +
-    ylab(y_lab)
+
   
   if(!dir.exists(plot_dir_path)){
     dir.create(plot_dir_path, recursive = TRUE)
@@ -313,6 +478,95 @@ create_per_feature_plot <- function(comparison, classes,
 
 
 
-create_per_sample_plot <- function(){
-  
-}
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                                  classes = c("MET", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "none",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                                  classes = c("MET", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "log_cpm",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsMET",
+                                  classes = c("MET", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "log_cpm",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "combat",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+
+
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                                  classes = c("HC", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "none",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                                  classes = c("HC", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "log_cpm",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+create_per_feature_or_sample_plot(comparison = "PREOPEVsHC",
+                                  classes = c("HC", "PREOPE"),
+                                  omics_type = "transcriptomics",
+                                  norm = "log_cpm",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "combat",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+
+
+create_per_feature_or_sample_plot(comparison = "METVsHC",
+                                  classes = c("HC", "MET"),
+                                  omics_type = "transcriptomics",
+                                  norm = "none",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
+create_per_feature_or_sample_plot(comparison = "METVsHC",
+                                  classes = c("HC", "MET"),
+                                  omics_type = "transcriptomics",
+                                  norm = "log_cpm",
+                                  perform_filter = TRUE,
+                                  batch_effect_correction = "none",
+                                  plot_dir_path = "plots_RNA_all/PREOPE_MET_HC/qc/expression_sample_level",
+                                  data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                  phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", 
+                                  plot_type = "per_sample")
