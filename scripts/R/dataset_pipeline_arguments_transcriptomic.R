@@ -2641,8 +2641,6 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("ga_rf")),
   
   
-  
-  
   #transcriptomic after new uantification with rna seq portal
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
@@ -2761,7 +2759,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   #transcriptomic METVsHC
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
-       read_count_dir_path = "Data/RNA",
+       read_count_dir_path = "Data/RNA_all/",
        read_count_file_name = "newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
        sep = ",",
        dataset_id = "GBM_combined_transcriptomic_new_quant_compset2",
@@ -2778,7 +2776,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   #transcriptomic METVsHC
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
-       read_count_dir_path = "Data/RNA",
+       read_count_dir_path = "Data/RNA_all/",
        read_count_file_name = "newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
        sep = ",",
        dataset_id = "GBM_combined_transcriptomic_new_quant_compset2",
@@ -2791,7 +2789,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   #transcriptomic METVsHC
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
-       read_count_dir_path = "Data/RNA",
+       read_count_dir_path = "Data/RNA_all/",
        read_count_file_name = "newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
        sep = ",",
        dataset_id = "GBM_combined_transcriptomic_new_quant_compset2",
@@ -2804,7 +2802,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
   
   #transcriptomic METVsHC
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
-       read_count_dir_path = "Data/RNA",
+       read_count_dir_path = "Data/RNA_all/",
        read_count_file_name = "newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
        sep = ",",
        dataset_id = "GBM_combined_transcriptomic_new_quant_compset2",
@@ -2813,5 +2811,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
        norm = "log_cpm", perform_filter = TRUE,
-       fems_to_run = c("ga_rf"))
+       fems_to_run = c("ga_rf"))  
+  
+
 )
