@@ -1524,6 +1524,74 @@ plot_common_feature_heatmap(c(174:181),
                             heatmap_file_name = "METVsHC.png"
 )
 
+best_features <- read.csv("Data/selected_features/best_features.csv") %>%
+  filter(dataset_id == "GBM_combined_transcriptomic_combat_compset2_METVsHC") %>%
+  mutate(name = paste0(description, "_", min_iter_feature_presence)) %>%
+  column_to_rownames("name") %>%
+  dplyr::select(c(biomarkers))
+mrmr100_30_nop <- strsplit(best_features["mrmr100_nopir_30", "biomarkers"], split = "|", fixed = TRUE)[[1]]
+mrmr30_30 <- strsplit(best_features["mrmr30_30", "biomarkers"], split = "|", fixed = TRUE)[[1]]
+ranger_30 <- strsplit(best_features["ranger_pos_impu_cor_30", "biomarkers"], split = "|", fixed = TRUE)[[1]]
+
+ggvenn(list("mrmr100_30_nop" = mrmr100_30_nop,
+            "mrmr30_30" = mrmr30_30,
+            "ranger_30" = ranger_30),
+       stroke_size = 0.1,
+       set_name_size = 4,
+       text_size = 3, stroke_linetype = "blank",
+       fill_color = c("cyan", "orange", "plum"))
+ggsave("plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2/common_heatmap/METVsHC_best_feature_overlap.png")
 
 
 ####################
+
+#proteomic within met
+
+plot_heatmap(
+  dparg_vec = c(191),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+  results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_Met",
+  dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_combat_compset2_Met/",
+  dataset_replace_string = "GBM_combined_proteomic_combat_compset2_Met_"
+)
+
+
+
+####################
+
+#transcriptomic within met
+
+plot_heatmap(
+  dparg_vec = c(182),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2_Met",
+  dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_Met/",
+  dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_Met_"
+)
+
+
+####################
+
+#transcriptomic set2 comparisons combined combat
+
+plot_heatmap(
+  dparg_vec = c(153, 157, 161),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2",
+  dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2/",
+  dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_"
+)
+
+
+
+#################################
+
+#transcriptomic after new quantification with rna seq portal
+
+plot_heatmap(
+  dparg_vec = c(186, 190, 194),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
+  dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_new_quant_compset2/",
+  dataset_replace_string = "GBM_combined_transcriptomic_new_quant_compset2_"
+)
