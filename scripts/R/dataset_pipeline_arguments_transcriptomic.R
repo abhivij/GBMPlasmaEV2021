@@ -2641,7 +2641,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("ga_rf")),
   
   
-  #transcriptomic after new uantification with rna seq portal
+  #transcriptomic after new quantification with rna seq portal
   #transcriptomic PREOPEVsMET
   list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
        read_count_dir_path = "Data/RNA_all/",
@@ -2652,7 +2652,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("MET", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("all", 
                        "t-test", "wilcoxontest",
                        "ranger_pos_impu_cor",
@@ -2669,7 +2669,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("MET", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("mrmr_perc50")),
   
   #transcriptomic PREOPEVsMET
@@ -2682,7 +2682,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("MET", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("RF_RFE")),
   
   #transcriptomic PREOPEVsMET
@@ -2695,7 +2695,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("MET", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("ga_rf")),
   
   
@@ -2710,7 +2710,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("HC", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("all", 
                        "t-test", "wilcoxontest",
                        "ranger_pos_impu_cor",
@@ -2727,7 +2727,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("HC", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("mrmr_perc50")),
   
   #transcriptomic PREOPEVsHC
@@ -2740,7 +2740,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("HC", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("RF_RFE")),
   
   #transcriptomic PREOPEVsHC
@@ -2753,7 +2753,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        classes = c("HC", "PREOPE"),
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
-       norm = "none", perform_filter = FALSE,
+       norm = "log_cpm", perform_filter = TRUE,
        fems_to_run = c("ga_rf")),
   
   
@@ -2811,7 +2811,7 @@ dataset_pipeline_arguments_transcriptomic <- list(
        cores = 16,
        results_dir_path = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2",
        norm = "log_cpm", perform_filter = TRUE,
-       fems_to_run = c("ga_rf"))  
+       fems_to_run = c("ga_rf")) 
   
 
 )
