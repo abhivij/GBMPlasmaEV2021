@@ -3,6 +3,7 @@ library(readxl)
 library(edgeR)
 library(caret)
 library("DESeq2")
+library(EnhancedVolcano)
 
 
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
@@ -114,3 +115,177 @@ plot_transcriptomic_data(umi_counts, metadata, c("PREOPE", "HC"), "All transcrip
 
 plot_transcriptomic_data(umi_counts, metadata, c("MET", "HC"), "All transcripts")
 plot_transcriptomic_data(umi_counts, metadata, c("MET", "HC"), "All transcripts", dim_red = "umap")
+
+
+
+
+
+###############
+
+#DE analysis for all transcriptomics data - PREOPE, MET, HC - 2024 Jan 
+
+
+
+umi_counts <- read.csv("Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv", row.names = 1)
+metadata <- read.table("Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", header=TRUE, sep="\t") %>%
+  filter(!is.na(data_cohort)) %>%
+  mutate(condition = case_when(Condition == "Pre-op" ~ "PREOPE",
+                               Condition == "Metastatic" ~ "MET",
+                               Condition == "Healthy Control" ~ "HC"))
+umi_counts <- umi_counts[, metadata$Sample]
+
+dds <- DESeqDataSetFromMatrix(countData = umi_counts,
+                              colData = metadata,
+                              design = ~ condition + data_cohort)
+
+print(dim(counts(dds)))
+
+dds <- DESeq(dds)
+resultsNames(dds)
+
+plot_dir_path <- "plots_RNA_all/PREOPE_MET_HC/volcano/" 
+if(!dir.exists(plot_dir_path)){
+  dir.create(plot_dir_path, recursive = TRUE)  
+}
+
+res <- results(dds, contrast = c("condition", "PREOPE", "MET"), alpha = 0.05)
+
+res
+print(summary(res))
+
+result <- as.data.frame(res) %>%
+  filter(!is.na(padj)) %>%
+  rownames_to_column("rna") %>%
+  select(rna, log2FoldChange, pvalue, padj) %>%
+  dplyr::rename(Molecule = rna, adjPVal = padj, pVal = pvalue, logFC = log2FoldChange) %>%
+  arrange(logFC)
+
+
+
+
+logFC_cutoff = 0.585
+#approx 1.5 FC
+k = 10
+title = "PREOPE Vs MET"
+plot_file_name = "volcano_1_PREOPEVsMET.png"
+dir_path = plot_dir_path
+
+diff_utils(result, title = "PREOPE Vs MET",
+           plot_file_name = "volcano_1_PREOPEVsMET.png",
+           dir_path = plot_dir_path,
+           logFC_cutoff = 0.585)
+
+
+
+res <- results(dds, contrast = c("condition", "PREOPE", "HC"), alpha = 0.05)
+res
+print(summary(res))
+result <- as.data.frame(res) %>%
+  filter(!is.na(padj)) %>%
+  rownames_to_column("rna") %>%
+  select(rna, log2FoldChange, pvalue, padj) %>%
+  dplyr::rename(Molecule = rna, adjPVal = padj, pVal = pvalue, logFC = log2FoldChange) %>%
+  arrange(logFC)
+diff_utils(result, title = "PREOPE Vs HC",
+           plot_file_name = "volcano_2_PREOPEVsHC.png",
+           dir_path = plot_dir_path,
+           logFC_cutoff = 0.585)
+
+
+res <- results(dds, contrast = c("condition", "MET", "HC"), alpha = 0.05)
+res
+print(summary(res))
+result <- as.data.frame(res) %>%
+  filter(!is.na(padj)) %>%
+  rownames_to_column("rna") %>%
+  select(rna, log2FoldChange, pvalue, padj) %>%
+  dplyr::rename(Molecule = rna, adjPVal = padj, pVal = pvalue, logFC = log2FoldChange) %>%
+  arrange(logFC)
+diff_utils(result, title = "MET Vs HC",
+           plot_file_name = "volcano_3_METVsHC.png",
+           dir_path = plot_dir_path,
+           logFC_cutoff = 0.263)  #log2(1.2)
+
+
+diff_utils <- function(result, title, plot_file_name, dir_path,
+                       k = 10,
+                       logFC_cutoff) {
+
+  
+  #arrange by significance needs to be done so as to show 
+  # the labels in the order - downregulated, not significant, upregulated in the volcano plot 
+  result <- result %>%
+    mutate(significance = case_when(logFC <= -logFC_cutoff & adjPVal <= 0.05 ~ 'Downregulated',
+                                    logFC >= logFC_cutoff & adjPVal <= 0.05 ~ 'Upregulated',
+                                    TRUE ~ 'Not significant')) %>% 
+    mutate(colour = case_when(significance == 'Downregulated' ~ '#E8495C',
+                              significance == 'Upregulated' ~ '#38ACE2',
+                              TRUE ~ 'grey')) %>%
+    arrange(significance)
+  
+  upreg <- result %>%
+    filter(significance == 'Upregulated') %>%
+    arrange(desc(logFC))
+  downreg <- result %>%
+    filter(significance == "Downregulated") %>%
+    arrange(logFC)
+  
+  if(nrow(upreg) >= k){
+    top_molecules <- upreg[1:k, "Molecule"]
+  } else{
+    top_molecules <- upreg[1:nrow(upreg), "Molecule"]
+  }
+  if(nrow(downreg) >= k){
+    top_molecules <- c(top_molecules, downreg[1:k, "Molecule"])
+  } else{
+    top_molecules <- c(top_molecules, downreg[1:nrow(downreg), "Molecule"])
+  }
+  
+  result <- result %>%
+    mutate(label = case_when(Molecule %in% top_molecules ~ Molecule,
+                             TRUE ~ NA_character_))
+  
+  # result <- result %>%
+  #   filter(!is.na(label)) %>%
+  #   arrange(desc(logFC))
+  
+  sig <- rbind(upreg, downreg) %>%
+    select(-c(significance, colour)) %>%
+    arrange(desc(logFC))
+  # print(sig)
+  # print(paste("Upregulated:", nrow(sig[sig$logFC > 0,]), sep=" "))
+  # print(paste("Downregulated:", nrow(sig[sig$logFC < 0,]), sep=" "))
+  
+  keyvals <- result$colour
+  names(keyvals) <- result$significance
+  
+  upreg_count <- sum(names(keyvals) == 'Upregulated')
+  downreg_count <- sum(names(keyvals) == 'Downregulated')
+  ns_count <- sum(names(keyvals) == 'Not significant')
+  
+  names(keyvals) <- gsub('Upregulated', paste0('Upregulated (', upreg_count, ')'), names(keyvals))
+  names(keyvals) <- gsub('Downregulated', paste0('Downregulated (', downreg_count, ')'), names(keyvals))
+  names(keyvals) <- gsub('Not significant', paste0('Not significant (', ns_count, ')'), names(keyvals))
+  
+  volcanoplot <- EnhancedVolcano(result,
+                                 lab = result$label,
+                                 x='logFC',
+                                 y='adjPVal',
+                                 ylab = bquote(~-Log[10] ~ italic(adjP)),
+                                 pCutoff = 0.05,
+                                 FCcutoff = logFC_cutoff,
+                                 colCustom = keyvals,
+                                 colAlpha = 1,
+                                 title = title,
+                                 legendPosition = 'bottom',
+                                 subtitle = '',
+                                 labSize = 3,
+                                 drawConnectors = T,
+                                 max.overlaps = Inf,
+                                 arrowheads = F)
+  plot(volcanoplot)
+  ggsave(paste0(dir_path, plot_file_name), units = "cm", width = 25)
+  
+  data_file_name <- sub(".png", ".csv", plot_file_name, fixed = TRUE)
+  write.csv(result, paste0(dir_path, data_file_name), row.names = FALSE)
+}
