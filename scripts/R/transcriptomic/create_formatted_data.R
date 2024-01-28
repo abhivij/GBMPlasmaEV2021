@@ -5,6 +5,8 @@ library(ComplexHeatmap)
 library(viridis)
 library(RColorBrewer)
 
+library(checkmate)
+
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
 
@@ -746,4 +748,52 @@ nrow(filt_data)
 write.csv(filt_data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv")
 
 
+######################################################
+
+#create data subsets with DE significant features
+
+data <- read.csv("Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv", row.names = 1)
+metadata <- read.table("Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", header=TRUE, sep="\t") %>%
+  filter(!is.na(data_cohort)) %>%
+  mutate(condition = case_when(Condition == "Pre-op" ~ "PREOPE",
+                               Condition == "Metastatic" ~ "MET",
+                               Condition == "Healthy Control" ~ "HC"))
+data <- data[, metadata$Sample]
+
+de_file_path <- "plots_RNA_all/PREOPE_MET_HC/volcano/volcano_1_PREOPEVsMET.csv"
+comparison <- "PREOPEVsMET"
+subset_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90_de_PREOPEVsMET.csv"
+create_de_subset_file <- function(data, metadata, comparison, de_file_path,
+                                  subset_file_path){
+  de_data <- read.csv(de_file_path) %>%
+    filter(significance != "Not significant") %>%
+    dplyr::select(Molecule)
+  
+  metadata_sub <- metadata %>%
+    dplyr::rename("comparison" = comparison) %>%
+    dplyr::filter(!is.na(comparison))
+  
+  data_sub <- data[de_data$Molecule, metadata_sub$Sample]
+  
+  #https://github.com/r-lib/rlang/issues/1111
+  checkmate::assert(all.equal(rownames(data_sub), de_data$Molecule))
+  checkmate::assert(all.equal(colnames(data_sub), metadata_sub$Sample))  
+  print(dim(data_sub))
+  write.csv(data_sub, subset_file_path)
+}
+
+create_de_subset_file(data, metadata, 
+                      comparison = "PREOPEVsMET", 
+                      de_file_path = "plots_RNA_all/PREOPE_MET_HC/volcano/volcano_1_PREOPEVsMET.csv",
+                      subset_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90_de_PREOPEVsMET.csv")
+
+create_de_subset_file(data, metadata, 
+                      comparison = "PREOPEVsHC", 
+                      de_file_path = "plots_RNA_all/PREOPE_MET_HC/volcano/volcano_2_PREOPEVsHC.csv",
+                      subset_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90_de_PREOPEVsHC.csv")
+
+create_de_subset_file(data, metadata, 
+                      comparison = "METVsHC", 
+                      de_file_path = "plots_RNA_all/PREOPE_MET_HC/volcano/volcano_3_METVsHC.csv",
+                      subset_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90_de_METVsHC.csv")
 
