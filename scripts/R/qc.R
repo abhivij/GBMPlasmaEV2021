@@ -1,4 +1,4 @@
-#to check the expression levels of proteins and transcripts in PREOPE, MET, HC
+#to check the expression levels of proteins and transcripts and samplewise expression for PREOPE, MET, HC
 
 library(tidyverse)
 library(ggrepel)
