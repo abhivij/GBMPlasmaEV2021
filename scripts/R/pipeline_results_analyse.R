@@ -1645,3 +1645,26 @@ plot_heatmap(
   dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2/",
   dataset_replace_string = "GBM_combined_transcriptomic_new_quant_DE_compset2_"
 )
+
+plot_common_feature_heatmap(c(226:227),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_new_quant_DE_compset2_PREOPEVsMET_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsMET.png"
+)
+plot_common_feature_heatmap(c(228:229),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_new_quant_DE_compset2_PREOPEVsHC_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsHC.png"
+)
+plot_common_feature_heatmap(c(230:234),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_new_quant_DE_compset2_METVsHC_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_new_quant_DE_compset2/common_heatmap/",
+                            heatmap_file_name = "METVsHC.png"
+)
+
