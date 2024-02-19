@@ -1633,6 +1633,27 @@ plot_heatmap(
   dataset_replace_string = "GBM_combined_proteomic_compset2_"
 )
 
+plot_common_feature_heatmap(c(207:208),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_compset2_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_compset2/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsMET.png"
+)
+plot_common_feature_heatmap(c(209:210),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_compset2_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_compset2/common_heatmap/",
+                            heatmap_file_name = "PREOPEVsHC.png"
+)
+plot_common_feature_heatmap(c(211:212),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_compset2_",
+                            dir_path = "plots_comparison_set2/fem_pipeline_results_combined_proteomic_compset2/common_heatmap/",
+                            heatmap_file_name = "METVsHC.png"
+)
 
 #################################
 
