@@ -287,26 +287,4 @@ data <- cbind(data.cohort1, data.cohort2)
 
 output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
 
-
-#adapted from https://davetang.org/muse/2014/07/07/quantile-normalisation-in-r/
-data.rank <- apply(data, 2, rank, ties.method="average")
-data.sorted <- data.frame(apply(data, 2, sort))
-data.mean <- apply(data.sorted, 1, mean)
-index_to_mean <- function(index, data_mean){
-  #index can be int or int+0.5
-  #if int+0.5, take average of the numbers in those positions
-  int.result <- data_mean[index]
-  index.int <- floor(index)
-  #some of the values in point5.result might be NA
-  #but they won't be chosen
-  point5.result <- (data_mean[index.int] + data_mean[index.int+1])/2
-  point5.indices <- index%%1 != 0
-  result <- int.result
-  result[point5.indices] <- point5.result[point5.indices]
-  return (result)
-}
-data.norm <- apply(data.rank, 2, index_to_mean, data_mean = data.mean)
-rownames(data.norm) <- rownames(data)
-data <- as.data.frame(data.norm)
-
 write.csv(data, "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv")
