@@ -242,3 +242,71 @@ result %>% filter(from == "Q6ZMK1")
 
 write.csv(result %>% dplyr::select(-c(organism_id)), "Data/Protein/formatted_data/all_protein_names.csv",
           row.names = FALSE)
+
+
+#######################
+
+#create combined data with PREOPE, MET, HC samples from both cohorts specifically for DE analysis
+
+data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
+validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv" 
+phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+output_dir_path <- "Data/Protein"
+
+data <- read.csv(data_file_path, row.names = 1)
+validation_data <- read.csv(validation_data_file_path, row.names = 1)
+phenotype <- read.table(phenotype_file_path, header=TRUE, sep="\t")
+
+colnames(validation_data)[colnames(validation_data) == "SB12_01"] = "SB12"
+#use SB22.02
+colnames(validation_data)[colnames(validation_data) == "SB22.02"] = "SBtobeused22"
+colnames(validation_data)[colnames(validation_data) == "SB22"] = "SB22_dont_include"
+colnames(validation_data)[colnames(validation_data) == "SBtobeused22"] = "SB22"
+
+phenotype <- phenotype %>%
+  dplyr::rename(c("Label" = PREOPE_MET_HC))
+
+output_labels.cohort1 <- phenotype %>%
+  dplyr::filter(!is.na(Label)) %>%
+  dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
+  dplyr::filter(data_cohort == "initial")
+output_labels.cohort2 <- phenotype %>%
+  dplyr::filter(!is.na(Label)) %>%
+  dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
+  dplyr::filter(data_cohort == "validation")
+
+#currently data format : (transcripts x samples)
+
+data.cohort1 <- data %>% dplyr::select(output_labels.cohort1$Sample)
+data.cohort2 <- validation_data %>% dplyr::select(output_labels.cohort2$Sample)
+
+common <- intersect(rownames(data.cohort1), rownames(data.cohort2))  
+data.cohort1 <- data.cohort1[common, ]
+data.cohort2 <- data.cohort2[common, ]
+data <- cbind(data.cohort1, data.cohort2)    
+
+output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
+
+
+#adapted from https://davetang.org/muse/2014/07/07/quantile-normalisation-in-r/
+data.rank <- apply(data, 2, rank, ties.method="average")
+data.sorted <- data.frame(apply(data, 2, sort))
+data.mean <- apply(data.sorted, 1, mean)
+index_to_mean <- function(index, data_mean){
+  #index can be int or int+0.5
+  #if int+0.5, take average of the numbers in those positions
+  int.result <- data_mean[index]
+  index.int <- floor(index)
+  #some of the values in point5.result might be NA
+  #but they won't be chosen
+  point5.result <- (data_mean[index.int] + data_mean[index.int+1])/2
+  point5.indices <- index%%1 != 0
+  result <- int.result
+  result[point5.indices] <- point5.result[point5.indices]
+  return (result)
+}
+data.norm <- apply(data.rank, 2, index_to_mean, data_mean = data.mean)
+rownames(data.norm) <- rownames(data)
+data <- as.data.frame(data.norm)
+
+write.csv(data, "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv")

@@ -284,3 +284,14 @@ PREOPE_MET_HC_phenotype <- insert_comparison_columns(PREOPE_MET_HC_metadata,
 write.table(PREOPE_MET_HC_phenotype, 
             file = "Data/proteomic_phenotype_PREOPE_MET_HC.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)
+
+
+
+##### creating an updated phenotype file witha dditional column for PREOPE / MET / HC
+PREOPE_MET_HC_phenotype_updated <- PREOPE_MET_HC_phenotype %>%
+  mutate(PREOPE_MET_HC = case_when(!is.na(PREOPEVsMET) ~ PREOPEVsMET,
+                                   !is.na(PREOPEVsHC) ~ PREOPEVsHC,
+                                   TRUE ~ METVsHC))
+write.table(PREOPE_MET_HC_phenotype_updated, 
+            file = "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt", 
+            quote = FALSE, sep = "\t", row.names = FALSE)
