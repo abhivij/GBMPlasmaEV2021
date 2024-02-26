@@ -287,11 +287,17 @@ write.table(PREOPE_MET_HC_phenotype,
 
 
 
-##### creating an updated phenotype file witha dditional column for PREOPE / MET / HC
+##### creating an updated phenotype file with additional column for PREOPE / MET / HC
 PREOPE_MET_HC_phenotype_updated <- PREOPE_MET_HC_phenotype %>%
   mutate(PREOPE_MET_HC = case_when(!is.na(PREOPEVsMET) ~ PREOPEVsMET,
                                    !is.na(PREOPEVsHC) ~ PREOPEVsHC,
                                    TRUE ~ METVsHC))
+
+#presence of NA row in phenotype PREOPE_MET_HC column and need to remove this from data file makes DE analysis difficult. 
+#So filter out NA row.
+PREOPE_MET_HC_phenotype_updated <- PREOPE_MET_HC_phenotype_updated %>%
+  filter(!is.na(PREOPE_MET_HC))
+
 write.table(PREOPE_MET_HC_phenotype_updated, 
             file = "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt", 
             quote = FALSE, sep = "\t", row.names = FALSE)

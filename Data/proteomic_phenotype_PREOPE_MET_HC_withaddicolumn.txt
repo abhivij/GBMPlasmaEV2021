@@ -3,7 +3,6 @@ HB01	Pre-op	Pre-op	Male	64			PREOPE	PREOPE	NA	initial	NA	PREOPE
 HB04	Pre-op	Pre-op	Male	52.75			PREOPE	PREOPE	NA	initial	NA	PREOPE
 HB10	Pre-op	Pre-op	Male	72.18			PREOPE	PREOPE	NA	initial	NA	PREOPE
 HB13	Pre-op	Pre-op	Female	64.79			PREOPE	PREOPE	NA	initial	NA	PREOPE
-HB14	Pre-op	Pre-op	Female	64.8			NA	NA	NA	NA	NA	NA
 HB17	Pre-op	Pre-op	Female	69.39			PREOPE	PREOPE	NA	initial	NA	PREOPE
 HB20	Pre-op	Pre-op	Male	59.3			PREOPE	PREOPE	NA	initial	NA	PREOPE
 HB23	Pre-op	Pre-op	Male	39.66			PREOPE	PREOPE	NA	initial	NA	PREOPE
