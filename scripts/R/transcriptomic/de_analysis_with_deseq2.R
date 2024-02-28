@@ -207,6 +207,7 @@ diff_utils(result, title = "MET Vs HC",
            logFC_cutoff = 0.263)  #log2(1.2)
 
 
+#NOTE - do not use the below function in future - creating a common function for prot and tra in utils_diff.R
 diff_utils <- function(result, title, plot_file_name, dir_path,
                        k = 10,
                        logFC_cutoff) {
