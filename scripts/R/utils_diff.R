@@ -17,6 +17,17 @@ library(tidyverse)
 # protein_names_file_columns = c(1, 4)
 # plot_width_cm = 25
 
+# protein_names <- read.csv("Data/Protein/formatted_data/all_protein_names.csv") %>%
+#   filter(is.na(primary_gene_id)) %>%
+#   dplyr::select(from_id)
+# protein_names
+# # from_id
+# # 1  E7EML9
+# # 2  P0DOX2
+# # 3  P0DOX5
+# # 4  P0DOX6
+
+
 plot_volcano_and_save_DE <- function(
   results, plot_title, plot_file_name, output_dir_path,
   k = 10, fc_cutoff = 1.5, pval_cutoff = 0.05, use_adj_pval = FALSE,
