@@ -13,8 +13,8 @@ library(tidyverse)
 # use_adj_pval = FALSE
 # x_lim = NA
 # y_lim = NA
-# protein_names_file_path = "Data/Protein/formatted_data/all_protein_names.csv"
-# protein_names_file_columns = c(1, 4)
+# molecule_names_file_path = "Data/Protein/formatted_data/all_protein_names.csv"
+# molecule_names_file_columns = c(1, 3, 4)
 # plot_width_cm = 25
 
 # protein_names <- read.csv("Data/Protein/formatted_data/all_protein_names.csv") %>%
@@ -27,13 +27,14 @@ library(tidyverse)
 # # 3  P0DOX5
 # # 4  P0DOX6
 
-
+#molecule_names_file_columns : c(<column_id of molecule_id>, <column_id of molecule_name>, 
+#                                                            <optional : column_id of alternate molecule_id to be used>)
 plot_volcano_and_save_DE <- function(
   results, plot_title, plot_file_name, output_dir_path,
   k = 10, fc_cutoff = 1.5, pval_cutoff = 0.05, use_adj_pval = FALSE,
   x_lim = NA, y_lim = NA,
-  protein_names_file_path = NA,
-  protein_names_file_columns = NA,
+  molecule_names_file_path = NA,
+  molecule_names_file_columns = NA,
   plot_width_cm = 25
 ) {
 
@@ -74,17 +75,27 @@ plot_volcano_and_save_DE <- function(
   }
   
   #include protein names
-  if(!is.na(protein_names_file_path)){
-    protein_names <- read.csv(protein_names_file_path) %>%
-      dplyr::select(all_of(protein_names_file_columns))
+  if(!is.na(molecule_names_file_path)){
+    molecule_names <- read.csv(molecule_names_file_path) %>%
+      dplyr::select(all_of(molecule_names_file_columns))
     
-    colnames(protein_names) <- c("Molecule", "name")
+    if(length(molecule_names_file_columns) == 3){
+      colnames(molecule_names) <- c("Molecule", "MoleculeName", "name")  
+    } else if(length(molecule_names_file_columns) == 2){
+      colnames(molecule_names) <- c("Molecule", "MoleculeName")      
+    } else{
+      print("invalid molecule_names_file_columns")
+      return
+    }
     
     results <- results %>%
-      left_join(protein_names, by = "Molecule") %>%
-      dplyr::select(-c(Molecule)) %>%
-      dplyr::rename(c("Molecule" = "name")) %>%
-      dplyr::relocate(Molecule, .before = logFC)
+      left_join(molecule_names, by = "Molecule")
+    if("name" %in% colnames(results)){
+      results <- results %>%
+        mutate(Molecule = case_when(!is.na(name) ~ name,
+                                    TRUE ~ Molecule)) %>%
+        dplyr::select(-c(name))
+    }
   }
 
   upreg <- results %>%
@@ -167,6 +178,11 @@ plot_volcano_and_save_DE <- function(
   
   write.table(sig, file = paste0(output_dir_path, 
                                  "sig_", de_results_file_name), sep = "\t", quote = F, row.names = F)
+  if("MoleculeName" %in% colnames(sig)){
+    write.table(sig %>% select(-c(MoleculeName)), 
+                file = paste0(output_dir_path, "sig_no_name_", de_results_file_name), 
+                sep = "\t", quote = F, row.names = F)    
+  }
   write.table(results, file = paste0(output_dir_path, 
                                  "all_", de_results_file_name), sep = "\t", quote = F, row.names = F)
 }
