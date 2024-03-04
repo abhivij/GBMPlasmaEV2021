@@ -30,14 +30,14 @@ library(tidyverse)
 #molecule_names_file_columns : c(<column_id of molecule_id>, <column_id of molecule_name>, 
 #                                                            <optional : column_id of alternate molecule_id to be used>)
 plot_volcano_and_save_DE <- function(
-  results, plot_title, plot_file_name, output_dir_path,
-  k = 10, fc_cutoff = 1.5, pval_cutoff = 0.05, use_adj_pval = FALSE,
-  x_lim = NA, y_lim = NA,
-  molecule_names_file_path = NA,
-  molecule_names_file_columns = NA,
-  plot_width_cm = 25
+    results, plot_title, plot_file_name, output_dir_path,
+    k = 10, fc_cutoff = 1.5, pval_cutoff = 0.05, use_adj_pval = FALSE,
+    x_lim = NA, y_lim = NA,
+    molecule_names_file_path = NA,
+    molecule_names_file_columns = NA,
+    plot_width_cm = 25
 ) {
-
+  
   if(!dir.exists(output_dir_path)){
     dir.create(output_dir_path, recursive = TRUE)
   }
@@ -57,8 +57,8 @@ plot_volcano_and_save_DE <- function(
     mutate(significance = case_when(logFC <= -lfc_cutoff & pvalcolumn <= pval_cutoff ~ 'Downregulated',
                                     logFC >= lfc_cutoff & pvalcolumn <= pval_cutoff ~ 'Upregulated',
                                     TRUE ~ 'Not significant')) %>% 
-    mutate(colour = case_when(significance == 'Downregulated' ~ '#E8495C',
-                              significance == 'Upregulated' ~ '#38ACE2',
+    mutate(colour = case_when(significance == 'Downregulated' ~ '#38ACE2',
+                              significance == 'Upregulated' ~ '#E8495C',
                               TRUE ~ 'grey')) %>%
     arrange(significance)
   
@@ -97,7 +97,7 @@ plot_volcano_and_save_DE <- function(
         dplyr::select(-c(name))
     }
   }
-
+  
   upreg <- results %>%
     filter(significance == 'Upregulated') %>%
     arrange(desc(logFC))
@@ -119,7 +119,7 @@ plot_volcano_and_save_DE <- function(
   results <- results %>%
     mutate(label = case_when(Molecule %in% top_proteins ~ Molecule,
                              TRUE ~ NA_character_))
-
+  
   sig <- rbind(upreg, downreg) %>%
     select(-c(significance, colour)) %>%
     arrange(desc(logFC))
@@ -184,6 +184,6 @@ plot_volcano_and_save_DE <- function(
                 sep = "\t", quote = F, row.names = F)    
   }
   write.table(results, file = paste0(output_dir_path, 
-                                 "all_", de_results_file_name), sep = "\t", quote = F, row.names = F)
+                                     "all_", de_results_file_name), sep = "\t", quote = F, row.names = F)
 }
 
