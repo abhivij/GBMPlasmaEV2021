@@ -407,3 +407,22 @@ meta_data.combined <- meta_data.combined %>%
   inner_join(qiagen_sample_names)
 colnames(meta_data.combined)[c(1, 5)] <- c("orig_sample_name", "Sample")
 write.csv(meta_data.combined, "Data/transcriptomic_metadata_2023_176samples.csv", row.names = FALSE)
+
+
+####################################
+##### creating an updated phenotype file with additional column for PREOPE / MET / HC
+
+PREOPE_MET_HC_phenotype <- read.table("Data/transcriptomic_phenotype_PREOPE_MET_HC.txt", header=TRUE, sep="\t")
+PREOPE_MET_HC_phenotype_updated <- PREOPE_MET_HC_phenotype %>%
+  mutate(PREOPE_MET_HC = case_when(!is.na(PREOPEVsMET) ~ PREOPEVsMET,
+                                   !is.na(PREOPEVsHC) ~ PREOPEVsHC,
+                                   TRUE ~ METVsHC))
+
+#presence of NA row in phenotype PREOPE_MET_HC column and need to remove this from data file makes DE analysis difficult. 
+#So filter out NA row.
+PREOPE_MET_HC_phenotype_updated <- PREOPE_MET_HC_phenotype_updated %>%
+  filter(!is.na(PREOPE_MET_HC))
+
+write.table(PREOPE_MET_HC_phenotype_updated, 
+            file = "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt", 
+            quote = FALSE, sep = "\t", row.names = FALSE)
