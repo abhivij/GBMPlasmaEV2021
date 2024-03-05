@@ -75,3 +75,38 @@ ggsave(paste0(plot_dir_path, "3_PreviousStudiesVsOurStudy.jpg"))
 #FALSE
 
 #i.e. BROX present in cohort 1 but not in cohort 2, so not present in common set of proteins
+
+
+dep_sig <- read.table("DE_results_2024/proteomics/3_combat_corrected/p/sig_no_name_PREOPEVsHC.csv", sep = "\t", header = TRUE)
+dep_sig.up <- dep_sig %>%
+  dplyr::filter(logFC > 0)
+dep_sig.down <- dep_sig %>%
+  dplyr::filter(logFC < 0)
+
+common.all <- Reduce(intersect, list(proteins.prev.plasmaEVs$Protein, 
+                                     proteins.prev.urineEVs$Protein,
+                                     dep_sig.up$Molecule))
+ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein, 
+            "Urine EV GBM Vs HC" = proteins.prev.urineEVs$Protein,
+            "Upregulated from our study" = dep_sig.up$Molecule),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "navajowhite", "steelblue1")) +
+  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
+        plot.caption = element_text(hjust = 0.5))
+ggsave(paste0(plot_dir_path, "4_PreviousStudiesVsOurStudyUp.jpg"))
+
+
+ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein, 
+            "Urine EV GBM Vs HC" = proteins.prev.urineEVs$Protein,
+            "Downregulated from our study" = dep_sig.down$Molecule),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "navajowhite", "steelblue1")) +
+  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
+        plot.caption = element_text(hjust = 0.5))
+ggsave(paste0(plot_dir_path, "5_PreviousStudiesVsOurStudyDown.jpg"))
