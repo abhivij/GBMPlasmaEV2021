@@ -93,10 +93,10 @@ ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein,
        set_name_size = 5,
        text_size = 3,
        fill_color = c("brown1", "navajowhite", "steelblue1")) +
-  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  ggtitle("GBM Vs HC significant proteins & our study upregulated proteins") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
         plot.caption = element_text(hjust = 0.5))
-ggsave(paste0(plot_dir_path, "4_PreviousStudiesVsOurStudyUp.jpg"))
+ggsave(paste0(plot_dir_path, "4_PreviousStudiesVsOurStudyUp.jpg"), units = "cm", width = 24)
 
 
 ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein, 
@@ -106,7 +106,7 @@ ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein,
        set_name_size = 5,
        text_size = 3,
        fill_color = c("brown1", "navajowhite", "steelblue1")) +
-  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  ggtitle("GBM Vs HC significant proteins & our study downregulated proteins") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
         plot.caption = element_text(hjust = 0.5))
-ggsave(paste0(plot_dir_path, "5_PreviousStudiesVsOurStudyDown.jpg"))
+ggsave(paste0(plot_dir_path, "5_PreviousStudiesVsOurStudyDown.jpg"), units = "cm", width = 24)
