@@ -110,3 +110,75 @@ ggvenn(list("Plasma EV GBM Vs HC" = proteins.prev.plasmaEVs$Protein,
   theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
         plot.caption = element_text(hjust = 0.5))
 ggsave(paste0(plot_dir_path, "5_PreviousStudiesVsOurStudyDown.jpg"), units = "cm", width = 24)
+
+
+################
+
+#transcriptomics
+
+mir.prev <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "SerumExosome_GBMVsHC")
+data <- read.csv("Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv", row.names = 1)
+phenotype <- read.table("Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt", header=TRUE, sep="\t")
+
+data <- data[, phenotype$Sample]
+all.equal(phenotype$Sample, colnames(data))
+
+keep <- edgeR::filterByExpr(data, group = phenotype$PREOPE_MET_HC)
+data.fil <- data[keep, ]
+
+ggvenn(list("miRNA GBM Vs HC previous study" = mir.prev$miRNA, 
+            "Transcripts from our study" = rownames(data)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "steelblue1")) +
+  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  # labs(caption = paste("Common :", paste(common.all, collapse = ", "))) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)))
+ggsave(paste0(plot_dir_path, "6_tra_PreviousStudiesVsOurStudy.jpg"))
+
+common <- intersect(mir.prev$miRNA, rownames(data.fil))
+ggvenn(list("miRNA GBM Vs HC previous study" = mir.prev$miRNA, 
+            "Filtered Transcripts from our study" = rownames(data.fil)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "steelblue1")) +
+  ggtitle("GBM Vs HC significant proteins & our study proteins") +
+  labs(caption = paste("Common :\n", 
+                       paste(common[1:5], collapse = ", "), "\n",
+                       paste(common[6:10], collapse = ", "), "\n",
+                       paste(common[11:13], collapse = ", "))) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
+        plot.caption = element_text(hjust = 0.5))
+ggsave(paste0(plot_dir_path, "7_tra_PreviousStudiesVsOurStudyFiltered.jpg"))
+
+de_sig <- read.table("DE_results_2024/transcriptomics/3_combat_corrected/p/sig_PREOPEVsHC.csv", sep = "\t", header = TRUE)
+de_sig.up <- de_sig %>%
+  dplyr::filter(logFC > 0)
+de_sig.down <- de_sig %>%
+  dplyr::filter(logFC < 0)
+
+ggvenn(list("miRNA GBM Vs HC previous study" = mir.prev$miRNA, 
+            "Upregulated from our study" = de_sig.up$Molecule),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "navajowhite")) +
+  ggtitle("GBM Vs HC significant proteins & our study upregulated proteins") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
+        plot.caption = element_text(hjust = 0.5))
+ggsave(paste0(plot_dir_path, "8_tra_PreviousStudiesVsOurStudyUp.jpg"), units = "cm", width = 24)
+
+common <- intersect(mir.prev$miRNA, de_sig.down$Molecule)
+ggvenn(list("miRNA GBM Vs HC previous study" = mir.prev$miRNA, 
+            "Downregulated from our study" = de_sig.down$Molecule),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3,
+       fill_color = c("brown1", "navajowhite")) +
+  ggtitle("GBM Vs HC significant proteins & our study downregulated proteins") +
+  labs(caption = paste("Common : ", paste(common, collapse = ", "))) +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold", size = rel(1.5)),
+        plot.caption = element_text(hjust = 0.5))
+ggsave(paste0(plot_dir_path, "9_tra_PreviousStudiesVsOurStudyDown.jpg"), units = "cm", width = 24)
