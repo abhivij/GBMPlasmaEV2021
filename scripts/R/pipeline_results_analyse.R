@@ -1689,3 +1689,15 @@ plot_common_feature_heatmap(c(230:234),
                             heatmap_file_name = "METVsHC.png"
 )
 
+
+#################################
+
+#transcriptomic new quant with ComBat
+
+plot_heatmap(
+  dparg_vec = c(235, 239),
+  dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+  results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+  dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/",
+  dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_new_quant_"
+)
