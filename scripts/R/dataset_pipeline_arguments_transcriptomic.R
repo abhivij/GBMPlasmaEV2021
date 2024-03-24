@@ -3317,6 +3317,124 @@ dataset_pipeline_arguments_transcriptomic <- list(
        fems_to_run = c("all"),
        random_seed = 2000,
        perform_filter = TRUE,
-       norm = "log_cpm")
+       norm = "log_cpm"),
+  
+  
+  #new quant data with combat
+  
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsMET.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("all", 
+                       "t-test", "wilcoxontest",
+                       "ranger_pos_impu_cor",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100")),
+  
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsMET.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("mrmr_perc50")),
+  
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsMET.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("RF_RFE")),
+  
+  #transcriptomic PREOPEVsMET
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsMET.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsMET",
+       classes = c("MET", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("ga_rf")),
+  
+  
+  
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsHC.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("all", 
+                       "t-test", "wilcoxontest",
+                       "ranger_pos_impu_cor",
+                       "mrmr30", "mrmr50", 
+                       "mrmr75", "mrmr100")),
+  
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsHC.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("mrmr_perc50")),
+  
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsHC.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("RF_RFE")),
+  
+  #transcriptomic PREOPEVsHC
+  list(phenotype_file_name = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+       read_count_dir_path = "Data/RNA_all/",
+       read_count_file_name = "combined_data.combat.PREOPEVsHC.csv",
+       sep = ",",
+       dataset_id = "GBM_combined_transcriptomic_combat_compset2_new_quant",
+       classification_criteria = "PREOPEVsHC",
+       classes = c("HC", "PREOPE"),
+       cores = 16,
+       results_dir_path = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant",
+       norm = "none", perform_filter = FALSE,
+       fems_to_run = c("ga_rf"))  
+  
 
 )

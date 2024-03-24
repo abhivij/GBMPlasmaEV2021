@@ -379,7 +379,12 @@ batch_effect_correction = "combat"
 create_batch_corrected_data_PMH <- function(comparison, classes, omics_type,
                                             norm,
                                             perform_filter = TRUE,
-                                            batch_effect_correction = "combat"){
+                                            batch_effect_correction = "combat",
+                                            output_dir_path_updated = NA,
+                                            data_file_path_updated = NA,
+                                            validation_data_file_path_updated = NA,
+                                            phenotype_file_path_updated = NA,
+                                            prepend_tra_file_name = TRUE){
   if(omics_type == "proteomics"){
     data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
     validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv" 
@@ -392,6 +397,18 @@ create_batch_corrected_data_PMH <- function(comparison, classes, omics_type,
     output_dir_path <- "Data/RNA"
   } else{
     return("Invalid omics_type")
+  }
+  if(!is.na(output_dir_path_updated)){
+    output_dir_path <- output_dir_path_updated
+  }
+  if(!is.na(data_file_path_updated)){
+    data_file_path <- data_file_path_updated
+  }
+  if(!is.na(validation_data_file_path_updated)){
+    validation_data_file_path <- validation_data_file_path_updated
+  }
+  if(!is.na(phenotype_file_path_updated)){
+    phenotype_file_path <- phenotype_file_path_updated
   }
   
   data <- read.csv(data_file_path, row.names = 1)
@@ -407,7 +424,9 @@ create_batch_corrected_data_PMH <- function(comparison, classes, omics_type,
     colnames(validation_data)[colnames(validation_data) == "SBtobeused22"] = "SB22"
    
   } else if(omics_type == "transcriptomics"){
-    colnames(validation_data) <- paste0("S", colnames(validation_data))
+    if(prepend_tra_file_name){
+      colnames(validation_data) <- paste0("S", colnames(validation_data))      
+    }
   }
   
   output_labels.cohort1 <- phenotype %>%
@@ -513,12 +532,14 @@ create_batch_corrected_data_PMH(comparison = "PREOPEVsHC",
                                 perform_filter = FALSE,
                                 batch_effect_correction = "combat")
 #running the below to create normalized data file for Agota/Susannah
+#changed the name of output file created below manually to combined_data..METVsHC_quantile_train_param_normalized.csv
 create_batch_corrected_data_PMH(comparison = "METVsHC",
                                 classes = c("HC", "MET"),
                                 omics_type = "proteomics",
                                 norm = "quantile_train_param",
                                 perform_filter = FALSE,
                                 batch_effect_correction = "")
+
 
 create_batch_corrected_data_PMH(comparison = "PREOPEVsMET",
                                 classes = c("MET", "PREOPE"),
@@ -539,3 +560,48 @@ create_batch_corrected_data_PMH(comparison = "METVsHC",
                                 norm = "log_cpm",
                                 perform_filter = TRUE,
                                 batch_effect_correction = "")
+
+
+
+
+
+
+#using this function as below to create combined files for proteomics
+create_batch_corrected_data_PMH(comparison = "PREOPEVsMET",
+                                classes = c("MET", "PREOPE"),
+                                omics_type = "proteomics",
+                                norm = "",
+                                perform_filter = FALSE,
+                                batch_effect_correction = "")
+create_batch_corrected_data_PMH(comparison = "PREOPEVsHC",
+                                classes = c("HC", "PREOPE"),
+                                omics_type = "proteomics",
+                                norm = "",
+                                perform_filter = FALSE,
+                                batch_effect_correction = "")
+
+
+
+#### combat processing for newly quantified RNA data
+
+create_batch_corrected_data_PMH(comparison = "PREOPEVsMET",
+                                classes = c("MET", "PREOPE"),
+                                omics_type = "transcriptomics",
+                                norm = "log_cpm",
+                                perform_filter = TRUE,
+                                batch_effect_correction = "combat", 
+                                output_dir_path_updated = "Data/RNA_all/",
+                                data_file_path_updated = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                validation_data_file_path_updated = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                prepend_tra_file_name = FALSE)
+create_batch_corrected_data_PMH(comparison = "PREOPEVsHC",
+                                classes = c("HC", "PREOPE"),
+                                omics_type = "transcriptomics",
+                                norm = "log_cpm",
+                                perform_filter = TRUE,
+                                batch_effect_correction = "combat", 
+                                output_dir_path_updated = "Data/RNA_all/",
+                                data_file_path_updated = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                validation_data_file_path_updated = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                                prepend_tra_file_name = FALSE)
+
