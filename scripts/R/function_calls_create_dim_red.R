@@ -788,3 +788,35 @@ create_dim_red_plots_PMH(comparison = "METVsHC", classes = c("HC", "MET"),
                          file_name_prefix = 3,
                          best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
                          dataset_replace_str = "GBM_combined_proteomic_compset2_")
+
+
+
+
+create_dim_red_plots_PMH(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/dim_red/",
+                         boxplot_dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/boxplot/",
+                         data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                         validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                         phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+                         file_name_prefix = 1,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_new_quant_")
+create_dim_red_plots_PMH(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
+                         omics_type = "transcriptomics", norm = "log_cpm",
+                         dim_red = "UMAP",
+                         shownames = FALSE,
+                         perform_filter = TRUE,
+                         batch_effect_correction = "combat",
+                         plot_dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/dim_red/",
+                         boxplot_dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/boxplot/",
+                         data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                         validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv",
+                         phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
+                         file_name_prefix = 2,
+                         best_features_file_path = "Data/selected_features/best_features_with_add_col.csv",
+                         dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_new_quant_")
