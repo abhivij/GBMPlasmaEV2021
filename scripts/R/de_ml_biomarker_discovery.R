@@ -13,7 +13,7 @@ source('scripts/R/prediction_pipeline/cm_rf.R')
 #create a list of siginificant tra/prot in each iter, append biomarkers identified to this list, append prev study markers to this list
 #for each element of this list, get avg logFC and avg logP
 
-#note - for some reason the functiond efinition execution stops due to some extra brackets issue
+#note - for some reason the function definition execution stops due to some extra brackets issue
 #so read all args, and execute the function code manually
 
 
@@ -120,9 +120,9 @@ result_file_path = "DE_results_2024/prot_result_METVsHC_agg.csv"
 de_ml_bimarker_discovery.compute_feature_rank <- function(data_file_path, phenotype_file_path, omics_type,
                                                           comparison, conditions, pval_cutoff,
                                                           best_features_file_path, dataset_replace_string,
-                                                          prev_data_available = FALSE,
-                                                          previous_study_biomarkers = NA,
-                                                          result_file_path){
+                                                          prev_data_available = FALSE, previous_study_biomarkers = NA, 
+                                                          result_file_path)
+{
   data <- read.csv(data_file_path, row.names = 1)
   phenotype <- read.table(phenotype_file_path, header=TRUE, sep="\t")
   
@@ -179,7 +179,7 @@ de_ml_bimarker_discovery.compute_feature_rank <- function(data_file_path, phenot
     data.train <- data[, label.train$Sample]
     data.test <- data[, label.test$Sample]
     
-    result.de <- perform_de(data, label, conditions) %>%
+    result.de <- perform_de(data.train, label.train, conditions) %>%
       mutate("iter" = i) %>%
       mutate("significant" = case_when((PVal < pval_cutoff) ~ 1,
                                        TRUE ~ 0))
@@ -329,4 +329,102 @@ perform_de <- function(data, label, conditions){
     arrange(logFC)
   
   return(result)
+}
+
+############################################################################################
+
+data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+omics_type = "transcriptomics"
+comparison = "PREOPEVsHC"
+conditions = c("HC", "PREOPE")
+ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
+
+feature_selection_from_ranked_list <- function(data_file_path, phenotype_file_path, omics_type,
+                                               comparison, conditions,
+                                               ranked_feature_file_path) {
+  data <- read.csv(data_file_path, row.names = 1)
+  phenotype <- read.table(phenotype_file_path, header=TRUE, sep="\t")
+  
+  label <- phenotype %>%
+    dplyr::rename("Label" = comparison) %>%
+    dplyr::select(all_of(c("Sample", "Label", "data_cohort", "PREOPE_MET_HC"))) %>%
+    mutate(condition_cohort = paste(PREOPE_MET_HC, data_cohort, sep = "_"))
+  
+  data <- data[, label$Sample]
+  all.equal(label$Sample, colnames(data))
+
+  ranked_features <- read.csv(ranked_feature_file_path) %>%
+    arrange(combined_score)
+  
+  if(omics_type == "transcriptomics"){
+    data <- preprocess_data(data, label, perform_filter = TRUE, norm = "log_cpm")
+  } else if(omics_type == "proteomics"){
+    data <- preprocess_data(data, label, perform_filter = FALSE, norm = "quantile")
+  } else{
+    print("invalid omics_type")
+    return
+  }
+  data.combat <- ComBat(dat = data, batch = label$data_cohort)
+  data <- as.data.frame(data.combat)
+  
+  meanAUC <- compute_mean_AUC(data, label, conditions)
+  feature_set <- ranked_features$Molecule
+  feature_set_size <- length(feature_set)
+  pos_logFC_count <- ranked_features %>%
+    filter(mean_logFC > 0)
+  
+  for(i in c(1:nrow(ranked_features))){
+    i <- 1
+    feature_considered <- ranked_features$Molecule[i]
+  }
+}
+
+
+compute_mean_AUC <- function(data, label, conditions){
+  set.seed(1000)
+  k_val <- 5
+  times_val <- 6
+  k_prod_times <- k_val * times_val
+  train_index <- caret::createMultiFolds(y = label$condition_cohort, k = k_val, times = times_val)
+  
+  for (i in c(1:k_prod_times)) {
+    
+    # i <- 1
+    label.train <- label[train_index[[i]], , drop = FALSE]
+    label.test <- label[-train_index[[i]], , drop = FALSE]
+    # print(head(label.train$Sample))
+    # print(head(label.test$Sample))
+    
+    # print(summary(factor(label.train$PREOPE_MET_HC)))
+    # print(summary(factor(label.test$PREOPE_MET_HC)))
+    
+    data.train <- data[, label.train$Sample]
+    data.test <- data[, label.test$Sample]
+
+    ##########################################
+    label.train <- label.train %>%
+      filter(!is.na(Label))
+    label.test <- label.test %>%
+      filter(!is.na(Label))
+    data.train <- data[, label.train$Sample]
+    data.test <- data[, label.test$Sample]
+    
+    result <- rf_model(as.data.frame(t(data.train)), label.train,
+                            as.data.frame(t(data.test)), label.test,
+                            conditions)
+    result.test <- result %>%
+      filter(Type == "test")
+    
+    pr <- ROCR::prediction(result.test$Pred_prob, result.test$TrueLabel, label.ordering = conditions)
+    auc.test <- ROCR::performance(pr, measure = "auc")@y.values[[1]]
+    
+    if(i == 1){
+      result_all <- auc.test
+    } else{
+      result_all <- c(result_all, auc.test)
+    }
+  }
+  mean_AUC <- mean(result_all)
+  return (mean_AUC)
 }
