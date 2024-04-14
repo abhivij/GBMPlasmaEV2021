@@ -3,22 +3,33 @@
 # random_seed <- 1000
 
 rf_model <- function(data.train, label.train, data.test, label.test, 
-                     classes, random_seed = 1000,
-                     ...){
+                     classes, random_seed = 1000, classifier_feature_imp = FALSE, ...){
   
   model_name <- "Random Forest"
   
+  feature_imp <- data.frame(matrix(nrow = 0, ncol = 2,
+                                   dimnames = list(NULL, c("feature", "meanDecreaseGini"))))
+  
   try({
     set.seed(random_seed)
-    if(sum(data.train - colMeans(data.train)) != 0){
+    data.sanity_check <- data.train - colMeans(data.train)
+    if(sum(data.sanity_check != 0) != 0){
       #ensure that atleast one column is not a constant vector
+      #does this by checking if there is atleast one non-zero entry after subtracting column mean
+      
       #all columns constant causes the below line to run forever
       model <- randomForest::randomForest(x = data.train, y = factor(label.train$Label, levels = classes))
+      
+      if(classifier_feature_imp){
+        feature_imp <- data.frame(randomForest::importance(model))
+        feature_imp <- cbind(feature = rownames(feature_imp),
+                             data.frame(feature_imp, row.names = NULL))
+      }
       
       best_acc <- -1
       best_cut_off <- 0.5
       for(cut_off in c(0.5, seq(0.2, 0.8, 0.01))){
-        print(cut_off)
+        # print(cut_off)
         pred_prob.train <- predict(model, data.train, type = "prob")
         pred_prob.train <- data.frame(pred_prob.train)[classes[2]]
         pred.train <- ifelse(pred_prob.train > best_cut_off, classes[2], classes[1])
@@ -64,10 +75,24 @@ rf_model <- function(data.train, label.train, data.test, label.test,
     } else{
       print("data to RF : all fields constant!")
       print(dim(data.train))
+      
+      result_df <- data.frame("sample" = NA, 
+                              "TrueLabel" = NA,
+                              "Pred_prob" = NA,
+                              "PredictedLabel" = NA,
+                              "Type" = NA,
+                              "cutoff" = NA)
     }
     
   })
+  
   result_df <- result_df %>%
     mutate(model = model_name)
-  return (result_df)
+  
+  if(classifier_feature_imp){
+    return (list(result_df, feature_imp))   
+  } else{
+    return (result_df)     
+  }
+
 }
