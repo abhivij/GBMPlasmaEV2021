@@ -11,109 +11,109 @@ source('scripts/R/prediction_pipeline/cm_rf.R')
 #in each split, use train data for de analysis
 #get logFC, p value for all
 #create a list of siginificant tra/prot in each iter, append biomarkers identified to this list, append prev study markers to this list
-#for each element of this list, get avg logFC and avg logP
+#for each element of this list, get combined value for each of pvalue, logFC, decreaseInGini, stability
 
-#note - for some reason the function definition execution stops due to some extra brackets issue
-#so read all args, and execute the function code manually
-
-
-#################################################################################################
-data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
-phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "transcriptomics"
-comparison = "PREOPEVsHC"
-conditions = c("HC", "PREOPE")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_transcriptomic_combat_compset2_new_quant_"
-previous_study_biomarkers <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "SerumExosome_GBMVsHC")
-colnames(previous_study_biomarkers) <- "Molecule"
-previous_study_biomarkers <- previous_study_biomarkers %>%
-  mutate(source = "SerumExosome_GBMVsHC")
-#note : doing it this way to support proteomics biomarkers from 2 sources
-prev_data_available = TRUE
-result_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
-
-#################################################################################################
-data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
-phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "transcriptomics"
-comparison = "PREOPEVsMET"
-conditions = c("MET", "PREOPE")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_transcriptomic_combat_compset2_new_quant_"
-prev_data_available = FALSE
-previous_study_biomarkers = NA
-result_file_path = "DE_results_2024/tra_result_PREOPEVsMET_agg.csv"
-
-#################################################################################################
-data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
-phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "transcriptomics"
-comparison = "METVsHC"
-conditions = c("HC", "MET")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_transcriptomic_new_quant_compset2_"
-prev_data_available = FALSE
-previous_study_biomarkers = NA
-result_file_path = "DE_results_2024/tra_result_METVsHC_agg.csv"
-
-
-
-#################################################################################################
-data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
-phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "proteomics"
-comparison = "PREOPEVsHC"
-conditions = c("HC", "PREOPE")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
-
-previous_study_biomarkers <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "PlasmaEV_GBMVsHC")
-colnames(previous_study_biomarkers) <- "Molecule"
-previous_study_biomarkers <- previous_study_biomarkers %>%
-  mutate(source1 = "PlasmaEV_GBMVsHC")
-
-previous_study_biomarkers2 <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "UrineEV_GBMVsHC")
-colnames(previous_study_biomarkers2) <- "Molecule"
-previous_study_biomarkers2 <- previous_study_biomarkers2 %>%
-  mutate(source2 = "UrineEV_GBMVsHC")
-
-previous_study_biomarkers <- previous_study_biomarkers %>%
-  full_join(previous_study_biomarkers2, by = "Molecule")
-
-prev_data_available = TRUE
-result_file_path = "DE_results_2024/prot_result_PREOPEVsHC_agg.csv"
-
-#################################################################################################
-data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
-phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "proteomics"
-comparison = "PREOPEVsMET"
-conditions = c("MET", "PREOPE")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
-previous_study_biomarkers <- NA
-prev_data_available = FALSE
-result_file_path = "DE_results_2024/prot_result_PREOPEVsMET_agg.csv"
-
-#################################################################################################
-
-data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
-phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-omics_type = "proteomics"
-comparison = "METVsHC"
-conditions = c("HC", "MET")
-pval_cutoff <- 0.05
-best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
-dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
-previous_study_biomarkers <- NA
-prev_data_available = FALSE
-result_file_path = "DE_results_2024/prot_result_METVsHC_agg.csv"
+# #note - for some reason the function definition execution stops due to some extra brackets issue
+# #so read all args, and execute the function code manually
+# 
+# 
+# #################################################################################################
+# data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+# phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "transcriptomics"
+# comparison = "PREOPEVsHC"
+# conditions = c("HC", "PREOPE")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_transcriptomic_combat_compset2_new_quant_"
+# previous_study_biomarkers <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "SerumExosome_GBMVsHC")
+# colnames(previous_study_biomarkers) <- "Molecule"
+# previous_study_biomarkers <- previous_study_biomarkers %>%
+#   mutate(source = "SerumExosome_GBMVsHC")
+# #note : doing it this way to support proteomics biomarkers from 2 sources
+# prev_data_available = TRUE
+# result_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
+# 
+# #################################################################################################
+# data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+# phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "transcriptomics"
+# comparison = "PREOPEVsMET"
+# conditions = c("MET", "PREOPE")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_transcriptomic_combat_compset2_new_quant_"
+# prev_data_available = FALSE
+# previous_study_biomarkers = NA
+# result_file_path = "DE_results_2024/tra_result_PREOPEVsMET_agg.csv"
+# 
+# #################################################################################################
+# data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+# phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "transcriptomics"
+# comparison = "METVsHC"
+# conditions = c("HC", "MET")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_transcriptomic_new_quant_compset2_"
+# prev_data_available = FALSE
+# previous_study_biomarkers = NA
+# result_file_path = "DE_results_2024/tra_result_METVsHC_agg.csv"
+# 
+# 
+# 
+# #################################################################################################
+# data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
+# phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "proteomics"
+# comparison = "PREOPEVsHC"
+# conditions = c("HC", "PREOPE")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
+# 
+# previous_study_biomarkers <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "PlasmaEV_GBMVsHC")
+# colnames(previous_study_biomarkers) <- "Molecule"
+# previous_study_biomarkers <- previous_study_biomarkers %>%
+#   mutate(source1 = "PlasmaEV_GBMVsHC")
+# 
+# previous_study_biomarkers2 <- read_excel("Data/selected_features/features_of_interest.xlsx", sheet = "UrineEV_GBMVsHC")
+# colnames(previous_study_biomarkers2) <- "Molecule"
+# previous_study_biomarkers2 <- previous_study_biomarkers2 %>%
+#   mutate(source2 = "UrineEV_GBMVsHC")
+# 
+# previous_study_biomarkers <- previous_study_biomarkers %>%
+#   full_join(previous_study_biomarkers2, by = "Molecule")
+# 
+# prev_data_available = TRUE
+# result_file_path = "DE_results_2024/prot_result_PREOPEVsHC_agg.csv"
+# 
+# #################################################################################################
+# data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
+# phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "proteomics"
+# comparison = "PREOPEVsMET"
+# conditions = c("MET", "PREOPE")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
+# previous_study_biomarkers <- NA
+# prev_data_available = FALSE
+# result_file_path = "DE_results_2024/prot_result_PREOPEVsMET_agg.csv"
+# 
+# #################################################################################################
+# 
+# data_file_path <- "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
+# phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# omics_type = "proteomics"
+# comparison = "METVsHC"
+# conditions = c("HC", "MET")
+# pval_cutoff <- 0.05
+# best_features_file_path <- "Data/selected_features/best_features_with_add_col.csv"
+# dataset_replace_string <- "GBM_combined_proteomic_combat_compset2_"  
+# previous_study_biomarkers <- NA
+# prev_data_available = FALSE
+# result_file_path = "DE_results_2024/prot_result_METVsHC_agg.csv"
 
 #################################################################################################
 
