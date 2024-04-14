@@ -339,12 +339,18 @@ omics_type = "transcriptomics"
 comparison = "PREOPEVsHC"
 conditions = c("HC", "PREOPE")
 ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
+meanAUC_decrease_cutoff = 0.01
+pos_logFC_min_proportion = 0.25
+results_file_path = "DE_results_2024/RFE_results_tra_PREOPEVsHC.csv"
 
-feature_selection_from_ranked_list <- function(data_file_path, phenotype_file_path, omics_type,
-                                               comparison, conditions,
-                                               ranked_feature_file_path) {
+RFE_from_ranked_list <- function(data_file_path, phenotype_file_path, 
+                                 results_file_path, omics_type,
+                                 comparison, conditions,
+                                 ranked_feature_file_path,
+                                 meanAUC_decrease_cutoff = 0.01,
+                                 pos_logFC_min_proportion = 0.25) {
   data <- read.csv(data_file_path, row.names = 1)
-  phenotype <- read.table(phenotype_file_path, header=TRUE, sep="\t")
+  phenotype <- read.table(phenotype_file_path, header = TRUE, sep = "\t")
   
   label <- phenotype %>%
     dplyr::rename("Label" = comparison) %>%
@@ -355,7 +361,8 @@ feature_selection_from_ranked_list <- function(data_file_path, phenotype_file_pa
   all.equal(label$Sample, colnames(data))
 
   ranked_features <- read.csv(ranked_feature_file_path) %>%
-    arrange(combined_score)
+    column_to_rownames("Molecule") %>%
+    arrange(combined_score) #arrange so that least scored feature is in 1st row
   
   if(omics_type == "transcriptomics"){
     data <- preprocess_data(data, label, perform_filter = TRUE, norm = "log_cpm")
@@ -369,15 +376,69 @@ feature_selection_from_ranked_list <- function(data_file_path, phenotype_file_pa
   data <- as.data.frame(data.combat)
   
   meanAUC <- compute_mean_AUC(data, label, conditions)
-  feature_set <- ranked_features$Molecule
-  feature_set_size <- length(feature_set)
-  pos_logFC_count <- ranked_features %>%
-    filter(mean_logFC > 0)
+  feature_set <- rownames(ranked_features)
+  feature_set.pos_logFC <- rownames(ranked_features %>%               #NOTE : this list of features is ranked from lowest score to highest
+                                      filter(mean_logFC > 0))
+  feature_set.non_pos_logFC <- setdiff(feature_set, feature_set.pos_logFC)
+  
+  results <- data.frame(iter = 0, MeanAUC = meanAUC, 
+                        pos_logFC_feature_count = length(feature_set.pos_logFC),
+                        non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                        feature = NA, feature_removed = NA)
   
   for(i in c(1:nrow(ranked_features))){
-    i <- 1
-    feature_considered <- ranked_features$Molecule[i]
+    # i <- 1
+    if(i %% 50 == 1){
+      print(paste("Iter", i, "out of", nrow(ranked_features)))
+    }
+    
+    feature_considered <- rownames(ranked_features)[i]
+    
+    if(feature_considered %in% feature_set.pos_logFC){
+      
+      #select pos logFC feature with least score since previously a lower scored pos logfc 
+      #               feature might not have been removed due to pos_logFC_min_proportion
+      feature_considered <- feature_set.pos_logFC[1]
+      
+      if((length(feature_set.pos_logFC)-1)/(length(feature_set.pos_logFC)+length(feature_set.non_pos_logFC)-1) > pos_logFC_min_proportion){
+        
+        data_updated <- data[rownames(data) != feature_considered, ]
+        meanAUC_updated <- compute_mean_AUC(data_updated, label, conditions)
+    
+        feature_set.pos_logFC.updated <- setdiff(feature_set.pos_logFC, feature_considered)
+        
+        if(meanAUC - meanAUC_updated < meanAUC_decrease_cutoff){ 
+          feature_set.pos_logFC <- feature_set.pos_logFC.updated
+          data <- data_updated
+          meanAUC <- meanAUC_updated
+          is_feature_removed <- TRUE
+        } else{
+          is_feature_removed <- FALSE
+        }
+      } else{
+        is_feature_removed <- FALSE
+      }
+    } else{
+      data_updated <- data[rownames(data) != feature_considered, ]
+      meanAUC_updated <- compute_mean_AUC(data_updated, label, conditions)
+      feature_set.non_pos_logFC.updated <- setdiff(feature_set.non_pos_logFC, feature_considered)
+      if(meanAUC - meanAUC_updated < meanAUC_decrease_cutoff){ 
+        feature_set.non_pos_logFC <- feature_set.non_pos_logFC.updated   
+        data <- data_updated
+        meanAUC <- meanAUC_updated
+        is_feature_removed <- TRUE
+      } else{
+        is_feature_removed <- FALSE
+      }
+    }
+    #create dataframe of current mean auc, number of features, current_feature_considered, is_feature_removed, iter number
+    results <- rbind(results,
+                     data.frame(iter = i, MeanAUC = meanAUC, 
+                                pos_logFC_feature_count = length(feature_set.pos_logFC),
+                                non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                                feature = feature_considered, feature_removed = is_feature_removed))
   }
+  write.csv(results, results_file_path, row.names = FALSE)
 }
 
 
