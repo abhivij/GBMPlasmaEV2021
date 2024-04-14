@@ -55,3 +55,17 @@ RFE_from_ranked_list(data_file_path = "Data/Protein/formatted_data/PREOPE_MET_HC
                      ranked_feature_file_path = "DE_results_2024/prot_result_METVsHC_agg.csv",
                      meanAUC_decrease_cutoff = 0.01,
                      pos_logFC_min_proportion = 0.25)
+
+
+get_RFE_selected_features(ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv",
+                          RFE_results_file_path = "DE_results_2024/RFE_results_tra_PREOPEVsHC.csv",
+                          stop_iter = 202,
+                          output_file_path = "DE_results_2024/RFE_features_tra_PREOPEVsHC.csv")
+get_RFE_selected_features(ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsMET_agg.csv",
+                          RFE_results_file_path = "DE_results_2024/RFE_results_tra_PREOPEVsMET.csv",
+                          stop_iter = 207,
+                          output_file_path = "DE_results_2024/RFE_features_tra_PREOPEVsMET.csv")
+get_RFE_selected_features(ranked_feature_file_path = "DE_results_2024/tra_result_METVsHC_agg.csv",
+                          RFE_results_file_path = "DE_results_2024/RFE_results_tra_METVsHC.csv",
+                          stop_iter = 207,
+                          output_file_path = "DE_results_2024/RFE_features_tra_METVsHC.csv")

@@ -441,6 +441,27 @@ RFE_from_ranked_list <- function(data_file_path, phenotype_file_path,
   write.csv(results, results_file_path, row.names = FALSE)
 }
 
+# ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
+# RFE_results_file_path = "DE_results_2024/RFE_results_tra_PREOPEVsHC.csv"
+# stop_iter = 202
+# output_file_path = "DE_results_2024/RFE_features_tra_PREOPEVsHC.csv"
+get_RFE_selected_features <- function(ranked_feature_file_path, RFE_results_file_path, stop_iter,
+                                      output_file_path){
+  ranked_features <- read.csv(ranked_feature_file_path) %>%
+    mutate(combined_score_rank = rank(combined_score), .after = Molecule) 
+  ranked_features <- ranked_features %>%
+    mutate(combined_score_rank = nrow(ranked_features) - combined_score_rank + 1)
+  RFE_results <- read.csv(RFE_results_file_path)
+  
+  RFE_results.filt <- RFE_results %>%
+    filter(iter <= stop_iter & feature_removed)
+  
+  ranked_features <- ranked_features %>%
+    filter(! Molecule %in% RFE_results.filt$feature)
+  
+  write.csv(ranked_features, output_file_path, row.names = FALSE)
+}
+
 
 compute_mean_AUC <- function(data, label, conditions){
   set.seed(1000)
