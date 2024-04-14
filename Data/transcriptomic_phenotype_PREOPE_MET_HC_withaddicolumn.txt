@@ -1,0 +1,68 @@
+Sample	Condition	Subgroup	Sex	Age	Clinical.History	Treatment	PREOPEVsMET	PREOPEVsHC	METVsHC	data_cohort	Melanoma_metVsOther	PREOPE_MET_HC
+HB1	Pre-op	Pre-op	Male	64			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB4	Pre-op	Pre-op	Male	52.75			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB10	Pre-op	Pre-op	Male	72.18			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB13	Pre-op	Pre-op	Female	64.79			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB17	Pre-op	Pre-op	Female	69.39			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB20	Pre-op	Pre-op	Male	59.3			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB23	Pre-op	Pre-op	Male	39.66			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB26	Pre-op	Pre-op	Male	76.53			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB29	Pre-op	Pre-op	Male	73.74			PREOPE	PREOPE	NA	initial	NA	PREOPE
+HB34	Pre-op	Pre-op	Male	41.87			PREOPE	PREOPE	NA	initial	NA	PREOPE
+SB1	Pre-op	Pre-op	Female	70.86			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB4	Pre-op	Pre-op	Male	76.28			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB8	Pre-op	Pre-op	Male	71.52			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB12	Pre-op	Pre-op	Female	73.63			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB16	Pre-op	Pre-op	Male	71.36			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB20	Pre-op	Pre-op	Male	69.36			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB24	Pre-op	Pre-op	Female	73.87			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB28	Pre-op	Pre-op	Male	47.59			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB32	Pre-op	Pre-op	Male	68.72			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB36	Pre-op	Pre-op	Female	74.26			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB39	Pre-op	Pre-op	Male	49.91			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB42	Pre-op	Pre-op	Female	57.68			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB45	Pre-op	Pre-op	Female	73.26			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB49	Pre-op	Pre-op	Male	68.53			PREOPE	PREOPE	NA	validation	NA	PREOPE
+SB52	Pre-op	Pre-op	Male	62.5			PREOPE	PREOPE	NA	validation	NA	PREOPE
+MET1	Metastatic	Other	Female	72.62	Adenocarcinoma of upper gastrointenstinal origin		MET	NA	MET	initial	Other	MET
+MET2	Metastatic	Other	Male	57.96	Adenocarcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET3	Metastatic	Melanoma_met	Female	82.41	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET4	Metastatic	Melanoma_met	Female	69.43	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET5	Metastatic	Melanoma_met	Male	60.75	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET6	Metastatic	Melanoma_met	Male	65.43	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET7	Metastatic	Other	Male	55.99	Adenocarcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET8	Metastatic	Other	Male	36.12	Metastatic testicular embryonal carcinoma 		MET	NA	MET	initial	Other	MET
+MET9	Metastatic	Melanoma_met	Female	80.58	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET10	Metastatic	Melanoma_met	Male	51.8	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET11	Metastatic	Melanoma_met	Male	66.29	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET12	Metastatic	Melanoma_met	Male	33.07	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET13	Metastatic	Other	Male	58.04	Metastatic acinic cell carcinoma		MET	NA	MET	initial	Other	MET
+MET14	Metastatic	Other	Female	81.42	Adenocarcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET15	Metastatic	Other	Female	56.01	Non small cell carcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET16	Metastatic	Other	Female	65.19	Non small cell carcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET17	Metastatic	Other	Female	59.88	Adenocarcinoma of lung origin		MET	NA	MET	initial	Other	MET
+MET18	Metastatic	Melanoma_met	Male	67.73	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+MET19	Metastatic	Other	Female	73.45	Squamous cell carcinoma		MET	NA	MET	initial	Other	MET
+MET20	Metastatic	Other	Male	70.45	Adenocarcinoma of prostate origin		MET	NA	MET	initial	Other	MET
+MET21	Metastatic	Melanoma_met	Male	33.62	Metastatic Melanoma		MET	NA	MET	initial	Melanoma_met	MET
+HC1	Healthy Control	Healthy	Male	70.65		N/A	NA	HC	HC	initial	NA	HC
+HC2	Healthy Control	High_Blood_Pressure	Male	55.85		Treament for blood pressure	NA	HC	HC	initial	NA	HC
+HC4	Healthy Control	Healthy	Male	71.95		B.C.C/Skini cancer cutaneous melanoma	NA	HC	HC	initial	NA	HC
+HC5	Healthy Control	Healthy	Female	69.19		Lyrica, Paucel	NA	HC	HC	initial	NA	HC
+HC6	Healthy Control	Healthy	Female	68.45		N/A	NA	HC	HC	initial	NA	HC
+HC7	Healthy Control	Healthy	Female	67.78		High blood pressure, crestor	NA	HC	HC	initial	NA	HC
+HC8	Healthy Control	Healthy	Female	67.43		Pariet for reflux. Telfast. Melanoma on skin. Low platelets	NA	HC	HC	initial	NA	HC
+HC9	Healthy Control	Healthy	Male	64.59		Recent  bowel cancer removed +BCC	NA	HC	HC	initial	NA	HC
+HC10	Healthy Control	Healthy	Male	64.36		Hemacomtsin (significant medical history). Currenlty taking rampiril, roucqstatin	NA	HC	HC	initial	NA	HC
+HC11	Healthy Control	Healthy	Female	64.21		Valium, seroquill	NA	HC	HC	initial	NA	HC
+HC12	Healthy Control	Healthy	Male	64.01		Atrovistatin. Dabigatran Etexilate	NA	HC	HC	initial	NA	HC
+HC13	Healthy Control	Healthy	Male	63.43		N/A	NA	HC	HC	initial	NA	HC
+HC14	Healthy Control	Healthy	Female	62.27		N/A	NA	HC	HC	initial	NA	HC
+HC15	Healthy Control	Healthy	Male	60.1		N/A	NA	HC	HC	initial	NA	HC
+HC16	Healthy Control	Asthma	Male	52.9		Symbicant	NA	HC	HC	initial	NA	HC
+HC17	Healthy Control	Healthy	Male	51.9		N/A	NA	HC	HC	initial	NA	HC
+HC18	Healthy Control	Healthy	Female	41.64		N/A	NA	HC	HC	initial	NA	HC
+HC19	Healthy Control	Healthy	Male	39.22		N/A	NA	HC	HC	initial	NA	HC
+HC20	Healthy Control	Healthy	Female	38.97		N/A	NA	HC	HC	initial	NA	HC
+HC21	Healthy Control	Healthy	Male	35.35		N/A	NA	HC	HC	initial	NA	HC
+HC22	Healthy Control	Healthy	Female	39.07		None	NA	HC	HC	initial	NA	HC
