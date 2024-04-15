@@ -396,27 +396,54 @@ RFE_from_ranked_list <- function(data_file_path, phenotype_file_path,
     
     if(feature_considered %in% feature_set.pos_logFC){
       
-      #select pos logFC feature with least score since previously a lower scored pos logfc 
-      #               feature might not have been removed due to pos_logFC_min_proportion
-      feature_considered <- feature_set.pos_logFC[1]
-      
       if((length(feature_set.pos_logFC)-1)/(length(feature_set.pos_logFC)+length(feature_set.non_pos_logFC)-1) > pos_logFC_min_proportion){
         
-        data_updated <- data[rownames(data) != feature_considered, ]
-        meanAUC_updated <- compute_mean_AUC(data_updated, label, conditions)
-    
-        feature_set.pos_logFC.updated <- setdiff(feature_set.pos_logFC, feature_considered)
+        current_iter_results <- data.frame(matrix(ncol = 6, nrow = 0,
+                                                  dimnames = list(c(), 
+                                                                  c('iter', 'MeanAUC', 
+                                                                    'pos_logFC_feature_count', 'non_pos_logFC_feature_count',
+                                                                    'feature', 'feature_removed'))))  
         
-        if(meanAUC - meanAUC_updated < meanAUC_decrease_cutoff){ 
-          feature_set.pos_logFC <- feature_set.pos_logFC.updated
-          data <- data_updated
-          meanAUC <- meanAUC_updated
-          is_feature_removed <- TRUE
-        } else{
-          is_feature_removed <- FALSE
+        while((length(feature_set.pos_logFC)-1)/(length(feature_set.pos_logFC)+length(feature_set.non_pos_logFC)-1) > pos_logFC_min_proportion){
+          
+          #select pos logFC feature with least score since previously a lower scored pos logfc 
+          #               feature might not have been removed due to pos_logFC_min_proportion
+          feature_considered.pos_logFC <- feature_set.pos_logFC[1]
+          
+          data_updated <- data[rownames(data) != feature_considered.pos_logFC, ]
+          meanAUC_updated <- compute_mean_AUC(data_updated, label, conditions)
+          
+          feature_set.pos_logFC.updated <- setdiff(feature_set.pos_logFC, feature_considered.pos_logFC)
+          
+          if(meanAUC - meanAUC_updated < meanAUC_decrease_cutoff){ 
+            feature_set.pos_logFC <- feature_set.pos_logFC.updated
+            data <- data_updated
+            meanAUC <- meanAUC_updated
+            is_feature_removed <- TRUE
+          } else{
+            is_feature_removed <- FALSE
+          }
+          
+          current_iter_results <- rbind(current_iter_results,
+                                        data.frame(iter = i, MeanAUC = meanAUC, 
+                                                   pos_logFC_feature_count = length(feature_set.pos_logFC),
+                                                   non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                                                   feature = feature_considered.pos_logFC, feature_removed = is_feature_removed))
+          
+          #while looping through pos_logFC features if we reach till current considered feature, then come out of the loop 
+          #also come out of loop if current pos_logFC feature can't be removed due to meanAUC large decrease. 
+          #       We assume that any higher scored features also can't be removed, and so exit the loop
+          if(feature_considered.pos_logFC == feature_considered | !is_feature_removed){ 
+            break
+          }
         }
       } else{
+        feature_considered <- feature_set.pos_logFC[1]
         is_feature_removed <- FALSE
+        current_iter_results <- data.frame(iter = i, MeanAUC = meanAUC, 
+                                           pos_logFC_feature_count = length(feature_set.pos_logFC),
+                                           non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                                           feature = feature_considered, feature_removed = is_feature_removed)
       }
     } else{
       data_updated <- data[rownames(data) != feature_considered, ]
@@ -430,13 +457,14 @@ RFE_from_ranked_list <- function(data_file_path, phenotype_file_path,
       } else{
         is_feature_removed <- FALSE
       }
+      current_iter_results <- data.frame(iter = i, MeanAUC = meanAUC, 
+                                         pos_logFC_feature_count = length(feature_set.pos_logFC),
+                                         non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                                         feature = feature_considered, feature_removed = is_feature_removed)
     }
     #create dataframe of current mean auc, number of features, current_feature_considered, is_feature_removed, iter number
     results <- rbind(results,
-                     data.frame(iter = i, MeanAUC = meanAUC, 
-                                pos_logFC_feature_count = length(feature_set.pos_logFC),
-                                non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
-                                feature = feature_considered, feature_removed = is_feature_removed))
+                     current_iter_results)
   }
   write.csv(results, results_file_path, row.names = FALSE)
 }
