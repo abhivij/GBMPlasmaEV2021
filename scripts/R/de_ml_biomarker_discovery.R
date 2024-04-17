@@ -333,22 +333,24 @@ perform_de <- function(data, label, conditions){
 
 ############################################################################################
 
-# data_file_path <- "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
-# phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
-# omics_type = "transcriptomics"
+# data_file_path = "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv"
+# phenotype_file_path = "Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt"
+# results_file_path = "DE_results_2024/RFE_results_prot_001_PREOPEVsHC.csv"
+# omics_type = "proteomics"
 # comparison = "PREOPEVsHC"
 # conditions = c("HC", "PREOPE")
-# ranked_feature_file_path = "DE_results_2024/tra_result_PREOPEVsHC_agg.csv"
+# ranked_feature_file_path = "DE_results_2024/prot_result_PREOPEVsHC_agg.csv"
 # meanAUC_decrease_cutoff = 0.01
 # pos_logFC_min_proportion = 0.25
-# results_file_path = "DE_results_2024/RFE_results_tra_PREOPEVsHC.csv"
+# filter_low_scored_features = TRUE
 
 RFE_from_ranked_list <- function(data_file_path, phenotype_file_path, 
                                  results_file_path, omics_type,
                                  comparison, conditions,
                                  ranked_feature_file_path,
                                  meanAUC_decrease_cutoff = 0.01,
-                                 pos_logFC_min_proportion = 0.25) {
+                                 pos_logFC_min_proportion = 0.25,
+                                 filter_low_scored_features = FALSE) {
   data <- read.csv(data_file_path, row.names = 1)
   phenotype <- read.table(phenotype_file_path, header = TRUE, sep = "\t")
   
@@ -385,6 +387,24 @@ RFE_from_ranked_list <- function(data_file_path, phenotype_file_path,
                         pos_logFC_feature_count = length(feature_set.pos_logFC),
                         non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
                         feature = NA, feature_removed = NA)
+  
+  if(filter_low_scored_features){
+    median_score <- median(ranked_features$combined_score)
+    ranked_features <- ranked_features %>% filter(combined_score >= median(ranked_features$combined_score))
+    data <- data[rownames(ranked_features), ]
+
+    meanAUC <- compute_mean_AUC(data, label, conditions)
+    feature_set <- rownames(ranked_features)
+    feature_set.pos_logFC <- rownames(ranked_features %>%               #NOTE : this list of features is ranked from lowest score to highest
+                                        filter(mean_logFC > 0))
+    feature_set.non_pos_logFC <- setdiff(feature_set, feature_set.pos_logFC)    
+    
+    results <- rbind(results,
+                     data.frame(iter = 0, MeanAUC = meanAUC, 
+                                pos_logFC_feature_count = length(feature_set.pos_logFC),
+                                non_pos_logFC_feature_count = length(feature_set.non_pos_logFC),
+                                feature = NA, feature_removed = NA))
+  }
   
   for(i in c(1:nrow(ranked_features))){
     # i <- 1
