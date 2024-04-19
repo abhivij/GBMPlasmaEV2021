@@ -389,8 +389,8 @@ RFE_from_ranked_list <- function(data_file_path, phenotype_file_path,
                         feature = NA, feature_removed = NA)
   
   if(filter_low_scored_features){
-    median_score <- median(ranked_features$combined_score)
-    ranked_features <- ranked_features %>% filter(combined_score >= median(ranked_features$combined_score))
+    q75 <- quantile(ranked_features$combined_score, 0.75)
+    ranked_features <- ranked_features %>% filter(combined_score >= q75)
     data <- data[rownames(ranked_features), ]
 
     meanAUC <- compute_mean_AUC(data, label, conditions)
