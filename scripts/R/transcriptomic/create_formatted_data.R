@@ -541,6 +541,31 @@ colnames(data) <- meta_data$orig_sample_name
 dim(data)
 #[1] 6203   67
 
+##### start - create cohort overlap venn
+
+sample.cohort1 <- (meta_data %>% dplyr::filter(Cohort == "cohort1"))[["orig_sample_name"]]
+sample.cohort2 <- (meta_data %>% dplyr::filter(Cohort == "cohort2"))[["orig_sample_name"]]
+
+data.cohort1 <- data[, sample.cohort1]
+data.cohort2 <- data[, sample.cohort2]
+
+rsum.1 <- rowSums(data.cohort1)
+rsum.2 <- rowSums(data.cohort2)
+
+data.cohort1 <- data.cohort1 %>%
+  filter(rsum.1 != 0)
+data.cohort2 <- data.cohort2 %>%
+  filter(rsum.2 != 0)
+
+ggvenn(list("Cohort A" = rownames(data.cohort1), 
+            "Cohort B" = rownames(data.cohort2)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_2_common_transcripts.png")
+
+##### end - create cohort overlap venn
+
 rsum <- rowSums(data)
 
 data <- data %>%
@@ -748,6 +773,59 @@ nrow(filt_data)
 write.csv(filt_data, "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv")
 
 
+##### start - create cohort overlap venn
+
+data.cohort1 <- data.cohort1 %>%
+  rownames_to_column("tra") %>%
+  dplyr::filter(tra %in% rownames(filt_data)) %>%
+  column_to_rownames("tra")
+data.cohort2 <- data.cohort2 %>%
+  rownames_to_column("tra") %>%
+  dplyr::filter(tra %in% rownames(filt_data)) %>%
+  column_to_rownames("tra")
+
+ggvenn(list("Cohort A" = rownames(data.cohort1), 
+            "Cohort B" = rownames(data.cohort2)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_2_common_transcripts_from_90_perc_filt.png")
+
+##### end - create cohort overlap venn
+
+##### start - create condition overlap venn
+
+sample.GBM <- (meta_data %>% dplyr::filter(Condition == "PREOPE"))[["orig_sample_name"]]
+sample.MET <- (meta_data %>% dplyr::filter(Condition == "MET"))[["orig_sample_name"]]
+sample.HC <- (meta_data %>% dplyr::filter(Condition == "HC"))[["orig_sample_name"]]
+
+filt.GBM <- filt_data[, sample.GBM]
+filt.MET <- filt_data[, sample.MET]
+filt.HC <- filt_data[, sample.HC]
+
+rsum.1 <- rowSums(filt.GBM)
+rsum.2 <- rowSums(filt.MET)
+rsum.3 <- rowSums(filt.HC)
+
+filt.GBM <- filt.GBM %>%
+  filter(rsum.1 != 0)
+filt.MET <- filt.MET %>%
+  filter(rsum.2 != 0)
+filt.HC <- filt.HC %>%
+  filter(rsum.3 != 0)
+
+ggvenn(list("GBM" = rownames(filt.GBM), 
+            "MET" = rownames(filt.MET), 
+            "HC" = rownames(filt.HC)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_4_transcripts_90_perc_filt.png")
+
+##### end - create condition overlap venn
+
+
+
 ######################################################
 
 #create data subsets with DE significant features
@@ -796,4 +874,5 @@ create_de_subset_file(data, metadata,
                       comparison = "METVsHC", 
                       de_file_path = "plots_RNA_all/PREOPE_MET_HC/volcano/volcano_3_METVsHC.csv",
                       subset_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90_de_METVsHC.csv")
+
 
