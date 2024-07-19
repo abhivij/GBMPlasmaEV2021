@@ -6,6 +6,7 @@ library(viridis)
 library(RColorBrewer)
 
 library(checkmate)
+library(ggvenn)
 
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV"
 setwd(base_dir)
@@ -821,6 +822,45 @@ ggvenn(list("GBM" = rownames(filt.GBM),
        set_name_size = 5,
        text_size = 3)
 ggsave("2024July_to_send_Kim/Fig2_4_transcripts_90_perc_filt.png")
+
+
+
+data.GBM <- data[, sample.GBM]
+data.MET <- data[, sample.MET]
+data.HC <- data[, sample.HC]
+
+rsum.1 <- rowSums(data.GBM)
+rsum.2 <- rowSums(data.MET)
+rsum.3 <- rowSums(data.HC)
+
+data.GBM <- data.GBM %>%
+  filter(rsum.1 != 0)
+data.MET <- data.MET %>%
+  filter(rsum.2 != 0)
+data.HC <- data.HC %>%
+  filter(rsum.3 != 0)
+
+filt.GBM <- data.GBM %>%
+  rownames_to_column("tra") %>%
+  dplyr::filter(tra %in% rownames(filt_data)) %>%
+  column_to_rownames("tra")
+filt.MET <- data.MET %>%
+  rownames_to_column("tra") %>%
+  dplyr::filter(tra %in% rownames(filt_data)) %>%
+  column_to_rownames("tra")
+filt.HC <- data.HC %>%
+  rownames_to_column("tra") %>%
+  dplyr::filter(tra %in% rownames(filt_data)) %>%
+  column_to_rownames("tra")
+
+ggvenn(list("GBM" = rownames(filt.GBM), 
+            "MET" = rownames(filt.MET), 
+            "HC" = rownames(filt.HC)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+#same as prev venn
+#i.e. check for row non-zero and then check if present in filter, same as other way round
 
 ##### end - create condition overlap venn
 
