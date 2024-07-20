@@ -288,3 +288,16 @@ data <- cbind(data.cohort1, data.cohort2)
 output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
 
 write.csv(data, "Data/Protein/formatted_data/PREOPE_MET_HC_data.csv")
+
+
+
+############################################################################
+
+#creating non-imputed data input files from cohort 1 and cohort 2 to create venn diagram
+
+process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/Q1-6_nonorm_formatted_noimpute_50fil.csv",
+                                impute = FALSE, filter_na_perc = 50)
+process_and_format_protein_data("Data/Protein/norm_output/norm__newcohort_processed_NA_FALSE.csv",
+                                "Data/Protein/formatted_data/newcohort_nonorm_formatted_noimpute_50fil.csv",
+                                impute = FALSE, filter_na_perc = 50)

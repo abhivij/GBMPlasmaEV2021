@@ -95,8 +95,10 @@ process_and_format_protein_data <- function(input_file_path, output_file_path,
     select(-c(GROUP_ORIGINAL)) %>%
     column_to_rownames("SUBJECT_ORIGINAL")
   
-  print(max(formatted_data, na.rm = TRUE))
-  print(min(formatted_data, na.rm = TRUE))
+  max <- max(formatted_data, na.rm = TRUE)
+  min <- min(formatted_data, na.rm = TRUE)
+  print(max)
+  print(min)
   
   print(sum(is.na(formatted_data)))
   if(impute){
@@ -111,6 +113,7 @@ process_and_format_protein_data <- function(input_file_path, output_file_path,
     formatted_data[is.na(formatted_data)] <- na_repl_value
   }
   print(sum(is.na(formatted_data)))
+  print(sum(formatted_data < min))
   
   
   formatted_data <- t(formatted_data)
@@ -400,46 +403,64 @@ create_dim_red_plots <- function(comparison, classes,
 
 #create dim red for PREOPE MET HC
 
-# dim_red = "UMAP"
-# shownames = FALSE
-# perform_filter = TRUE
-# batch_effect_correction = "none"
-# plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/"
-# best_features_file_path = NA
-# dataset_replace_str = NA
-# 
-# comparison = "PREOPEVsMET"
-# classes = c("MET", "PREOPE")
-# omics_type = "transcriptomics"
-# norm = "log_cpm"
-# dim_red = "UMAP"
-# shownames = FALSE
-# perform_filter = TRUE
-# batch_effect_correction = "combat"
-# plot_dir_path = "plots_comparison_set2/qc/dim_red/"
-# best_features_file_path = NA
-# dataset_replace_str = NA
-# file_name_prefix = 11
-# 
-# best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-# dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_"
-# 
-# boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
-# 
-# 
-# comparison = "METVsHC"
-# classes = c("HC", "MET")
-# omics_type = "proteomics"
-# norm = "quantile_train_param"
-# dim_red = "UMAP"
-# shownames = FALSE
-# perform_filter = FALSE
-# batch_effect_correction = "combat"
-# plot_dir_path = "plots_comparison_set2/qc/dim_red_best/"
-# file_name_prefix = 3
-# best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
-# dataset_replace_str = "GBM_combined_proteomic_combat_compset2_"
-# boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = TRUE
+batch_effect_correction = "none"
+plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/"
+best_features_file_path = NA
+dataset_replace_str = NA
+
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "transcriptomics"
+norm = "log_cpm"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = TRUE
+batch_effect_correction = "combat"
+plot_dir_path = "plots_comparison_set2/qc/dim_red/"
+best_features_file_path = NA
+dataset_replace_str = NA
+file_name_prefix = 11
+
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+dataset_replace_str = "GBM_combined_transcriptomic_combat_compset2_"
+
+boxplot_dir_path = "plots_comparison_set2/qc/boxplot/"
+
+
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "proteomics"
+norm = "quantile_train_param"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = FALSE
+batch_effect_correction = "combat"
+plot_dir_path = "plots_comparison_set2/qc/dim_red_best_test_ignore/"
+file_name_prefix = 1
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+dataset_replace_str = "GBM_combined_proteomic_combat_compset2_"
+boxplot_dir_path = "plots_comparison_set2/qc/boxplot_with_cohort/"
+
+
+comparison = "PREOPEVsMET"
+classes = c("MET", "PREOPE")
+omics_type = "transcriptomics"
+norm = "log_cpm"
+dim_red = "UMAP"
+shownames = FALSE
+perform_filter = TRUE
+batch_effect_correction = "none"
+plot_dir_path = "plots_RNA_all/qc/dim_red_best/"
+boxplot_dir_path = "plots_RNA_all/qc/boxplot_best/"
+data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+validation_data_file_path = "Data/RNA_all/newquant_Nov2023_umi_counts_PREOPE_MET_HC_filter90.csv"
+phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
+file_name_prefix = 1
+best_features_file_path = "Data/selected_features/best_features_with_add_col.csv"
+dataset_replace_str = "GBM_combined_transcriptomic_new_quant_compset2_"
 
 create_dim_red_plots_PMH <- function(comparison, classes,
                                      omics_type, norm,
@@ -449,18 +470,33 @@ create_dim_red_plots_PMH <- function(comparison, classes,
                                      batch_effect_correction = "none",
                                      plot_dir_path = "plots_PREOPE_MET_HC/qc/dim_red/",
                                      boxplot_dir_path = "plots_PREOPE_MET_HC/qc/boxplot/",
+                                     data_file_path = NA,
+                                     validation_data_file_path = NA,
+                                     phenotype_file_path = NA,
                                      file_name_prefix = "",
                                      best_features_file_path = NA,
                                      dataset_replace_str = NA){
   if(omics_type == "proteomics"){
-    data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
-    validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv" 
-    phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC.txt"
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
+    }
+    if(is.na(validation_data_file_path)){
+      validation_data_file_path <- "Data/Protein/formatted_data/newcohort_nonorm_formatted_impute50fil.csv"
+    }
+    if(is.na(phenotype_file_path)){
+      phenotype_file_path <- "Data/proteomic_phenotype_PREOPE_MET_HC.txt"  
+    }
   } else if(omics_type == "transcriptomics"){
-    data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
-    validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"      
-    phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"
     
+    if(is.na(data_file_path)){
+      data_file_path <- "Data/RNA/umi_counts_initial_cohort.csv"
+    }
+    if(is.na(validation_data_file_path)){
+      validation_data_file_path <- "Data/RNA/umi_counts_validation_cohort.csv"
+    }
+    if(is.na(phenotype_file_path)){
+      phenotype_file_path <- "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt"  
+    }
     # validation_metadata <- read.csv("Data/RNA_validation/metadata_glionet.csv") %>%
     #   mutate(sample_category = factor(sample_category)) %>%
     #   mutate(sample_category = recode_factor(sample_category, "PRE-OP" = "PREOPE",
@@ -485,7 +521,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     # validation_metadata <- validation_metadata %>%
     #   filter(Sample != "SB7")    
     
-  } else if(omics_type == "transcriptomics"){
+  } else if(omics_type == "transcriptomics" & data_file_path != validation_data_file_path){
     colnames(validation_data) <- paste0("S", colnames(validation_data))
   }
   
@@ -496,15 +532,15 @@ create_dim_red_plots_PMH <- function(comparison, classes,
   title <- paste0(title, " BEC-", batch_effect_correction)
   
   output_labels.cohort1 <- phenotype %>%
-    rename("Label" = comparison) %>%
-    filter(Label %in% classes) %>%
+    dplyr::rename("Label" = comparison) %>%
+    dplyr::filter(Label %in% classes) %>%
     dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
-    filter(data_cohort == "initial")
+    dplyr::filter(data_cohort == "initial")
   output_labels.cohort2 <- phenotype %>%
-    rename("Label" = comparison) %>%
-    filter(Label %in% classes) %>%
+    dplyr::rename("Label" = comparison) %>%
+    dplyr::filter(Label %in% classes) %>%
     dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
-    filter(data_cohort == "validation")
+    dplyr::filter(data_cohort == "validation")
   
   #currently data format : (transcripts x samples)
   
@@ -613,6 +649,8 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     }
     all_protein_names <- read.csv("Data/Protein/formatted_data/all_protein_names.csv")
     
+    colnames(data) <- gsub("-", ".", colnames(data))
+    
     #plot biomarker boxplot for the multiple biomarker sets identified
     for(i in c(1:nrow(best_features_sub))){
       # i <- 1
@@ -629,7 +667,9 @@ create_dim_red_plots_PMH <- function(comparison, classes,
         rownames_to_column(var = "Sample") %>%
         pivot_longer(cols = !Sample, names_to = "biomarker", values_to = "norm_expr") %>%
         inner_join(output_labels %>%
-                     dplyr::select(c(Sample, Label)))
+                     mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
+                     dplyr::select(c(Sample, Label))
+                   )
     
       if(omics_type == "transcriptomics"){
         x_lab <- "transcripts"
@@ -651,10 +691,12 @@ create_dim_red_plots_PMH <- function(comparison, classes,
         summarize(med_expr = median(norm_expr)) %>%
         arrange(desc(med_expr))
       
+      # data_to_plot <- data_to_plot %>%
+      #   mutate(Label = factor(Label, levels = rev(classes)),
+      #          biomarker = factor(biomarker, biomarker_agg$biomarker)) 
       data_to_plot <- data_to_plot %>%
-        mutate(Label = factor(Label, levels = rev(classes)),
-               biomarker = factor(biomarker, biomarker_agg$biomarker)) 
-      
+        mutate(biomarker = factor(biomarker, biomarker_agg$biomarker))
+      # print("here")
       ggplot(data_to_plot, aes(x = biomarker, 
                                y = norm_expr,
                                fill = Label)) +
@@ -690,10 +732,10 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     # colnames(data.cohort2) <- gsub("-", ".", colnames(data.cohort2))
 
   }
-  ################obtain best biomarkers end
-  
-  
-  
+  ###############obtain best biomarkers end
+
+
+
   if(shownames){
     text <- rownames(data)
   } else{
@@ -702,16 +744,16 @@ create_dim_red_plots_PMH <- function(comparison, classes,
   set.seed(1)
   if(dim_red == "PCA"){
     result <- prcomp(data)
-    dim_red_df <- data.frame(x = result$x[,1], y = result$x[,2])    
+    dim_red_df <- data.frame(x = result$x[,1], y = result$x[,2])
     xlab <- "PCA 1"
-    ylab <- "PCA 2"  
+    ylab <- "PCA 2"
   } else if(dim_red == "UMAP"){
     result <- umap(data)
-    dim_red_df <- data.frame(x = result$layout[,1], y = result$layout[,2])  
+    dim_red_df <- data.frame(x = result$layout[,1], y = result$layout[,2])
     xlab <- "UMAP 1"
     ylab <- "UMAP 2"
   }
-  
+
   ggplot2::ggplot(dim_red_df, ggplot2::aes(x = x, y = y)) +
     ggplot2::geom_point(ggplot2::aes(shape = output_labels$Label,
                                      fill = output_labels$Subgroup,
@@ -727,7 +769,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     labs(caption = paste(paste("Data dimension :", paste(dim(data), collapse = "x")), "\n",
                          group_counts_text),
          fill = "Subgroup (Point Fill)")
-  
+
   if(!dir.exists(plot_dir_path)){
     dir.create(plot_dir_path, recursive = TRUE)
   }
