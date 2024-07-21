@@ -301,3 +301,70 @@ process_and_format_protein_data("Data/Protein/norm_output/norm_annotatedQ1-6_NA_
 process_and_format_protein_data("Data/Protein/norm_output/norm__newcohort_processed_NA_FALSE.csv",
                                 "Data/Protein/formatted_data/newcohort_nonorm_formatted_noimpute_50fil.csv",
                                 impute = FALSE, filter_na_perc = 50)
+# filter_na_perc <- 50
+# data <- data[, colSums(is.na(data)) < (filter_na_perc/100*nrow(data))]
+
+data.cohort1 <- read.csv("Data/Protein/formatted_data/Q1-6_nonorm_formatted_noimpute_50fil.csv", row.names = 1)
+data.cohort2 <- read.csv("Data/Protein/formatted_data/newcohort_nonorm_formatted_noimpute_50fil.csv", row.names = 1)
+
+ggvenn(list("Cohort A" = rownames(data.cohort1), 
+            "Cohort B" = rownames(data.cohort2)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_1_proteins_overlap.png")
+
+
+phenotype <- read.table("Data/proteomic_phenotype_PREOPE_MET_HC_withaddicolumn.txt", sep = "\t", header = TRUE)
+
+colnames(data.cohort2)[colnames(data.cohort2) == "SB12_01"] = "SB12"
+#use SB22.02
+colnames(data.cohort2)[colnames(data.cohort2) == "SB22.02"] = "SBtobeused22"
+colnames(data.cohort2)[colnames(data.cohort2) == "SB22"] = "SB22_dont_include"
+colnames(data.cohort2)[colnames(data.cohort2) == "SBtobeused22"] = "SB22"
+
+summary(factor(paste(phenotype$data_cohort, phenotype$PREOPE_MET_HC)))
+
+phenotype.cohort1 <- phenotype %>%
+  filter(data_cohort == "initial")
+phenotype.cohort2 <- phenotype %>%
+  filter(data_cohort == "validation")
+
+data.cohort1 <- data.cohort1 %>%
+  dplyr::select(phenotype.cohort1$Sample)
+data.cohort2 <- data.cohort2 %>%
+  dplyr::select(phenotype.cohort2$Sample)
+
+phenotype.cohort1.GBM <- phenotype.cohort1 %>% dplyr::filter(PREOPE_MET_HC == "PREOPE")
+phenotype.cohort1.MET <- phenotype.cohort1 %>% dplyr::filter(PREOPE_MET_HC == "MET")
+phenotype.cohort1.HC <- phenotype.cohort1 %>% dplyr::filter(PREOPE_MET_HC == "HC")
+
+data.cohort1.GBM <- data.cohort1[, phenotype.cohort1.GBM$Sample]
+data.cohort1.MET <- data.cohort1[, phenotype.cohort1.MET$Sample]
+data.cohort1.HC <- data.cohort1[, phenotype.cohort1.HC$Sample]
+
+filter_na_perc <- 50
+data.cohort1.GBM <- data.cohort1.GBM[rowSums(is.na(data.cohort1.GBM)) < (filter_na_perc/100*ncol(data.cohort1.GBM)), ]
+data.cohort1.MET <- data.cohort1.MET[rowSums(is.na(data.cohort1.MET)) < (filter_na_perc/100*ncol(data.cohort1.MET)), ]
+data.cohort1.HC <- data.cohort1.HC[rowSums(is.na(data.cohort1.HC)) < (filter_na_perc/100*ncol(data.cohort1.HC)), ]
+
+ggvenn(list("GBM Cohort1" = rownames(data.cohort1.GBM), 
+            "MET Cohort1" = rownames(data.cohort1.MET), 
+            "HC Cohort1" = rownames(data.cohort1.HC)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_3_proteins_50_perc_filt_cohort1.png")
+
+
+# no need to do this - since cohort 2 was anyways separately filtered
+# data.cohort2 <- data.cohort2[rowSums(is.na(data.cohort2)) < (filter_na_perc/100*ncol(data.cohort2)), ]
+
+ggvenn(list("GBM Cohort1" = rownames(data.cohort1.GBM), 
+            "MET Cohort1" = rownames(data.cohort1.MET), 
+            "HC Cohort1" = rownames(data.cohort1.HC),
+            "GBM Cohort2" = rownames(data.cohort2)),
+       stroke_size = 0.1,
+       set_name_size = 5,
+       text_size = 3)
+ggsave("2024July_to_send_Kim/Fig2_3_proteins_50_perc_filt_cohort1and2.png", width = 15)
