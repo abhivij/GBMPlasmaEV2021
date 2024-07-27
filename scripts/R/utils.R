@@ -905,7 +905,7 @@ create_dim_red_plots_PMH <- function(comparison, classes,
 
 
 
-#create plots similar to create_dim_red_plots_PMH but without cohort-wise info in bozplot and without subgroup in UMAP
+#create plots similar to create_dim_red_plots_PMH but without cohort-wise info in boxplot and without subgroup in UMAP
 create_dim_red_plots_PMH_simplified <- function(comparison, classes,
                                                 omics_type, norm,
                                                 dim_red = "UMAP",
