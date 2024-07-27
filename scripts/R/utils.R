@@ -1178,8 +1178,8 @@ create_dim_red_plots_PMH_simplified <- function(comparison, classes,
           ggtitle(paste(sub("Vs", " Vs ", sub("PREOPE", "GBM", comparison)), best_str, x_lab)) +
           xlab(x_lab) +
           ylab(y_lab) +
+          ggplot2::scale_fill_manual(name = "Condition", values = colours) +
           guides(fill = guide_legend(title = "Condition")) +
-          theme_bw() +
           theme(axis.text.x = element_text(size=rel(1.2), angle = 90),
                 axis.text.y = element_text(size=rel(1.2)),
                 axis.title.x = element_text(size=rel(1.3)),
@@ -1240,6 +1240,7 @@ create_dim_red_plots_PMH_simplified <- function(comparison, classes,
         ggtitle(paste(sub("Vs", " Vs ", sub("PREOPE", "GBM", comparison)), x_lab)) +
         xlab(x_lab) +
         ylab(y_lab) +
+        ggplot2::scale_fill_manual(name = "Condition", values = colours) +
         guides(fill = guide_legend(title = "Condition")) +
         theme_bw() +
         theme(axis.text.x = element_text(size=rel(1.2), angle = 90),
@@ -1313,7 +1314,7 @@ create_dim_red_plots_PMH_simplified <- function(comparison, classes,
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::scale_shape_manual(name = "Data Cohort", values = c(21, 22)) +
-    ggplot2::scale_fill_manual(name = "Label", values = colours) +
+    ggplot2::scale_fill_manual(name = "Condition", values = colours) +
     ggplot2::guides(fill = guide_legend(override.aes = list(shape = 21, colour = colours))) +
     labs(caption = paste(paste("Data dimension :", paste(dim(data), collapse = "x")), "\n",
                          group_counts_text)) +
