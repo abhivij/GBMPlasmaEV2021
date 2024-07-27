@@ -926,7 +926,8 @@ create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsMET", classes = c("MET
                                     phenotype_file_path = "Data/proteomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 1,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_prot_PREOPEVsMET.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("cyan", "purple"))
 create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
                                     omics_type = "proteomics", norm = "quantile_train_param",
                                     dim_red = "UMAP",
@@ -940,7 +941,8 @@ create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsHC", classes = c("HC",
                                     phenotype_file_path = "Data/proteomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 2,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_prot_PREOPEVsHC.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("cyan", "green"))
 create_dim_red_plots_PMH_simplified(comparison = "METVsHC", classes = c("HC", "MET"),
                                     omics_type = "proteomics", norm = "quantile_train_param",
                                     dim_red = "UMAP",
@@ -954,7 +956,8 @@ create_dim_red_plots_PMH_simplified(comparison = "METVsHC", classes = c("HC", "M
                                     phenotype_file_path = "Data/proteomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 3,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_prot_METVsHC.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("purple", "green"))
 
 create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsMET", classes = c("MET", "PREOPE"),
                                     omics_type = "transcriptomics", norm = "log_cpm",
@@ -969,7 +972,8 @@ create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsMET", classes = c("MET
                                     phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 1,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_tra_PREOPEVsMET.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("cyan", "purple"))
 create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsHC", classes = c("HC", "PREOPE"),
                                     omics_type = "transcriptomics", norm = "log_cpm",
                                     dim_red = "UMAP",
@@ -983,7 +987,8 @@ create_dim_red_plots_PMH_simplified(comparison = "PREOPEVsHC", classes = c("HC",
                                     phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 2,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_tra_PREOPEVsHC.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("cyan", "green"))
 create_dim_red_plots_PMH_simplified(comparison = "METVsHC", classes = c("HC", "MET"),
                                     omics_type = "transcriptomics", norm = "log_cpm",
                                     dim_red = "UMAP",
@@ -997,5 +1002,6 @@ create_dim_red_plots_PMH_simplified(comparison = "METVsHC", classes = c("HC", "M
                                     phenotype_file_path = "Data/transcriptomic_phenotype_PREOPE_MET_HC.txt",
                                     file_name_prefix = 3,
                                     best_features_file_path = "DE_results_2024/features/features_RFE_tra_METVsHC.csv",
-                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE)  
+                                    create_pdf_images = TRUE, filter_classes_after_bec = TRUE, is_RFE_best_features = TRUE,
+                                    colours = c("purple", "green"))  
 

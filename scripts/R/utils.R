@@ -922,7 +922,8 @@ create_dim_red_plots_PMH_simplified <- function(comparison, classes,
                                                 dataset_replace_str = NA,
                                                 create_pdf_images = FALSE,
                                                 filter_classes_after_bec = FALSE,
-                                                is_RFE_best_features = FALSE){
+                                                is_RFE_best_features = FALSE,
+                                                colours = NA){
   if(omics_type == "proteomics"){
     if(is.na(data_file_path)){
       data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
@@ -1312,10 +1313,10 @@ create_dim_red_plots_PMH_simplified <- function(comparison, classes,
     ggplot2::xlab(xlab) +
     ggplot2::ylab(ylab) +
     ggplot2::scale_shape_manual(name = "Data Cohort", values = c(21, 22)) +
-    ggplot2::guides(fill = guide_legend(override.aes = list(shape = 21, colour = NA))) +
+    ggplot2::scale_fill_manual(name = "Label", values = colours) +
+    ggplot2::guides(fill = guide_legend(override.aes = list(shape = 21, colour = colours))) +
     labs(caption = paste(paste("Data dimension :", paste(dim(data), collapse = "x")), "\n",
-                         group_counts_text),
-         fill = "Label") +
+                         group_counts_text)) +
     theme_bw()
   
   if(!dir.exists(plot_dir_path)){
