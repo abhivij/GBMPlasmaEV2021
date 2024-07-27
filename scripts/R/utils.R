@@ -107,10 +107,17 @@ process_and_format_protein_data <- function(input_file_path, output_file_path,
                                   filter_na_perc = filter_na_perc,
                                   impute = TRUE)
   }else{
-    #impute = FALSE replaces NA with (min - 25th_quantile)
-    quantiles <- quantile(formatted_data, na.rm = TRUE)
-    na_repl_value <- quantiles["0%"] - quantiles["25%"]
-    formatted_data[is.na(formatted_data)] <- na_repl_value
+    # #impute = FALSE replaces NA with (min - 25th_quantile)
+    # quantiles <- quantile(formatted_data, na.rm = TRUE)
+    # na_repl_value <- quantiles["0%"] - quantiles["25%"]
+    # formatted_data[is.na(formatted_data)] <- na_repl_value
+    
+    #don't do the above. there is need to identify NAs for creating overlap venn diagram
+    #the values created newly will be all less than 'min', but after this process, we can't easily identify original min
+    
+    formatted_data <- impute_data(formatted_data, 
+                                  filter_na_perc = filter_na_perc,
+                                  impute = FALSE)
   }
   print(sum(is.na(formatted_data)))
   print(sum(formatted_data < min))
@@ -475,7 +482,10 @@ create_dim_red_plots_PMH <- function(comparison, classes,
                                      phenotype_file_path = NA,
                                      file_name_prefix = "",
                                      best_features_file_path = NA,
-                                     dataset_replace_str = NA){
+                                     dataset_replace_str = NA,
+                                     create_pdf_images = FALSE,
+                                     filter_classes_after_bec = FALSE,
+                                     is_RFE_best_features = FALSE){
   if(omics_type == "proteomics"){
     if(is.na(data_file_path)){
       data_file_path <- "Data/Protein/formatted_data/Q1-6_nonorm_formatted_impute50fil.csv"
@@ -526,21 +536,28 @@ create_dim_red_plots_PMH <- function(comparison, classes,
   }
   
   title <- paste0(dim_red, " plot of ", omics_type, " ",
-                  paste(rev(classes), collapse = ", "), " samples ", 
+                  paste(rev(sub("PREOPE", "GBM", classes)), collapse = ", "), " samples ", 
                   norm, " data")
   
   title <- paste0(title, " BEC-", batch_effect_correction)
   
   output_labels.cohort1 <- phenotype %>%
     dplyr::rename("Label" = comparison) %>%
-    dplyr::filter(Label %in% classes) %>%
     dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
-    dplyr::filter(data_cohort == "initial")
+    dplyr::filter(data_cohort == "initial") %>%
+    mutate(data_cohort = "Cohort1")
   output_labels.cohort2 <- phenotype %>%
     dplyr::rename("Label" = comparison) %>%
-    dplyr::filter(Label %in% classes) %>%
     dplyr::select(Sample, Label, data_cohort, Subgroup, Sex, Age) %>%
-    dplyr::filter(data_cohort == "validation")
+    dplyr::filter(data_cohort == "validation") %>%
+    mutate(data_cohort = "Cohort2")
+  
+  if(!filter_classes_after_bec){
+    output_labels.cohort1 <- output_labels.cohort1 %>%
+      dplyr::filter(Label %in% classes)
+    output_labels.cohort2 <- output_labels.cohort2 %>%
+      dplyr::filter(Label %in% classes) 
+  }
   
   #currently data format : (transcripts x samples)
   
@@ -601,14 +618,6 @@ create_dim_red_plots_PMH <- function(comparison, classes,
   output_labels <- output_labels %>%
     mutate(Label = factor(Label), data_cohort = factor(data_cohort))
   
-  group_counts <- output_labels %>%
-    dplyr::mutate(Label = paste(data_cohort, Label, sep = "_")) %>%
-    group_by(Label) %>%
-    summarise(n = n())
-  
-  group_counts_text <- paste(apply(group_counts, MARGIN = 1, FUN = function(x){paste(x[1], x[2], sep = ":")}),
-                             collapse = "  ")
-  
   all.equal(rownames(data), output_labels$Sample)
   
   if(batch_effect_correction == "combat"){
@@ -634,34 +643,127 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     data <- data.combat
   }
   
+  if(filter_classes_after_bec){
+    output_labels.cohort1 <- output_labels.cohort1 %>%
+      dplyr::filter(Label %in% classes)
+    output_labels.cohort2 <- output_labels.cohort2 %>%
+      dplyr::filter(Label %in% classes) 
+    
+    output_labels <- rbind(output_labels.cohort1, output_labels.cohort2)
+    data <- data[output_labels$Sample, ]        
+  }
+  output_labels <- output_labels %>%
+    mutate(Label = sub("PREOPE", "GBM", Label)) %>%
+    mutate(Label = factor(Label, levels = rev(sub("PREOPE", "GBM", classes))), data_cohort = factor(data_cohort))
+
+  group_counts <- output_labels %>%
+    dplyr::mutate(Label = paste(data_cohort, Label, sep = "_")) %>%
+    group_by(Label) %>%
+    summarise(n = n())
+  group_counts_text <- paste(apply(group_counts, MARGIN = 1, FUN = function(x){paste(x[1], x[2], sep = ":")}),
+                             collapse = "  ")
+  
   
   ################obtain best biomarkers
   
-  if(!is.na(best_features_file_path) & !is.na(dataset_replace_str)){
-
-    best_features <- read.csv(best_features_file_path)  
-    best_features_sub <- best_features %>%
-      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
-      filter(is_best > 0, dataset_id == comparison)
+  if( (!is.na(best_features_file_path) & !is.na(dataset_replace_str)) |
+      (!is.na(best_features_file_path) & is_RFE_best_features )
+  ){
+    
+    if(is_RFE_best_features){
+      best_features <- read.csv(best_features_file_path)
+      biomarkers <- best_features$Molecule
+    } else{
+      best_features <- read.csv(best_features_file_path)  
+      best_features <- best_features %>%
+        mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+        filter(is_best > 0, dataset_id == comparison)     
+    }
     
     if(!dir.exists(boxplot_dir_path)){
       dir.create(boxplot_dir_path, recursive = TRUE)
     }
     all_protein_names <- read.csv("Data/Protein/formatted_data/all_protein_names.csv")
     
-    colnames(data) <- gsub("-", ".", colnames(data))
+    # colnames(data) <- gsub("-", ".", colnames(data))
     
     #plot biomarker boxplot for the multiple biomarker sets identified
-    for(i in c(1:nrow(best_features_sub))){
-      # i <- 1
-      biomarkers <- strsplit(best_features_sub[i, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
+    #assuming that multiple biomarker sets not present in case of RFE_best_features
+    if(!is_RFE_best_features){
+      for(i in c(1:nrow(best_features_sub))){
+        # i <- 1
+        biomarkers <- strsplit(best_features_sub[i, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
+        data_sub <- data[, biomarkers]
+        
+        best_str <- ifelse(best_features_sub[i, "is_best"] == 1, "best", "")
+        
+        #plot biomarker boxplot
+        
+        #args - data, biomarkers, classes, output_labels, omics_type
+        
+        data_to_plot <- data_sub %>%
+          rownames_to_column(var = "Sample") %>%
+          pivot_longer(cols = !Sample, names_to = "biomarker", values_to = "norm_expr") %>%
+          inner_join(output_labels %>%
+                       mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
+                       dplyr::select(c(Sample, Label))
+          )
+        
+        if(omics_type == "transcriptomics"){
+          x_lab <- "transcripts"
+          y_lab <- "Log CPM expression"
+        } else{
+          x_lab <- "proteins"
+          y_lab <- "Quantile normalized expression"
+          
+          data_to_plot <- data_to_plot %>%
+            left_join(all_protein_names %>% dplyr::select(c(from_id, primary_gene_id)), 
+                      by = c("biomarker" = "from_id")) %>%
+            dplyr::select(-c(biomarker)) %>%
+            dplyr::rename(c("biomarker" = "primary_gene_id"))
+        }
+        x_lab <- paste0(x_lab, "(", length(biomarkers), ")")
+        
+        biomarker_agg <- data_to_plot %>%
+          group_by(biomarker) %>%
+          summarize(med_expr = median(norm_expr)) %>%
+          arrange(desc(med_expr))
+        
+        # data_to_plot <- data_to_plot %>%
+        #   mutate(Label = factor(Label, levels = rev(classes)),
+        #          biomarker = factor(biomarker, biomarker_agg$biomarker)) 
+        data_to_plot <- data_to_plot %>%
+          mutate(biomarker = factor(biomarker, biomarker_agg$biomarker))
+        # print("here")
+        ggplot(data_to_plot, aes(x = biomarker, 
+                                 y = norm_expr,
+                                 fill = Label)) +
+          geom_boxplot(size = 0.2, alpha = 0.5) +
+          ggtitle(paste(sub("Vs", " Vs ", sub("PREOPE", "GBM", comparison)), best_str, x_lab)) +
+          xlab(x_lab) +
+          ylab(y_lab) +
+          guides(fill = guide_legend(title = "Condition")) +
+          theme_bw() +
+          theme(axis.text.x = element_text(size=rel(1.2), angle = 90),
+                axis.text.y = element_text(size=rel(1.2)),
+                axis.title.x = element_text(size=rel(1.3)),
+                axis.title.y = element_text(size=rel(1.3)),
+                plot.title  = element_text(size=rel(1.5)))  
+        
+        file_name <- paste(file_name_prefix, sub("PREOPE", "GBM", comparison), omics_type, best_str, i, ".jpg",
+                           sep = "_")
+        file_path <- paste(boxplot_dir_path, file_name, sep = "/")
+        ggplot2::ggsave(file_path, units = "cm", width = 30)
+        
+        if(create_pdf_images){
+          file_name <- paste(file_name_prefix, sub("PREOPE", "GBM", comparison), omics_type, best_str, i, ".pdf",
+                             sep = "_")
+          file_path <- paste(boxplot_dir_path, file_name, sep = "/")
+          ggplot2::ggsave(file_path, units = "cm", width = 30)
+        }
+      }      
+    } else{
       data_sub <- data[, biomarkers]
-      
-      best_str <- ifelse(best_features_sub[i, "is_best"] == 1, "best", "")
-      
-      #plot biomarker boxplot
-      
-      #args - data, biomarkers, classes, output_labels, omics_type
       
       data_to_plot <- data_sub %>%
         rownames_to_column(var = "Sample") %>%
@@ -669,8 +771,8 @@ create_dim_red_plots_PMH <- function(comparison, classes,
         inner_join(output_labels %>%
                      mutate(Label = paste(Label, data_cohort, sep = "_")) %>%
                      dplyr::select(c(Sample, Label))
-                   )
-    
+        )
+      
       if(omics_type == "transcriptomics"){
         x_lab <- "transcripts"
         y_lab <- "Log CPM expression"
@@ -696,34 +798,48 @@ create_dim_red_plots_PMH <- function(comparison, classes,
       #          biomarker = factor(biomarker, biomarker_agg$biomarker)) 
       data_to_plot <- data_to_plot %>%
         mutate(biomarker = factor(biomarker, biomarker_agg$biomarker))
-      # print("here")
       ggplot(data_to_plot, aes(x = biomarker, 
                                y = norm_expr,
                                fill = Label)) +
         geom_boxplot(size = 0.2, alpha = 0.5) +
-        ggtitle(paste(sub("Vs", " Vs ", comparison), best_str, x_lab)) +
+        ggtitle(paste(sub("Vs", " Vs ", sub("PREOPE", "GBM", comparison)), x_lab)) +
         xlab(x_lab) +
         ylab(y_lab) +
         guides(fill = guide_legend(title = "Condition")) +
+        theme_bw() +
         theme(axis.text.x = element_text(size=rel(1.2), angle = 90),
               axis.text.y = element_text(size=rel(1.2)),
               axis.title.x = element_text(size=rel(1.3)),
               axis.title.y = element_text(size=rel(1.3)),
               plot.title  = element_text(size=rel(1.5)))  
       
-      file_name <- paste(file_name_prefix, comparison, omics_type, best_str, i, ".jpg",
+      file_name <- paste(file_name_prefix, sub("PREOPE", "GBM", comparison), 
+                         omics_type, ".jpg",
                          sep = "_")
       file_path <- paste(boxplot_dir_path, file_name, sep = "/")
       ggplot2::ggsave(file_path, units = "cm", width = 30)
+      
+      if(create_pdf_images){
+        file_name <- paste(file_name_prefix, sub("PREOPE", "GBM", comparison), 
+                           omics_type, ".pdf",
+                           sep = "_")
+        file_path <- paste(boxplot_dir_path, file_name, sep = "/")
+        ggplot2::ggsave(file_path, units = "cm", width = 30)
+      }
     }
     
-    
     #plot dim red plot just for the best biomarker set chosen
-    best_features_sub <- best_features %>%
-      mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
-      filter(is_best == 1, dataset_id == comparison)
-    biomarkers <- strsplit(best_features_sub[1, "biomarkers"], split = "|", fixed = TRUE)[[1]] 
+    if(!is_RFE_best_features){
+      best_features_sub <- best_features %>%
+        mutate(dataset_id = gsub(dataset_replace_str, "", dataset_id)) %>%
+        filter(is_best == 1, dataset_id == comparison)
+      biomarkers <- strsplit(best_features_sub[1, "biomarkers"], split = "|", fixed = TRUE)[[1]]     
+    } else{
+      biomarkers <- best_features$Molecule
+    }
     data <- data[, biomarkers]
+
+
     
     title <- paste(title, "best biomarkers")
     
@@ -768,7 +884,8 @@ create_dim_red_plots_PMH <- function(comparison, classes,
     ggplot2::guides(colour = guide_legend(override.aes = list(shape = 1))) +
     labs(caption = paste(paste("Data dimension :", paste(dim(data), collapse = "x")), "\n",
                          group_counts_text),
-         fill = "Subgroup (Point Fill)")
+         fill = "Subgroup (Point Fill)") +
+    theme_bw()
 
   if(!dir.exists(plot_dir_path)){
     dir.create(plot_dir_path, recursive = TRUE)
@@ -777,6 +894,11 @@ create_dim_red_plots_PMH <- function(comparison, classes,
                      sep = "_")
   file_path <- paste(plot_dir_path, file_name, sep = "/")
   ggplot2::ggsave(file_path, units = "cm", width = 30)
+  
+  if(create_pdf_images){
+    file_name <- paste(file_name_prefix, paste0(gsub(title, pattern = " |,", replacement = "-"), ".pdf"),
+                       sep = "_")
+    file_path <- paste(plot_dir_path, file_name, sep = "/")
+    ggplot2::ggsave(file_path, units = "cm", width = 30)
+  }
 }
-
-
