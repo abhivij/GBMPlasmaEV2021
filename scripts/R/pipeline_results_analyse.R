@@ -427,6 +427,7 @@ plot_common_feature_heatmap <- function(dparg_vec,
   
   data_to_plot <- model_results %>%
     select(DataSetId, Model, Mean_AUC) %>%
+    mutate(DataSetId = sub("PREOPE", "GBM", DataSetId)) %>%
     pivot_wider(names_from = DataSetId, values_from = Mean_AUC) %>%
     column_to_rownames("Model")
   data_to_plot <- data.matrix(data_to_plot)
@@ -1714,4 +1715,56 @@ plot_common_feature_heatmap(c(251:255),
                             dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_new_quant_PREOPEVsHC_",
                             dir_path = "plots_comparison_set2/fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant/common_heatmap/",
                             heatmap_file_name = "PREOPEVsHC.png"
+)
+
+
+
+###################
+
+#rerun selected ML based biomarkers to create plots with name GBM instead of PREOPE
+
+
+plot_common_feature_heatmap(c(243:250),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_new_quant_PREOPEVsMET_",
+                            dir_path = "plots_2024July/RNA/common_heatmap/",
+                            heatmap_file_name = "GBMVsMET.png"
+)
+plot_common_feature_heatmap(c(251:255),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_combat_compset2_new_quant_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_combat_compset2_new_quant_PREOPEVsHC_",
+                            dir_path = "plots_2024July/RNA/common_heatmap/",
+                            heatmap_file_name = "GBMVsHC.png"
+)
+plot_common_feature_heatmap(c(210:213),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_transcriptomic,
+                            results_dir = "fem_pipeline_results_combined_transcriptomic_new_quant_compset2_subset",
+                            dataset_replace_string = "GBM_combined_transcriptomic_new_quant_compset2_METVsHC_",
+                            dir_path = "plots_2024July/RNA/common_heatmap/",
+                            heatmap_file_name = "METVsHC.png"
+)
+
+
+plot_common_feature_heatmap(c(177:181),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_combat_compset2_PREOPEVsMET_",
+                            dir_path = "plots_2024July/Protein/common_heatmap/",
+                            heatmap_file_name = "GBMVsMET.png"
+)
+plot_common_feature_heatmap(c(182:186),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_combat_compset2_PREOPEVsHC_",
+                            dir_path = "plots_2024July/Protein/common_heatmap/",
+                            heatmap_file_name = "GBMVsHC.png"
+)
+plot_common_feature_heatmap(c(187:190),
+                            dataset_pipeline_arguments = dataset_pipeline_arguments_proteomic,
+                            results_dir = "fem_pipeline_results_combined_proteomic_combat_compset2_subset",
+                            dataset_replace_string = "GBM_combined_proteomic_combat_compset2_METVsHC_",
+                            dir_path = "plots_2024July/Protein/common_heatmap/",
+                            heatmap_file_name = "METVsHC.png"
 )
