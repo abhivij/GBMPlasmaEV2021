@@ -247,16 +247,16 @@ result <- top.table %>%
   dplyr::rename(Molecule = tra, adjPVal = adj.P.Val, PVal = P.Value) %>%
   arrange(logFC)
 
-plot_volcano_and_save_DE(result, plot_title = "PREOPE Vs MET",
+plot_volcano_and_save_DE(result, plot_title = "GBM Vs MET",
                          output_dir_path = "DE_results_2024/transcriptomics/3_combat_corrected/p/",
-                         plot_file_name = "PREOPEVsMET.png",
+                         plot_file_name = "GBMVsMET.png",
                          fc_cutoff = 1.2,
                          pval_cutoff = 0.05,
                          use_adj_pval = FALSE,
                          plot_width_cm = 25)
-plot_volcano_and_save_DE(result, plot_title = "PREOPE Vs MET",
+plot_volcano_and_save_DE(result, plot_title = "GBM Vs MET",
                          output_dir_path = "DE_results_2024/transcriptomics/3_combat_corrected/padj/",
-                         plot_file_name = "PREOPEVsMET.png",
+                         plot_file_name = "GBMVsMET.png",
                          fc_cutoff = 1.2,
                          pval_cutoff = 0.05,
                          use_adj_pval = TRUE,
@@ -276,16 +276,16 @@ result <- top.table %>%
   dplyr::select(tra, logFC, P.Value, adj.P.Val) %>%
   dplyr::rename(Molecule = tra, adjPVal = adj.P.Val, PVal = P.Value) %>%
   arrange(logFC)
-plot_volcano_and_save_DE(result, plot_title = "PREOPE Vs HC",
+plot_volcano_and_save_DE(result, plot_title = "GBM Vs HC",
                          output_dir_path = "DE_results_2024/transcriptomics/3_combat_corrected/p/",
-                         plot_file_name = "PREOPEVsHC.png",
+                         plot_file_name = "GBMVsHC.png",
                          fc_cutoff = 1.2,
                          pval_cutoff = 0.05,
                          use_adj_pval = FALSE,
                          plot_width_cm = 25)
-plot_volcano_and_save_DE(result, plot_title = "PREOPE Vs HC",
+plot_volcano_and_save_DE(result, plot_title = "GBM Vs HC",
                          output_dir_path = "DE_results_2024/transcriptomics/3_combat_corrected/padj/",
-                         plot_file_name = "PREOPEVsHC.png",
+                         plot_file_name = "GBMVsHC.png",
                          fc_cutoff = 1.2,
                          pval_cutoff = 0.05,
                          use_adj_pval = TRUE,
