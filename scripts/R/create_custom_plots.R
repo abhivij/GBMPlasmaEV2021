@@ -4,88 +4,72 @@ library(ROCR)
 
 library(ggvenn)
 library(ComplexHeatmap)
-
+library(viridis)
+library(RColorBrewer)
 
 base_dir <- "/home/abhivij/UNSW/VafaeeLab/GBMPlasmaEV/"
 setwd(base_dir)
 
 #create heatmap of average prediction probabilities
 
-best_features <- read.csv("Data/selected_features/best_features_with_add_col.csv") %>%
-  filter(is_best == 1, 
-         grepl("_combined_", dataset_id),
-         grepl('_common_combat_', dataset_id)) %>%
-  mutate(comparison = gsub("GBM_combined_transcriptomic_common_combat_|GBM_combined_proteomic_common_combat_",
-                           "", dataset_id)) %>%
-  mutate(dataset_id = paste(dataset_id, description, 
-                            min_iter_feature_presence, comparison,
-                            sep = "_")) %>%
-  dplyr::select(c(dataset_id, comparison))
-
-sample_wise_results.proteomics <- read.csv("fem_pipeline_results_combined_pr_common_combat_subset/all_samplewise_result_df.csv") %>%
-  inner_join(best_features %>% filter(grepl("proteomic", dataset_id)), 
-             by = c("DataSetId" = "dataset_id")) %>%
-  filter(FSM == "all") %>%
-  select(-c(FSM))
-sample_wise_results.transcriptomics <- read.csv("fem_pipeline_results_combined_tr_common_combat_subset/all_samplewise_result_df.csv") %>%
-  inner_join(best_features %>% filter(grepl("transcriptomic", dataset_id)), 
-             by = c("DataSetId" = "dataset_id")) %>%
-  filter(FSM == "all") %>%
-  select(-c(FSM))
-
 sample_type <- "test"
 comparison_of_interest <- "POSTOPE_TPVsREC_TP"
 classes <- c("REC_TP", "POSTOPE_TP")
-create_mean_prob_heatmap <- function(sample_wise_results.transcriptomics, 
-                                     sample_wise_results.proteomics,
+result_file_dir <- "Data/prediction_result/integration/stacked/"
+sample_type <- "test"
+
+#classes assumed to be given as (neg_class, pos_class)
+create_mean_prob_heatmap <- function(result_file_dir,
                                      comparison_of_interest,
                                      classes,
                                      sample_type){
-  results.tra <- sample_wise_results.transcriptomics %>%
-    filter(Type == sample_type, comparison == comparison_of_interest) %>%
-    dplyr::select(-c(DataSetId, comparison, Type)) %>%
-    group_by(Sample, TrueLabel, Model) %>%
-    summarize(mean_prob = mean(PredProb))
-  results.prot <- sample_wise_results.proteomics %>%
-    filter(Type == sample_type, comparison == comparison_of_interest) %>%
-    dplyr::select(-c(DataSetId, comparison, Type)) %>%
-    group_by(Sample, TrueLabel, Model) %>%
-    summarize(mean_prob = mean(PredProb))
   
-  sample_label.tra <- results.tra %>%
-    dplyr::select(c(Sample, TrueLabel)) %>%
-    distinct() %>%
-    arrange(Sample)
-  sample_label.prot <- results.prot %>%
-    dplyr::select(c(Sample, TrueLabel)) %>%
-    distinct() %>%
-    mutate(Sample = sub("HB0", "HB", Sample)) %>%
-    arrange(Sample)
-  
-  setdiff(sample_label.prot$Sample, sample_label.tra$Sample)
-  setdiff(sample_label.tra$Sample, sample_label.prot$Sample)
-  
-  results.prot <- results.prot %>%
-    mutate(Sample = sub("HB0", "HB", Sample)) 
-  
-  results <- rbind(results.tra %>% mutate(omics_type = "transcriptomics"),
-                   results.prot %>% mutate(omics_type = "proteomics")) %>%
-    ungroup() %>%
-    mutate(model_omics_type = paste(Model, omics_type, sep = "_"))
+  results.tra <- read.csv(paste0(result_file_dir, comparison_of_interest, "_tra.csv")) %>%
+    filter(Type == sample_type) %>%
+    group_by(sample, TrueLabel) %>%
+    summarize(mean_prob = mean(Pred_prob))
+  results.prot <- read.csv(paste0(result_file_dir, comparison_of_interest, "_prot.csv")) %>%
+    filter(Type == sample_type) %>%
+    group_by(sample, TrueLabel) %>%
+    summarize(mean_prob = mean(Pred_prob))
+  results.both <- read.csv(paste0(result_file_dir, comparison_of_interest, "_both.csv")) %>%
+    filter(Type == sample_type) %>%
+    group_by(sample, TrueLabel) %>%
+    summarize(mean_prob = mean(Pred_prob))
+
+  results <- rbind(results.tra %>% mutate(ensemble_type = "stacked with\ntranscriptomics\nmodels"),
+                   results.prot %>% mutate(ensemble_type = "stacked with\nproteomics\nmodels"),
+                   results.both %>% mutate(ensemble_type = "stacked with\nmulti-omic\nmodels")) %>%
+    ungroup()
   
   data_to_plot <- results %>%
-    dplyr::select(c(Sample, model_omics_type, mean_prob)) %>%
-    pivot_wider(names_from = model_omics_type, values_from = mean_prob) %>%
-    arrange(Sample) %>%
-    column_to_rownames("Sample")
+    dplyr::select(c(sample, ensemble_type, mean_prob)) %>%
+    pivot_wider(names_from = ensemble_type, values_from = mean_prob) %>%
+    mutate("Sample_char_part" = str_extract(sample, "[A-Z]+"),
+           "Sample_num_part" = as.numeric(str_extract(sample, "[0-9]+"))) %>%
+    arrange(Sample_char_part, Sample_num_part) %>%
+    dplyr::select(-c(Sample_char_part, Sample_num_part)) %>%
+    column_to_rownames("sample")
   data_to_plot <- data.matrix(data_to_plot)
   
-  meta_data.row <- rbind(sample_label.tra, sample_label.prot) %>%
-    distinct()
-  meta_data.col <- data.frame(model_omics_type = colnames(data_to_plot)) %>%
-    separate(model_omics_type, into = c("model", "omics_type"), sep = "_", remove = FALSE)
+  labels <- results %>%
+    dplyr::select(c(sample, TrueLabel)) %>%
+    distinct() %>%
+    ungroup()
   
-  Heatmap(data_to_plot, name = "Mean Prediction probability",
+  meta_data.row <- data.frame(sample = rownames(data_to_plot)) %>% 
+    inner_join(labels) %>%
+    mutate(TrueLabel = factor(TrueLabel, levels = rev(classes)))
+
+  row_col <- list()
+  row_col[["TrueLabel"]] <- c("#440154", "#fde725")
+  names(row_col[["TrueLabel"]]) <- classes
+  # column_col <- list("Omics type" = c("proteomics" = "skyblue1",
+  #                                     "transcriptomics" = "indianred1"))
+  # column_col[["Model"]] <- brewer.pal(n = 7, name = "Paired")
+  # names(column_col[["Model"]]) <- model_names
+  # 
+  ht <- Heatmap(data_to_plot, name = "Mean Prediction probability",
           col = viridis(5),
           rect_gp = gpar(col = "white", lwd = 1),
           cluster_columns = FALSE,
@@ -93,57 +77,205 @@ create_mean_prob_heatmap <- function(sample_wise_results.transcriptomics,
           row_title = "Samples",
           row_names_side = "left",
           row_split = meta_data.row$TrueLabel,
-          column_split = meta_data.col$omics_type,
           column_title = NULL,
-          show_column_names = FALSE,
-          bottom_annotation = HeatmapAnnotation(
-            "Omics type" = meta_data.col$omics_type,
-            "Model" = meta_data.col$model,
-            annotation_name_side = "left"
-          )) + 
+          show_column_names = TRUE,
+          row_names_gp = gpar(fontsize = 5),
+          column_names_rot = 45,
+          column_names_centered = TRUE,
+          width = unit(9, "cm")) + 
     HeatmapAnnotation("TrueLabel" = meta_data.row$TrueLabel, 
                                  which = "row", 
-                      col = list("TrueLabel" = c("POSTOPE_TP" = "#440154", "REC_TP" = "#fde725")))
+                      col = row_col)
   
-  
-  Heatmap(data_to_plot, name = "Mean Prediction probability",
-          col = magma(5),
-          rect_gp = gpar(col = "white", lwd = 1),
-          cluster_columns = FALSE,
-          column_order = replaced_dataset_id_vec[replaced_dataset_id_vec %in% colnames(data_to_plot)],
-          column_names_rot = 60,
-          column_names_gp = gpar(fontsize = 10),
-          row_title = "Samples",
-          row_names_side = "left",
-          cell_fun = function(j, i, x, y, width, height, fill) {
-            grid.text(sprintf("%.3f", data_to_plot[i, j]), x, y, gp = gpar(fontsize = 7, col = "slateblue3"))
-          })
-  
-  
+  png(paste0("Data/prediction_result/integration/stacked/", comparison_of_interest, 
+             sample_type,
+             ".png"), units = "cm", width = 20, height = 15, res = 1200)  
+  draw(ht, column_title = paste(sample_type, sub("Vs", " Vs ", comparison_of_interest)))    
+  dev.off() 
 }
 
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "POSTOPE_TPVsREC_TP", 
+                         classes = c("REC_TP", "POSTOPE_TP"),
+                         sample_type = "train")
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "PREOPEVsPOSTOPE_TP", 
+                         classes = c("POSTOPE_TP", "PREOPE"),
+                         sample_type = "train")
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "PREOPEVsREC_TP", 
+                         classes = c("REC_TP", "PREOPE"),
+                         sample_type = "train")
 
-sample_wise_results.train <- sample_wise_results %>%
-  filter(Type == "train")
-sample_wise_results.test <- sample_wise_results %>%
-  filter(Type == "test")
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "POSTOPE_TPVsREC_TP", 
+                         classes = c("REC_TP", "POSTOPE_TP"),
+                         sample_type = "test")
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "PREOPEVsPOSTOPE_TP", 
+                         classes = c("POSTOPE_TP", "PREOPE"),
+                         sample_type = "test")
+create_mean_prob_heatmap(result_file_dir = "Data/prediction_result/integration/stacked/",
+                         comparison_of_interest = "PREOPEVsREC_TP", 
+                         classes = c("REC_TP", "PREOPE"),
+                         sample_type = "test")
 
-current_comparison <- "CFRDVsNGT"
-classes <- c("NGT", "CFRD")
-for(i in c(1:30)){
-  #i <- 1
-  results_subset <- sample_wise_results.test %>%
-    filter(Iter == i, comparison == current_comparison)
-  
-  pr <- ROCR::prediction(results_subset$PredProb, 
-                         results_subset$TrueLabel, label.ordering = classes)
-  #compute ROC curve, and AUC  
-  prf <- ROCR::performance(pr, measure = "tpr", x.measure = "fpr")
-  if(i == 1){
-    plot(prf, col = i)  
-  } else{
-    plot(prf, col = i, add = TRUE)
-  }
-  
-  print(ROCR::performance(pr, measure = "auc")@y.values[[1]])
-}
+
+
+#heatmap with results from best biomarkers from DE+ML method for prot and tra
+#based on manually created file best_features_meanAUC.csv
+data_to_plot <- read.csv("DE_results_2024/features/best_features_meanAUC.csv") %>%
+  dplyr::select(c(1:3)) %>%
+  mutate(Comparison = sub("Vs", " Vs ", Comparison)) %>%
+  pivot_wider(names_from = OmicsType, values_from = MeanAUC) %>%
+  column_to_rownames("Comparison")
+data_to_plot <- as.matrix(data_to_plot)
+
+num_features_to_plot <- read.csv("DE_results_2024/features/best_features_meanAUC.csv") %>%
+  dplyr::select(c(1, 2, 5)) %>%
+  mutate(Comparison = sub("Vs", " Vs ", Comparison)) %>%
+  pivot_wider(names_from = OmicsType, values_from = NumFeatures) %>%
+  column_to_rownames("Comparison")
+data_to_plot <- as.matrix(data_to_plot)
+
+png("DE_results_2024/features/MeanAUC_with_feature_count.png", units = "cm", width = 30, height = 25, res = 1200)
+ht <- Heatmap(data_to_plot, name = "Mean AUC",
+              col = plasma(5),
+              rect_gp = gpar(col = "white", lwd = 1),
+              column_names_rot = 0,
+              column_names_centered = TRUE,
+              column_names_gp = gpar(fontsize = 12),
+              row_names_gp = gpar(fontsize = 12),
+              row_title_gp = gpar(fontsize = 15),
+              row_title = "Comparison",
+              row_names_side = "left",
+              column_title_gp = gpar(fontsize = 15), 
+              cluster_columns = FALSE,
+              cluster_rows = FALSE,
+              cell_fun = function(j, i, x, y, width, height, fill) {
+                grid.text(paste(sprintf("%.3f", data_to_plot[i, j]),
+                                paste0("( ", num_features_to_plot[i, j], " biomarkers )"),
+                                sep = "\n"), 
+                          x, y, gp = gpar(fontsize = 10, col = "gray30", fontface = "bold"))
+              })
+draw(ht, column_title = "Mean AUC results for best biomarkers")
+dev.off()
+
+
+pdf("DE_results_2024/features/MeanAUC_with_feature_count.pdf")
+ht <- Heatmap(data_to_plot, name = "Mean AUC",
+              col = plasma(5),
+              rect_gp = gpar(col = "white", lwd = 1),
+              column_names_rot = 0,
+              column_names_centered = TRUE,
+              column_names_gp = gpar(fontsize = 12),
+              row_names_gp = gpar(fontsize = 12),
+              row_title_gp = gpar(fontsize = 15),
+              row_title = "Comparison",
+              row_names_side = "left",
+              column_title_gp = gpar(fontsize = 15), 
+              cluster_columns = FALSE,
+              cluster_rows = FALSE,
+              cell_fun = function(j, i, x, y, width, height, fill) {
+                grid.text(paste(sprintf("%.3f", data_to_plot[i, j]),
+                                paste0("( ", num_features_to_plot[i, j], " biomarkers )"),
+                                sep = "\n"), 
+                          x, y, gp = gpar(fontsize = 10, col = "gray30", fontface = "bold"))
+              })
+draw(ht, column_title = "Mean AUC results for best biomarkers")
+dev.off()
+
+
+png("DE_results_2024/features/MeanAUC.png", units = "cm", width = 30, height = 25, res = 1200)
+ht <- Heatmap(data_to_plot, name = "Mean AUC",
+              col = plasma(5),
+              rect_gp = gpar(col = "white", lwd = 1),
+              column_names_rot = 0,
+              column_names_centered = TRUE,
+              column_names_gp = gpar(fontsize = 12),
+              row_names_gp = gpar(fontsize = 12),
+              row_title_gp = gpar(fontsize = 15),
+              row_title = "Comparison",
+              row_names_side = "left",
+              column_title_gp = gpar(fontsize = 15), 
+              cluster_columns = FALSE,
+              cluster_rows = FALSE,
+              cell_fun = function(j, i, x, y, width, height, fill) {
+                grid.text(sprintf("%.3f", data_to_plot[i, j]),
+                          x, y, gp = gpar(fontsize = 10, col = "gray30", fontface = "bold"))
+              })
+draw(ht, column_title = "Mean AUC results for best biomarkers")
+dev.off()
+
+
+pdf("DE_results_2024/features/MeanAUC.pdf")
+ht <- Heatmap(data_to_plot, name = "Mean AUC",
+              col = plasma(5),
+              rect_gp = gpar(col = "white", lwd = 1),
+              column_names_rot = 0,
+              column_names_centered = TRUE,
+              column_names_gp = gpar(fontsize = 12),
+              row_names_gp = gpar(fontsize = 12),
+              row_title_gp = gpar(fontsize = 15),
+              row_title = "Comparison",
+              row_names_side = "left",
+              column_title_gp = gpar(fontsize = 15), 
+              cluster_columns = FALSE,
+              cluster_rows = FALSE,
+              cell_fun = function(j, i, x, y, width, height, fill) {
+                grid.text(sprintf("%.3f", data_to_plot[i, j]),
+                          x, y, gp = gpar(fontsize = 10, col = "gray30", fontface = "bold"))
+              })
+draw(ht, column_title = "Mean AUC results for best biomarkers")
+dev.off()
+
+############################################################################
+# barplot with error bar - performance of best biomarkers
+data_to_plot <- read.csv("DE_results_2024/features/best_features_meanAUC.csv") %>%
+  dplyr::select(c(1:3)) %>%
+  mutate(Comparison = sub("Vs", " Vs ", Comparison))
+
+ggplot(data_to_plot, aes(x = Comparison, fill = Comparison, y = MeanAUC)) +
+  geom_bar(stat="identity", position="dodge") +
+  xlab("") +
+  ylab("Mean AUC") +
+  coord_cartesian(ylim = c(0.9, 1.0)) +
+  guides(fill=guide_legend(title = "Comparison")) +
+  # scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size=rel(1.2), hjust=0.95),
+        axis.title.x = element_text(size=rel(1.2)),
+        axis.title.y = element_text(size=rel(1.2)),
+        strip.text = element_text(size=rel(1.2)),
+        legend.title = element_text(size=rel(1.2)),
+        legend.text = element_text(size=rel(1.1)),
+        panel.background = element_rect(colour = "grey50", fill = "white"),
+        strip.background = element_rect(colour = "grey50", fill = "white")
+  ) +
+  facet_wrap(facets = vars(OmicsType))
+ggsave("DE_results_2024/features/MeanAUC_barplot_after0.9.png")
+ggsave("DE_results_2024/features/MeanAUC_barplot_after0.9.pdf")
+
+
+ggplot(data_to_plot, aes(x = Comparison, fill = Comparison, y = MeanAUC)) +
+  geom_bar(stat="identity", position="dodge") +
+  xlab("") +
+  ylab("Mean AUC") +
+  guides(fill=guide_legend(title = "Comparison")) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10)) +
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.y = element_text(size=rel(1.2), hjust=0.95),
+        axis.title.x = element_text(size=rel(1.2)),
+        axis.title.y = element_text(size=rel(1.2)),
+        strip.text = element_text(size=rel(1.2)),
+        legend.title = element_text(size=rel(1.2)),
+        legend.text = element_text(size=rel(1.1)),
+        panel.background = element_rect(colour = "grey50", fill = "white"),
+        strip.background = element_rect(colour = "grey50", fill = "white")
+  ) +
+  facet_wrap(facets = vars(OmicsType))
+ggsave("DE_results_2024/features/MeanAUC_barplot.png")
+ggsave("DE_results_2024/features/MeanAUC_barplot.pdf")
+
